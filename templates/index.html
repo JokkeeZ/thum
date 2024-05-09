@@ -6,11 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ Title() }}</title>
 
-	<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css')}}">
-	<script src="{{ url_for('static', filename='js/main.js')}}" defer></script>
+	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 </head>
 
-<body onload="getAllDataFromSensor()">
+<body onload="getAllDataFromSensor()" onresize="chart.resize()">
 	{{ Nav()|safe }}
 	<div class="container-left">
 		<canvas id="chart"></canvas>
@@ -21,12 +21,12 @@
 		<hr/>
 
 		<ul>
-			<li>Errors: {{ Errors }} (Latest: {{ ErrorLatest }})</li>
-			<li>Sensor samples: {{ Count }}</li>
-			<li>First sample: {{ Min }}</li>
-			<li>Latest sample: {{ Max }}</li>
-			<li>Average Temperature: {{ AvgTemp }}C°</li>
-			<li>Average Humidity: {{ AvgHum }}%</li>
+			<li>Errors: {{ LogData[0] }} (Latest: {{ LogData[1] }})</li>
+			<li>Sensor samples: {{ Data[0] }}</li>
+			<li>First sample: {{ Data[1] }}</li>
+			<li>Latest sample: {{ Data[2] }}</li>
+			<li>Average Temperature: {{ Data[3] }}C°</li>
+			<li>Average Humidity: {{ Data[4] }}%</li>
 		</ul>
 	</div>
 </body>

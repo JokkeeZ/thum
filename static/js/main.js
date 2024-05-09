@@ -8,13 +8,17 @@ Chart.defaults.color = "#ADBABD";
 Chart.defaults.borderColor = "rgba(255,255,255,0.1)";
 Chart.defaults.backgroundColor = "rgba(255,255,0,0.1)";
 
+document.addEventListener('resize', chart.resize());
+
 /**
+ * Updates chart datasets and labels.
+ * 
  * @param {String[]} labels
  * @param {number[]} humidities
  * @param {number[]} temperatures
  * @returns {void}
  */
-function setChartData(labels, humidities, temperatures) {
+function updateChartData(labels, humidities, temperatures) {
 	chart.config.data = {
 		labels: labels,
 		datasets: [
@@ -27,10 +31,24 @@ function setChartData(labels, humidities, temperatures) {
 	chart.update();
 }
 
+function deleteLogByTimestamp(timestamp) {
+	fetch(`/sensor/logs/${timestamp}`, {
+		method: 'DELETE'
+	})
+	.then(r => r.json())
+	.then(result => {
+		if (result.count > 0) {
+			document.getElementById(`log_${timestamp}`).remove();
+		}
+	});
+}
+
 /**
+ * Calculates dew points from temperatures and humidities.
+ * 
  * @param {number[]} temperatures
  * @param {number[]} humidities
- * @returns {number[]}
+ * @returns {Array[]} Array of dew points.
  */
 function calculateDewPoints(temperatures, humidities) {
 	let values = [];
@@ -54,10 +72,10 @@ function getAllDataFromSensor() {
 	fetch(`/sensor`)
 	.then(r => r.json())
 	.then(result => {
-		setChartData(
+		updateChartData(
 			result.map(x => x.timestamp),
-			result.map(x => x.humidity),
-			result.map(x => x.temperature));
+			result.map(x => x.humidities),
+			result.map(x => x.temperatures));
 	});
 }
 
@@ -71,8 +89,8 @@ function getWeeklyDataFromSensor(week) {
 	fetch(`sensor/weekly/${week}`)
 	.then(r => r.json())
 	.then(result => {
-		setChartData(
-			['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+		updateChartData(
+			result.labels,
 			result.humidities,
 			result.temperatures);
 	});
@@ -88,10 +106,10 @@ function getDailyDataFromSensor(date) {
 	fetch(`/sensor/${date}`)
 	.then(r => r.json())
 	.then(result => {
-		setChartData(
+		updateChartData(
 			result.map(x => x.timestamp.split(' ')[1]),
-			result.map(x => x.humidity),
-			result.map(x => x.temperature));
+			result.map(x => x.humidities),
+			result.map(x => x.temperatures));
 	});
 }
 
@@ -107,10 +125,8 @@ function getMonthlyDataFromSensor(month) {
 	fetch(`/sensor/monthly/${y}/${m}`)
 	.then(r => r.json())
 	.then(result => {
-		setChartData(
-			Array.from({length: result.temperatures.length}, (_, n) => {
-				return `${(n + 1).toString().padStart(2, '0')}.${m}.${y}`;
-			}),
+		updateChartData(
+			result.labels,
 			result.humidities,
 			result.temperatures);
 	});

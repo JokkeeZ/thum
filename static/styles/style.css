@@ -46,6 +46,17 @@ nav {
 	overflow: hidden;
 }
 
+.deletebtn {
+	background-color: var(--default-txt-color);
+	border: 1px var(--default-body-bg-color);
+	color: var(--default-bg-color);
+}
+.deletebtn:hover {
+	background-color: var(--default-nav-active);
+	border: 1px var(--default-body-bg-color);
+	color: var(--default-txt-color);
+}
+
 nav a {
 	float: left;
 	display: block;

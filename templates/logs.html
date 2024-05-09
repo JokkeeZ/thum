@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ Title() }}</title>
 
-	<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css')}}">
-	<script src="{{ url_for('static', filename='js/main.js')}}" defer></script>
+	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 </head>
 
 <body>
@@ -17,13 +17,15 @@
 			<tr>
 				<th>Error</th>
 				<th>Timestamp</th>
+				<th>Delete</th>
 			</tr>
 		</thead>
 		<tbody>
 			{%for log in Logs%}
-			<tr>
+			<tr id="log_{{log[1]}}">
 				<td>{{log[0]}}</td>
 				<td>{{log[1]}}</td>
+				<td><button class="deletebtn" onclick="deleteLogByTimestamp('{{log[1]}}')">X</button></td>
 			</tr>
 			{%endfor%}
 		</tbody>
