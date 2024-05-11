@@ -31,6 +31,11 @@ function updateChartData(labels, humidities, temperatures) {
 	chart.update();
 }
 
+/**
+ * Deletes a log entry with a specific timestamp from the db.
+ * 
+ * @param {string} timestamp
+ */
 function deleteLogByTimestamp(timestamp) {
 	fetch(`/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
@@ -48,7 +53,7 @@ function deleteLogByTimestamp(timestamp) {
  * 
  * @param {number[]} temperatures
  * @param {number[]} humidities
- * @returns {Array[]} Array of dew points.
+ * @returns {number[]} Array of dew points.
  */
 function calculateDewPoints(temperatures, humidities) {
 	let values = [];
@@ -66,6 +71,8 @@ function calculateDewPoints(temperatures, humidities) {
 }
 
 /**
+ * Gets all available data from the db.
+ * 
  * @returns {void}
  */
 function getAllDataFromSensor() {
@@ -80,7 +87,9 @@ function getAllDataFromSensor() {
 }
 
 /**
- * @param {String} week
+ * Gets weekly data from the db by weekstring value.
+ * 
+ * @param {String} week Format: `2024-W10`
  * @returns {void}
  */
 function getWeeklyDataFromSensor(week) {
@@ -97,7 +106,9 @@ function getWeeklyDataFromSensor(week) {
 }
 
 /**
- * @param {String} date
+ * Gets all the data for specific date by datestring.
+ * 
+ * @param {String} date Format: `2024-01-20`
  * @returns {void}
  */
 function getDailyDataFromSensor(date) {
@@ -114,7 +125,9 @@ function getDailyDataFromSensor(date) {
 }
 
 /**
- * @param {String} month
+ * Gets all the data for specific month by monthstring.
+ * 
+ * @param {String} month Format: `2024-01`
  */
 function getMonthlyDataFromSensor(month) {
 	month ??= document.getElementById('month').value;

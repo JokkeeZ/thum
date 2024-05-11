@@ -30,7 +30,9 @@ def navbar():
 				' class="active"' if rule.rule == request.path else '',
 				ROUTE_NAMES[rule.rule]))
 
-	return f'<nav>{"".join(links)}</nav>'
+	return f"""<a class="github-fork-ribbon" href="https://github.com/jokkeez/thum" data-ribbon="Find me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+	<nav>{''.join(links)}</nav>
+	"""
 
 @app.route('/')
 def route_index():

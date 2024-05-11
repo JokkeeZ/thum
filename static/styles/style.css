@@ -1,15 +1,15 @@
 :root {
-	--default-bg-color: #333333;
-	--default-txt-color: #F2F2F2;
-	--default-body-bg-color: #22272e;
-	--default-nav-active: #30AA9A;
+	--alternative-bg: #333333;
+	--text: #F2F2F2;
+	--body-bg: #22272e;
+	--active-highlight: #30AA9A;
 }
 
 body {
 	margin: 0;
 	padding: 0;
 	font-family: Arial, sans-serif;
-	background-color: var(--default-body-bg-color);
+	background-color: var(--body-bg);
 }
 
 .container {
@@ -28,7 +28,7 @@ body {
 }
 
 h1 {
-	color: var(--default-txt-color);
+	color: var(--text);
 	text-align: center;
 }
 
@@ -37,30 +37,30 @@ hr {
 }
 
 ul, li {
-	color: var(--default-txt-color);
+	color: var(--text);
 }
 
 
 nav {
-	background-color: var(--default-bg-color);
+	background-color: var(--alternative-bg);
 	overflow: hidden;
 }
 
 .deletebtn {
-	background-color: var(--default-txt-color);
-	border: 1px var(--default-body-bg-color);
-	color: var(--default-bg-color);
+	background-color: var(--text);
+	border: 1px var(--body-bg);
+	color: var(--alternative-bg);
 }
 .deletebtn:hover {
-	background-color: var(--default-nav-active);
-	border: 1px var(--default-body-bg-color);
-	color: var(--default-txt-color);
+	background-color: var(--active-highlight);
+	border: 1px var(--body-bg);
+	color: var(--text);
 }
 
 nav a {
 	float: left;
 	display: block;
-	color: var(--default-txt-color);
+	color: var(--text);
 	text-align: center;
 	padding: 14px 20px;
 	text-decoration: none;
@@ -68,13 +68,13 @@ nav a {
 }
 
 nav a:hover {
-	background-color: var(--default-txt-color);
-	color: var(--default-bg-color);
+	background-color: var(--text);
+	color: var(--alternative-bg);
 }
 
 form {
 	text-align: center;
-	color: var(--default-txt-color);
+	color: var(--text);
 }
 
 form span {
@@ -82,16 +82,16 @@ form span {
 }
 
 .active {
-	background-color: var(--default-nav-active);
+	background-color: var(--active-highlight);
 }
 
 .active:hover {
-	background-color: var(--default-nav-active);
-	color: var(--default-txt-color);
+	background-color: var(--active-highlight);
+	color: var(--text);
 }
 
 table {
-	color: var(--default-txt-color);
+	color: var(--text);
 	width: 70%;
 	border-collapse: collapse;
 	margin: 20px auto;
@@ -100,13 +100,17 @@ table {
 th, td {
 	padding: 12px;
 	text-align: left;
-	border-bottom: 1px solid var(--default-bg-color);
+	border-bottom: 1px solid var(--alternative-bg);
 }
 
 th {
-	background-color: var(--default-bg-color);
+	background-color: var(--alternative-bg);
 }
 
 tr:nth-child(even) {
-	background-color: var(--default-bg-color);
+	background-color: var(--alternative-bg);
+}
+
+.github-fork-ribbon:before { 
+	background-color: var(--active-highlight); 
 }

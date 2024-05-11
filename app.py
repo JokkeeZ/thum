@@ -12,7 +12,6 @@ from restroutes import *
 def get_sensor_data_from_week(week):
 	temps = []
 	hums = []
-	labels = [n for n in day_name]
 
 	with sqlite3.connect(DB_FILE) as db:
 		first = datetime.strptime(f'{week}-1', '%Y-W%W-%w')
@@ -23,7 +22,10 @@ def get_sensor_data_from_week(week):
 			temps.append(temp)
 			hums.append(hum)
 
-	return jsonify({'labels': labels, 'temperatures': temps, 'humidities': hums})
+	return jsonify({
+		'labels': [n for n in day_name],
+		'temperatures': temps,
+		'humidities': hums})
 
 #
 #
@@ -41,8 +43,6 @@ def get_sensor_data_all():
 @app.route('/sensor/monthly/<string:year>/<string:month>')
 def get_sensor_data_from_year_month(year, month):
 	(_, days) = monthrange(int(year), int(month))
-
-	labels = [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)]
 	temps = []
 	hums = []
 
@@ -54,7 +54,10 @@ def get_sensor_data_from_year_month(year, month):
 			temps.append(temp)
 			hums.append(hum)
 
-	return jsonify({'labels': labels, 'temperatures': temps, 'humidities': hums})
+	return jsonify({
+		'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
+		'temperatures': temps,
+		'humidities': hums})
 
 #
 #
@@ -66,6 +69,9 @@ def get_sensor_data_from_date(date):
 
 	return jsonify([{'temperatures': x[0],'humidities': x[1],'timestamp': x[2]} for x in result])
 
+#
+#
+# Handles the DELETE request for removing a log entry with timestamp.
 @app.route('/sensor/logs/<string:timestamp>', methods=['DELETE'])
 def delete_log_by_timestamp(timestamp):
 	with sqlite3.connect(DB_FILE) as db:

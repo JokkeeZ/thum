@@ -39,7 +39,7 @@ def db_insert_sensor_entry(e):
 print('Initializing the database ...')
 db_initialize()
 
-print('Reading sensor data ever 600ms ...')
+print('Reading sensor data every 600ms ...')
 while True:
 	data = poll_sensor_data()
 
