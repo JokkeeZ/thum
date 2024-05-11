@@ -53,11 +53,27 @@ def route_daily():
 
 @app.route('/weekly')
 def route_weekly():
-	return render_template('weekly.html', Week = dt.now().strftime('%Y-W%W'))
+	with sqlite3.connect(DB_FILE) as db:
+		result = db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor').fetchone()
+
+	min = dt.strptime(result[0], '%Y-%m-%d %H:%M:%S').strftime('%Y-W%W')
+	max = dt.strptime(result[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-W%W')
+
+	return render_template('weekly.html',
+						Min = min,
+						Max = max)
 
 @app.route('/monthly')
 def route_monthly():
-	return render_template('monthly.html', Month = dt.now().strftime('%Y-%m'))
+	with sqlite3.connect(DB_FILE) as db:
+		result = db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor').fetchone()
+
+	min = dt.strptime(result[0], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m')
+	max = dt.strptime(result[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m')
+
+	return render_template('monthly.html',
+						Min = min,
+						Max = max)
 
 @app.route('/logs')
 def route_logs():

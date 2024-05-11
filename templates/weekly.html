@@ -12,14 +12,15 @@
 	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 </head>
 
-<body onload="getWeeklyDataFromSensor('{{ Week }}')">
+<body onload="getWeeklyDataFromSensor('{{ Max }}')">
 	{{ Nav()|safe }}
 
 	<div class="form">
 		<form>
 			<div>
 				<span>Select week</span>
-				<input type="week" id="week" value="{{ Week }}" onchange="getWeeklyDataFromSensor()" />
+				<input type="week" id="week" min="{{ Min }}" max="{{ Max }}" value="{{ Max }}"
+					onchange="getWeeklyDataFromSensor()" />
 			</div>
 		</form>
 	</div>
