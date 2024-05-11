@@ -3,12 +3,17 @@
 	--text: #F2F2F2;
 	--body-bg: #22272e;
 	--active-highlight: #30AA9A;
+	--border: #FFFFFF1A;
+	--red: #FF6347;
+}
+
+* {
+	font-family: Arial, sans-serif;
 }
 
 body {
 	margin: 0;
 	padding: 0;
-	font-family: Arial, sans-serif;
 	background-color: var(--body-bg);
 }
 
@@ -47,14 +52,29 @@ nav {
 }
 
 .deletebtn {
-	background-color: var(--text);
-	border: 1px var(--body-bg);
-	color: var(--alternative-bg);
+  display: inline-block;
+  padding: 5px 10px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--alternative-bg);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
+
 .deletebtn:hover {
-	background-color: var(--active-highlight);
-	border: 1px var(--body-bg);
-	color: var(--text);
+  background-color: var(--body-bg);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.deletebtn:active {
+  background-color: var(--red);
+  color: var(--text);
 }
 
 nav a {
@@ -68,8 +88,9 @@ nav a {
 }
 
 nav a:hover {
-	background-color: var(--text);
-	color: var(--alternative-bg);
+	transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+	background-color: var(--active-highlight);
+	color: var(--text);
 }
 
 form {
@@ -112,5 +133,30 @@ tr:nth-child(even) {
 }
 
 .github-fork-ribbon:before { 
-	background-color: var(--active-highlight); 
+	background-color: var(--red);
+}
+
+input[type="month"],
+input[type="date"],
+input[type="week"] {
+	width: 200px;
+	padding: 8px;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	background-color: var(--alternative-bg);
+	color: var(--text);
+}
+
+/* Dark Theme Input Field Focus */
+input[type="month"]:focus,
+input[type="date"]:focus,
+input[type="week"]:focus {
+	outline: none;
+	border-color: var(--border);
+}
+
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="week"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
