@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{title()}}</title>
+
+	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
+</head>
+
+<body>
+	<nav>
+		{%for item in get_navbar_items()%}
+		<a href="{{item['path']}}"{%if item['active']%} class="active"{%endif%}>
+			{{item['text']}}
+		</a>
+		{%endfor%}
+	</nav>
+	<div class="stat-container">
+		<div id="popup-container"></div>
+		<div class="box">
+			<h3>Thum</h3>
+			<button class="deletebtn" onclick="deleteAllLogs(false)">Clear logs</button>
+			<button class="successbtn" onclick="backupDatabase()">Backup database</button>
+			<button class="successbtn" onclick="optimizeDatabase()">Optimize database</button>
+			<button class="deletebtn" onclick="emptyDatabase()">Empty database</button>
+		</div>
+		<div class="box">
+			<h3>Stats</h3>
+			<ul>
+				<li style="text-align: left;">Nothing yet :)</li>
+				<li style="text-align: left;">Nothing yet :)</li>
+				<li style="text-align: left;">Nothing yet :)</li>
+				<li style="text-align: left;">Nothing yet :)</li>
+				<li style="text-align: left;">Nothing yet :)</li>
+				<li style="text-align: left;">Nothing yet :)</li>
+			</ul>
+		</div>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</html>

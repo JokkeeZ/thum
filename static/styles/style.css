@@ -5,6 +5,9 @@
 	--active-highlight: #30AA9A;
 	--border: #FFFFFF1A;
 	--red: #FF6347;
+	--green: #009900;
+
+	--notification-pos: 20px;
 }
 
 * {
@@ -18,8 +21,9 @@ body {
 }
 
 .container {
-	width: 85%;
 	margin: 0 auto;
+	width: 90%;
+	height: 80vh;
 }
 
 .container-left {
@@ -34,17 +38,12 @@ body {
 
 h1 {
 	color: var(--text);
-	text-align: center;
-}
-
-hr {
-	width: 200px;
+	margin: 0 auto;
 }
 
 ul, li {
 	color: var(--text);
 }
-
 
 nav {
 	background-color: var(--alternative-bg);
@@ -74,6 +73,32 @@ nav {
 
 .deletebtn:active {
   background-color: var(--red);
+  color: var(--text);
+}
+
+.successbtn {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--alternative-bg);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.successbtn:hover {
+  background-color: var(--body-bg);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.successbtn:active {
+  background-color: var(--green);
   color: var(--text);
 }
 
@@ -118,6 +143,13 @@ table {
 	margin: 20px auto;
 }
 
+.log-actions {
+	color: var(--text);
+	width: 70%;
+	margin: 20px auto;
+	text-align: right;
+}
+
 th, td {
 	padding: 12px;
 	text-align: left;
@@ -132,10 +164,6 @@ tr:nth-child(even) {
 	background-color: var(--alternative-bg);
 }
 
-.github-fork-ribbon:before { 
-	background-color: var(--red);
-}
-
 input[type="month"],
 input[type="date"],
 input[type="week"] {
@@ -147,7 +175,6 @@ input[type="week"] {
 	color: var(--text);
 }
 
-/* Dark Theme Input Field Focus */
 input[type="month"]:focus,
 input[type="date"]:focus,
 input[type="week"]:focus {
@@ -159,4 +186,70 @@ input[type="month"]::-webkit-calendar-picker-indicator,
 input[type="week"]::-webkit-calendar-picker-indicator,
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+
+.stat-container {
+  display: flex;
+  flex-wrap: wrap;
+	width: 80%;
+	margin: 0 auto;
+	margin-top: 100px;
+}
+
+.box {
+  width: calc(50% - 10px);
+	margin: 3px;
+	padding-bottom: 10px;
+	border: 2px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--alternative-bg);
+  text-align: center;
+	color: var(--text);
+}
+
+.box > button {
+	width: calc(50% - 20px);
+	margin-bottom: 5px;
+}
+
+.box > hr {
+	width: 70%;
+}
+
+#notification {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+	background-color: var(--alternative-bg);
+  padding: 16px;
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px var(--body-bg);
+  transition: top 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+.success {
+	background-color: var(--green) !important;
+}
+
+.error {
+	background-color: var(--red) !important;
+}
+
+#notification.show:nth-child(1) {
+	top: var(--notification-pos);
+}
+
+#notification.show:nth-child(2) {
+	top: calc(var(--notification-pos) + (60px * 1));
+}
+
+#notification.show:nth-child(3) {
+	top: calc(var(--notification-pos) + (60px * 2));
+}
+
+#notification.show:nth-child(4) {
+	top: calc(var(--notification-pos) + (60px * 3));
 }

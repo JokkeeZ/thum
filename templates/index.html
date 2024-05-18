@@ -4,32 +4,22 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{ Title() }}</title>
+	<title>{{title()}}</title>
 
-	<link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
 	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
 	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 </head>
 
 <body onload="getAllDataFromSensor()">
-	{{ Nav()|safe }}
-	<div class="container-left">
+	<nav>
+		{%for item in get_navbar_items()%}
+		<a href="{{item['path']}}"{%if item['active']%} class="active"{%endif%}>
+			{{item['text']}}
+		</a>
+		{%endfor%}
+	</nav>
+	<div class="container">
 		<canvas id="chart"></canvas>
-	</div>
-
-	<div class="container-right">
-		<h1>Stats</h1>
-		<hr />
-
-		<ul>
-			<li>Errors: {{ LogData[0] }} (Latest: {{ LogData[1] }})</li>
-			<li>Sensor samples: {{ Data[0] }}</li>
-			<li>First sample: {{ Data[1] }}</li>
-			<li>Latest sample: {{ Data[2] }}</li>
-			<li>Average Temperature: {{ Data[3] }}C°</li>
-			<li>Average Humidity: {{ Data[4] }}%</li>
-		</ul>
 	</div>
 </body>
 

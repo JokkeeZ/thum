@@ -1,11 +1,12 @@
-import time
-import sqlite3
 import board
 
+from time import sleep
+from sqlite3 import connect
 from datetime import datetime
 from adafruit_dht import DHT11
 
-dht = DHT11(board.D4)
+DB_FILE = 'sensordata.db'
+dht = DHT11(board.D4, use_pulseio=False)
 
 def poll_sensor_data():
 	try:
@@ -22,17 +23,17 @@ def get_timestamp():
 	return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 def db_initialize():
-	with sqlite3.connect('sensordata.db') as db:
+	with connect(DB_FILE) as db:
 		db.execute('CREATE TABLE IF NOT EXISTS logs(message, timestamp)')
 		db.execute('CREATE TABLE IF NOT EXISTS sensor(temperature, humidity, timestamp)')
 
 def db_insert_log_entry(e):
-	with sqlite3.connect('sensordata.db') as db:
+	with connect(DB_FILE) as db:
 		db.execute(f'INSERT INTO logs VALUES (?, ?)', (e['err'], e['ts']))
 		db.commit()
 
 def db_insert_sensor_entry(e):
-	with sqlite3.connect('sensordata.db') as db:
+	with connect(DB_FILE) as db:
 		db.execute(f'INSERT INTO sensor VALUES (?, ?, ?)', (e['temp'], e['hum'], e['ts']))
 		db.commit()
 
@@ -53,4 +54,4 @@ while True:
 		continue
 
 	db_insert_sensor_entry(data)
-	time.sleep(600)
+	sleep(600)
