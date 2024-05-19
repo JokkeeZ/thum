@@ -9,6 +9,8 @@ from datetime import datetime as dt, timedelta
 app = Flask(__name__)
 
 TITLE = 'Apartment Temperature And Humidity'
+DB_FILE = 'sensordata.db'
+
 ROUTE_NAMES = {
 	'/': 'All',
 	'/monthly': 'Monthly',
@@ -17,8 +19,6 @@ ROUTE_NAMES = {
 	'/logs': 'Logs',
 	'/commands': 'Commands'
 }
-
-DB_FILE = 'sensordata.db'
 
 @app.route('/sensor/weekly/<string:week>')
 def get_sensor_data_from_week(week):
