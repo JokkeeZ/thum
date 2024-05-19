@@ -23,7 +23,7 @@
 		<div id="popup-container"></div>
 		{%if Logs%}
 		<div class="log-actions">
-			<button class="deletebtn" onclick="deleteAllLogs(true)">Delete all</button>
+			<button class="btn error" onclick="deleteAllLogs(true)">Delete all</button>
 		</div>
 		{%endif%}
 		<table>
@@ -39,7 +39,7 @@
 				<tr id="log_{{log[1]}}" class="log_entry">
 					<td>{{log[0]}}</td>
 					<td>{{log[1]}}</td>
-					<td><button class="deletebtn" onclick="deleteLogByTimestamp('{{log[1]}}')">Delete</button></td>
+					<td><button class="btn error" onclick="deleteLogByTimestamp('{{log[1]}}')">Delete</button></td>
 				</tr>
 				{%endfor%}
 			</tbody>
