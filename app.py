@@ -3,7 +3,7 @@ from shutil import copyfile
 from pathlib import Path
 from calendar import monthrange, day_name
 from sqlite3 import connect
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 from datetime import datetime as dt, timedelta
 
 app = Flask(__name__)
@@ -101,13 +101,16 @@ def delete_logs_all():
 
 	return jsonify({'count': result.rowcount})
 
-@app.route('/sensor/database/backup')
-def thum_backup_db():
+def thum_make_db_backup():
 	ts = dt.now().strftime('%Y-%m-%d_%H:%M:%S')
 	Path('backup').mkdir(parents=True, exist_ok=True)
 
 	dest = copyfile(DB_FILE, f'backup/sensordata_{ts}.db')
-	return jsonify({'success': path.isfile(dest), 'path': dest})
+	return {'success': path.isfile(dest), 'path': dest}
+
+@app.route('/sensor/database/backup')
+def thum_backup_db():
+	return jsonify(thum_make_db_backup())
 
 @app.route('/sensor/database/optimize')
 def thum_optimize_db():
@@ -207,6 +210,18 @@ def route_logs():
 	with connect(DB_FILE) as db:
 		result = db.execute('SELECT * FROM logs').fetchall()
 		return render_template('logs.html', Logs = result)
+
+@app.route('/sensor/database/backup/download')
+def download_backup():
+	resp = thum_make_db_backup()
+
+	if not resp['success']:
+		return jsonify(resp)
+
+	return send_file(resp['path'],
+				  'application/vnd.sqlite3',
+					as_attachment=True,
+					download_name=resp['path'].split('/')[1])
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')

@@ -82,9 +82,9 @@ function deleteAllLogs(logPage) {
 
 		showNotification(`Successfully cleared ${result.count} log entires.`, true);
 
-		if (!logPage) return;
-
-		document.querySelectorAll('.log_entry').forEach(e => e.remove());
+		if (logPage) {
+			document.querySelectorAll('.log_entry').forEach(e => e.remove());
+		}
 	});
 }
 
@@ -213,6 +213,13 @@ function emptyDatabase() {
 	.then(result => {
 		showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
 	});
+}
+
+/**
+ * Sends a notification that download has started.
+ */
+function downloadDatabaseBackup() {
+	showNotification('Database backup download started..', true);
 }
 
 /**

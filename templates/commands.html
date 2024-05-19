@@ -22,10 +22,14 @@
 		<div id="popup-container"></div>
 		<div class="box">
 			<h3>Thum</h3>
-			<button class="deletebtn" onclick="deleteAllLogs(false)">Clear logs</button>
-			<button class="successbtn" onclick="backupDatabase()">Backup database</button>
-			<button class="successbtn" onclick="optimizeDatabase()">Optimize database</button>
-			<button class="deletebtn" onclick="emptyDatabase()">Empty database</button>
+			<button class="btn deletebtn" onclick="deleteAllLogs(false)">Clear logs</button>
+			<button class="btn successbtn" onclick="backupDatabase()">Backup database</button>
+			<button class="btn successbtn" onclick="optimizeDatabase()">Optimize database</button>
+			<button class="btn deletebtn" onclick="emptyDatabase()">Empty database</button>
+			<a href="/sensor/database/backup/download"
+				class="btn-long successbtn"
+				onclick="downloadDatabaseBackup()"
+			 	download>Download database backup</a>
 		</div>
 		<div class="box">
 			<h3>Stats</h3>

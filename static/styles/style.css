@@ -207,8 +207,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	color: var(--text);
 }
 
-.box > button {
+.box > .btn {
 	width: calc(50% - 20px);
+	margin-bottom: 5px;
+}
+
+.box > .btn-long {
+	width: calc(100% - 60px);
 	margin-bottom: 5px;
 }
 
@@ -221,7 +226,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
+  color: var(--text);
 	background-color: var(--alternative-bg);
   padding: 16px;
   border-radius: 4px;
