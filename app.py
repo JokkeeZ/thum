@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 TITLE = 'Apartment Temperature And Humidity'
 DB_FILE = 'sensordata.db'
+DEFAULT_DT_FMT = '%Y-%m-%d %H:%M:%S'
 
 ROUTE_NAMES = {
 	'/': 'All',
@@ -46,7 +47,7 @@ def get_expr():
 		result = db.execute('SELECT timestamp FROM sensor').fetchall()
 
 	for date in result:
-		datet = dt.strptime(date[0], '%Y-%m-%d %H:%M:%S')
+		datet = dt.strptime(date[0], DEFAULT_DT_FMT)
 		x = dt.strftime(datet, '%Y-%m-%d')
 		if x not in dates.keys():
 			dates[x] = {'temp': [], 'hum': []}
@@ -102,10 +103,10 @@ def delete_logs_all():
 	return jsonify({'count': result.rowcount})
 
 def thum_make_db_backup():
-	ts = dt.now().strftime('%Y-%m-%d_%H:%M:%S')
+	ts = dt.now().strftime('%Y%m%d%H%M%S')
 	Path('backup').mkdir(parents=True, exist_ok=True)
 
-	dest = copyfile(DB_FILE, f'backup/sensordata_{ts}.db')
+	dest = copyfile(DB_FILE, f'backup/{ts}.db')
 	return {'success': path.isfile(dest), 'path': dest}
 
 @app.route('/sensor/database/backup')
@@ -172,8 +173,8 @@ def route_daily():
 	if mi is None or ma is None:
 		min = max = dt.now().strftime('%Y-%m-%d')
 	else:
-		min = dt.strptime(mi, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
-		max = dt.strptime(ma, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+		min = dt.strptime(mi, DEFAULT_DT_FMT).strftime('%Y-%m-%d')
+		max = dt.strptime(ma, DEFAULT_DT_FMT).strftime('%Y-%m-%d')
 
 	return render_template('daily.html', Min = min, Max = max)
 
@@ -187,8 +188,8 @@ def route_weekly():
 		min = max = dt.now().strftime('%Y-W%W')
 	else:
 		print('here')
-		min = dt.strptime(mi, '%Y-%m-%d %H:%M:%S').strftime('%Y-W%W')
-		max = dt.strptime(ma, '%Y-%m-%d %H:%M:%S').strftime('%Y-W%W')
+		min = dt.strptime(mi, DEFAULT_DT_FMT).strftime('%Y-W%W')
+		max = dt.strptime(ma, DEFAULT_DT_FMT).strftime('%Y-W%W')
 
 	return render_template('weekly.html', Min = min, Max = max)
 
@@ -200,8 +201,8 @@ def route_monthly():
 	if mi is None or ma is None:
 		min = max = dt.now().strftime('%Y-%m')
 	else:
-		min = dt.strptime(mi, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m')
-		max = dt.strptime(ma, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m')
+		min = dt.strptime(mi, DEFAULT_DT_FMT).strftime('%Y-%m')
+		max = dt.strptime(ma, DEFAULT_DT_FMT).strftime('%Y-%m')
 
 	return render_template('monthly.html', Min = min, Max = max)
 
