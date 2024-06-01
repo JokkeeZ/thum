@@ -184,10 +184,8 @@ def route_weekly():
 		(mi, ma) = db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor').fetchone()
 
 	if mi is None or ma is None:
-		print('hereee')
 		min = max = dt.now().strftime('%Y-W%W')
 	else:
-		print('here')
 		min = dt.strptime(mi, DEFAULT_DT_FMT).strftime('%Y-W%W')
 		max = dt.strptime(ma, DEFAULT_DT_FMT).strftime('%Y-W%W')
 
@@ -211,6 +209,25 @@ def route_logs():
 	with connect(DB_FILE) as db:
 		result = db.execute('SELECT * FROM logs').fetchall()
 		return render_template('logs.html', Logs = result)
+
+@app.route('/sensor/temperature/current')
+def get_sensor_data_current():
+	import board
+	import time
+	from adafruit_dht import DHT11
+
+	dht = DHT11(board.D4, use_pulseio=False)
+
+	while True:
+		try:
+			temp = dht.temperature
+			hum = dht.humidity
+
+			if temp is not None and hum is not None:
+				return jsonify({'temperature': temp, 'humidity': hum})
+
+		except (RuntimeError, Exception):
+			time.sleep(0.2)
 
 @app.route('/sensor/database/backup/download')
 def download_backup():

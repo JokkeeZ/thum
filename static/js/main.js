@@ -1,24 +1,39 @@
-const ctx = document.getElementById('chart').getContext('2d');
-const chart = new Chart(ctx, { type: 'line', data: {}, options: {
-	responsive: true,
-	maintainAspectRatio: false,
-	interaction: {
-		intersect: false,
-		mode: 'index'
-	},
-	plugins: {
-		tooltip: {
-			callbacks: {
-				footer: function(toolTipItems) {
-					const dewPoint = toolTipItems[1].parsed.y - 
-						((100 - toolTipItems[0].parsed.y) / 5)
-				
-					return `Dew point: ${dewPoint.toFixed(2)}°C`;
+let ctx;
+let chart; 
+
+const canvas = document.getElementById('chart');
+if (canvas != null) {
+	ctx = canvas.getContext('2d');
+	chart = new Chart(ctx, { type: 'line', data: {}, options: {
+		responsive: true,
+		maintainAspectRatio: false,
+		interaction: {
+			intersect: false,
+			mode: 'index'
+		},
+		plugins: {
+			tooltip: {
+				callbacks: {
+					footer: function(toolTipItems) {
+						const dewPoint = toolTipItems[1].parsed.y - 
+							((100 - toolTipItems[0].parsed.y) / 5)
+					
+						return `Dew point: ${dewPoint.toFixed(2)}°C`;
+					}
 				}
 			}
 		}
-	}
-}});
+	}});
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	getCurrentTemperature();
+
+	// Update current temperature every 10sec.
+	setInterval(function() {
+		getCurrentTemperature();
+	}, 10 * 1000);
+});
 
 /**
  * Set chart styling to fit the page style.
@@ -196,6 +211,7 @@ function optimizeDatabase() {
 	fetch('/sensor/database/optimize')
 	.then(r => r.json())
 	.then(result => {
+		console.log(result)
 		showNotification('Database VACUUM; executed', true);
 	});
 }
@@ -216,6 +232,19 @@ function emptyDatabase() {
 }
 
 /**
+ * Gets the current temperature and humidity and sets the navbar text.
+ */
+function getCurrentTemperature() {
+	fetch('/sensor/temperature/current')
+	.then(r => r.json())
+	.then(result => {
+		const currTemp = document.getElementById('current-temperature');
+		currTemp.innerText = result.temperature + '°C';
+		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
+	});
+}
+
+/**
  * Sends a notification that download has started.
  */
 function downloadDatabaseBackup() {
@@ -231,6 +260,7 @@ function downloadDatabaseBackup() {
 function showNotification(text, success) {
 	const popupContainer = document.getElementById('popup-container');
 	const popup = document.createElement('div');
+	
 	popup.id = 'notification';
 	popup.innerText = text;
 	popup.classList.add(success ? 'success' : 'error');
