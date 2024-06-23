@@ -8,6 +8,7 @@
 
 	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
 	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
+	<script src="{{url_for('static', filename='js/tv.js')}}" defer></script>
 </head>
 
 <body>
@@ -30,20 +31,17 @@
 			<button class="btn success" onclick="optimizeDatabase()">Optimize database</button>
 			<button class="btn error" onclick="emptyDatabase()">Empty database</button>
 			<a href="/sensor/database/backup/download"
-				class="btn btn-long success"
+				class="btn success"
 				onclick="downloadDatabaseBackup()"
 			 	download>Download database backup</a>
 		</div>
 		<div class="box">
-			<h3>Stats</h3>
-			<ul>
-				<li style="text-align: left;">Nothing yet :)</li>
-				<li style="text-align: left;">Nothing yet :)</li>
-				<li style="text-align: left;">Nothing yet :)</li>
-				<li style="text-align: left;">Nothing yet :)</li>
-				<li style="text-align: left;">Nothing yet :)</li>
-				<li style="text-align: left;">Nothing yet :)</li>
-			</ul>
+			<h3>TV Management</h3>
+			<h5 class="error-txt" id="tv-status"><div class="loader"></div></h5>
+
+			<input type="text" id="message" placeholder="Message">
+			<input type="number" id="timeout" placeholder="Minutes until the message pops up" min="1" max="120">
+			<button class="btn success" id="send-message">Send</button>
 		</div>
 	</div>
 </body>

@@ -1,36 +1,40 @@
 let ctx;
-let chart; 
+let chart;
 
+const spinner = document.getElementById('spinner');
 const canvas = document.getElementById('chart');
+
 if (canvas != null) {
 	ctx = canvas.getContext('2d');
-	chart = new Chart(ctx, { type: 'line', data: {}, options: {
-		responsive: true,
-		maintainAspectRatio: false,
-		interaction: {
-			intersect: false,
-			mode: 'index'
-		},
-		plugins: {
-			tooltip: {
-				callbacks: {
-					footer: function(toolTipItems) {
-						const dewPoint = toolTipItems[1].parsed.y - 
-							((100 - toolTipItems[0].parsed.y) / 5)
-					
-						return `Dew point: ${dewPoint.toFixed(2)}°C`;
+	chart = new Chart(ctx, {
+		type: 'line', data: {}, options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			interaction: {
+				intersect: false,
+				mode: 'index'
+			},
+			plugins: {
+				tooltip: {
+					callbacks: {
+						footer: function (toolTipItems) {
+							const dewPoint = toolTipItems[1].parsed.y -
+								((100 - toolTipItems[0].parsed.y) / 5)
+
+							return `Dew point: ${dewPoint.toFixed(2)}°C`;
+						}
 					}
 				}
 			}
 		}
-	}});
+	});
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 	getCurrentTemperature();
 
 	// Update current temperature every 10sec.
-	setInterval(function() {
+	setInterval(function () {
 		getCurrentTemperature();
 	}, 10 * 1000);
 });
@@ -53,7 +57,7 @@ function updateChartData(labels, humidities, temperatures) {
 	chart.config.data = {
 		labels: labels,
 		datasets: [
-			{ label: 'Humidity', data: humidities }, 
+			{ label: 'Humidity', data: humidities },
 			{ label: 'Temperature', data: temperatures }
 		]
 	}
@@ -70,15 +74,15 @@ function deleteLogByTimestamp(timestamp) {
 	fetch(`/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
 	})
-	.then(r => r.json())
-	.then(result => {
-		if (result.count <= 0) {
-			showNotification(`Failed to remove a log entry with timestamp: "${timestamp}".`, false);
-			return;
-		}
+		.then(r => r.json())
+		.then(result => {
+			if (result.count <= 0) {
+				showNotification(`Failed to remove a log entry with timestamp: "${timestamp}".`, false);
+				return;
+			}
 
-		document.getElementById(`log_${timestamp}`).remove();
-	});
+			document.getElementById(`log_${timestamp}`).remove();
+		});
 }
 
 /**
@@ -88,19 +92,19 @@ function deleteAllLogs(logPage) {
 	fetch('/sensor/logs/all', {
 		method: 'DELETE'
 	})
-	.then(r => r.json())
-	.then(result => {
-		if (result.count <= 0) {
-			showNotification('Failed to clear all logs. (There was no logs)', false);
-			return;
-		}
+		.then(r => r.json())
+		.then(result => {
+			if (result.count <= 0) {
+				showNotification('Failed to clear all logs. (There was no logs)', false);
+				return;
+			}
 
-		showNotification(`Successfully cleared ${result.count} log entires.`, true);
+			showNotification(`Successfully cleared ${result.count} log entires.`, true);
 
-		if (logPage) {
-			document.querySelectorAll('.log_entry').forEach(e => e.remove());
-		}
-	});
+			if (logPage) {
+				document.querySelectorAll('.log_entry').forEach(e => e.remove());
+			}
+		});
 }
 
 /**
@@ -116,20 +120,21 @@ function deleteAllLogs(logPage) {
  */
 function getAllDataFromSensor() {
 	fetch('/sensor')
-	.then(r => r.json())
-	.then(result => {
-		const labels = Object.keys(result);
-		const temps = [];
-		const hums = [];
-		
-		for (let i = 0; i < labels.length; ++i) {
-			const label = labels[i];
-			temps.push(...result[label].temp);
-			hums.push(...result[label].hum);
-		}
+		.then(r => r.json())
+		.then(result => {
+			const labels = Object.keys(result);
+			const temps = [];
+			const hums = [];
 
-		updateChartData(labels.flatMap(i => [i, i, i, i]), hums, temps);
-	});
+			for (let i = 0; i < labels.length; ++i) {
+				const label = labels[i];
+				temps.push(...result[label].temp);
+				hums.push(...result[label].hum);
+			}
+
+			updateChartData(labels.flatMap(i => [i, i, i, i]), hums, temps);
+			spinner.remove();
+		});
 }
 
 /**
@@ -141,13 +146,15 @@ function getWeeklyDataFromSensor(week) {
 	week ??= document.getElementById('week').value;
 
 	fetch(`sensor/weekly/${week}`)
-	.then(r => r.json())
-	.then(result => {
-		updateChartData(
-			result.labels,
-			result.humidities,
-			result.temperatures);
-	});
+		.then(r => r.json())
+		.then(result => {
+			updateChartData(
+				result.labels,
+				result.humidities,
+				result.temperatures);
+
+				spinner.remove();
+		});
 }
 
 /**
@@ -159,13 +166,15 @@ function getDailyDataFromSensor(date) {
 	date ??= document.getElementById('date').value;
 
 	fetch(`/sensor/${date}`)
-	.then(r => r.json())
-	.then(result => {
-		updateChartData(
-			result.map(x => x.timestamp.split(' ')[1]),
-			result.map(x => x.humidities),
-			result.map(x => x.temperatures));
-	});
+		.then(r => r.json())
+		.then(result => {
+			updateChartData(
+				result.map(x => x.timestamp.split(' ')[1]),
+				result.map(x => x.humidities),
+				result.map(x => x.temperatures));
+
+				spinner.remove();
+		});
 }
 
 /**
@@ -175,18 +184,20 @@ function getDailyDataFromSensor(date) {
  */
 function getMonthlyDataFromSensor(month) {
 	month ??= document.getElementById('month').value;
-	
+
 	const y = month.split('-')[0];
 	const m = month.split('-')[1];
 
 	fetch(`/sensor/monthly/${y}/${m}`)
-	.then(r => r.json())
-	.then(result => {
-		updateChartData(
-			result.labels,
-			result.humidities,
-			result.temperatures);
-	});
+		.then(r => r.json())
+		.then(result => {
+			updateChartData(
+				result.labels,
+				result.humidities,
+				result.temperatures);
+
+				spinner.remove();
+		});
 }
 
 /**
@@ -194,14 +205,14 @@ function getMonthlyDataFromSensor(month) {
  */
 function backupDatabase() {
 	fetch('/sensor/database/backup')
-	.then(r => r.json())
-	.then(result => {
-		if (result.success) {
-			showNotification(`Successfully created a backup of the database. (${result.path})`, true);
-		} else {
-			showNotification(`Database backup creation failed. (${result.path})`, false);
-		}
-	});
+		.then(r => r.json())
+		.then(result => {
+			if (result.success) {
+				showNotification(`Successfully created a backup of the database. (${result.path})`, true);
+			} else {
+				showNotification(`Database backup creation failed. (${result.path})`, false);
+			}
+		});
 }
 
 /**
@@ -209,11 +220,11 @@ function backupDatabase() {
  */
 function optimizeDatabase() {
 	fetch('/sensor/database/optimize')
-	.then(r => r.json())
-	.then(result => {
-		console.log(result)
-		showNotification('Database VACUUM; executed', true);
-	});
+		.then(r => r.json())
+		.then(result => {
+			console.log(result)
+			showNotification('Database VACUUM; executed', true);
+		});
 }
 
 /**
@@ -225,10 +236,10 @@ function emptyDatabase() {
 	}
 
 	fetch('/sensor/database/empty')
-	.then(r => r.json())
-	.then(result => {
-		showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
-	});
+		.then(r => r.json())
+		.then(result => {
+			showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
+		});
 }
 
 /**
@@ -236,12 +247,12 @@ function emptyDatabase() {
  */
 function getCurrentTemperature() {
 	fetch('/sensor/temperature/current')
-	.then(r => r.json())
-	.then(result => {
-		const currTemp = document.getElementById('current-temperature');
-		currTemp.innerText = result.temperature + '°C';
-		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
-	});
+		.then(r => r.json())
+		.then(result => {
+			const currTemp = document.getElementById('current-temperature');
+			currTemp.innerText = result.temperature + '°C';
+			currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
+		});
 }
 
 /**
@@ -260,20 +271,20 @@ function downloadDatabaseBackup() {
 function showNotification(text, success) {
 	const popupContainer = document.getElementById('popup-container');
 	const popup = document.createElement('div');
-	
+
 	popup.id = 'notification';
 	popup.innerText = text;
 	popup.classList.add(success ? 'success' : 'error');
-	
+
 	popup.addEventListener('click', () => {
 		popup.classList.remove(...popup.classList);
 		setTimeout(() => popupContainer.removeChild(popup), 1000);
 	});
 
 	popupContainer.appendChild(popup);
-  
+
 	setTimeout(() => popup.classList.add('show'), 100);
-	
+
 	if (!popupContainer.contains(popup)) return;
 
 	setTimeout(() => {

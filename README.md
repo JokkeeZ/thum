@@ -1,7 +1,12 @@
-# thum
-A small application that collects temperature and humidity data from a DHT11 sensor and nicely displays it in a Flask app using Chart.js.
+# t h u m
+My random app that displays apartment temperature & humidity data. Also contains some functionality to control LG WebOS TV, like sending timed notifications to it.
+
+# Run
+- `chmod u+x thum.sh && ./thum.sh`
 
 # Requirements
-- Flask
-- sqlite3
+- Quart
+- asyncio
+- aiowebostv
+- aiosqlite
 - adafruit_dht

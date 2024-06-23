@@ -1,11 +1,13 @@
+import asyncio
 import board
 
-from time import sleep
-from sqlite3 import connect
+from thum_config import ThumConfig
+
+from aiosqlite import connect
 from datetime import datetime
 from adafruit_dht import DHT11
 
-DB_FILE = 'sensordata.db'
+cfg = ThumConfig('config.json')
 dht = DHT11(board.D4, use_pulseio=False)
 
 def poll_sensor_data():
@@ -20,38 +22,44 @@ def poll_sensor_data():
 		return { 'success': False, 'err': str(e), 'ts': get_timestamp() }
 
 def get_timestamp():
-	return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	return datetime.now().strftime(cfg.get('db.timeformat'))
 
-def db_initialize():
-	with connect(DB_FILE) as db:
-		db.execute('CREATE TABLE IF NOT EXISTS logs(message, timestamp)')
-		db.execute('CREATE TABLE IF NOT EXISTS sensor(temperature, humidity, timestamp)')
+async def db_initialize():
+	async with connect(cfg.get('db.file')) as db:
+		await db.execute('CREATE TABLE IF NOT EXISTS logs(message, timestamp)')
+		await db.execute('CREATE TABLE IF NOT EXISTS sensor(temperature, humidity, timestamp)')
 
-def db_insert_log_entry(e):
-	with connect(DB_FILE) as db:
-		db.execute(f'INSERT INTO logs VALUES (?, ?)', (e['err'], e['ts']))
-		db.commit()
+async def db_insert_log_entry(e):
+	async with connect(cfg.get('db.file')) as db:
+		await db.execute(f'INSERT INTO logs VALUES (?, ?)', (e['err'], e['ts']))
+		await db.commit()
 
-def db_insert_sensor_entry(e):
-	with connect(DB_FILE) as db:
-		db.execute(f'INSERT INTO sensor VALUES (?, ?, ?)', (e['temp'], e['hum'], e['ts']))
-		db.commit()
+async def db_insert_sensor_entry(e):
+	async with connect(cfg.get('db.file')) as db:
+		await db.execute(f'INSERT INTO sensor VALUES (?, ?, ?)', (e['temp'], e['hum'], e['ts']))
+		await db.commit()
 
-print('Initializing the database ...')
-db_initialize()
+async def main():
+	print('Loading configuration ...')
+	cfg.load()
+	print('Initializing the database ...')
+	await db_initialize()
 
-print('Reading sensor data every 600ms ...')
-while True:
-	data = poll_sensor_data()
+	print(f'Reading sensor data every {cfg.get("sensor.interval")}ms ...')
+	while True:
+		data = poll_sensor_data()
 
-	# Incase sensor reading fails, add log of
-	# the error that occurred to the database
-	# and jump back to the start of the loop;
-  # not waiting the 600ms for new reading.
-	if not data['success']:
-		print('OOPS, error occurred. Attempting again ...')
-		db_insert_log_entry(data)
-		continue
+		# Incase sensor reading fails, add log of
+		# the error that occurred to the database
+		# and jump back to the start of the loop;
+		# not waiting the cfg.get('sensor.interval') ms for new reading.
+		if not data['success']:
+			print('OOPS, error occurred. Attempting again ...')
+			await db_insert_log_entry(data)
+			continue
 
-	db_insert_sensor_entry(data)
-	sleep(600)
+		await db_insert_sensor_entry(data)
+		await asyncio.sleep(cfg.get('sensor.interval'))
+
+if __name__ == '__main__':
+	asyncio.run(main())
