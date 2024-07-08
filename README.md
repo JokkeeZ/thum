@@ -1,5 +1,5 @@
 # t h u m
-My random app that displays apartment temperature & humidity data. Also contains some functionality to control LG WebOS TV, like sending timed notifications to it.
+My random app that displays apartment temperature & humidity data.
 
 # Run
 - `chmod u+x thum.sh && ./thum.sh`
@@ -7,6 +7,5 @@ My random app that displays apartment temperature & humidity data. Also contains
 # Requirements
 - Quart
 - asyncio
-- aiowebostv
 - aiosqlite
 - adafruit_dht

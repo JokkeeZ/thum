@@ -1,10 +1,5 @@
 import asyncio
 
-from contextlib import suppress
-from websockets.exceptions import ConnectionClosed, ConnectionClosedOK
-from aiowebostv import WebOsClient
-from aiowebostv.exceptions import WebOsTvCommandError
-
 from thum_config import ThumConfig
 
 from os import path
@@ -27,16 +22,6 @@ ROUTE_NAMES = {
 	'/logs': 'Logs',
 	'/commands': 'Commands'
 }
-
-WEBOSTV_EXCEPTIONS = (
-    OSError,
-    ConnectionClosed,
-    ConnectionClosedOK,
-    ConnectionRefusedError,
-    WebOsTvCommandError,
-    asyncio.TimeoutError,
-    asyncio.CancelledError,
-)
 
 @app.route('/sensor/weekly/<string:week>')
 async def get_sensor_data_from_week(week):
@@ -273,57 +258,8 @@ async def download_backup():
 					as_attachment=True,
 					download_name=resp['path'].split('/')[1])
 
-@app.route('/tv/message/<string:msg>/<int:minutes>')
-async def tv_add_timed_event(msg, minutes):
-	task = asyncio.create_task(run_timed_event(msg, minutes))
-	await task
-	return jsonify({'message': 'Timer completed'})
-
-@app.route('/tv/status')
-async def get_tv_status():
-		connected = client.is_connected()
-		is_on = client.is_on
-		is_screen_on = client.is_screen_on
-
-		if connected:
-			return jsonify({'connected': connected, 'is_on': is_on, 'is_screen_on': is_screen_on})
-
-		with suppress(*WEBOSTV_EXCEPTIONS):
-			await client.connect()
-
-		connected = client.is_connected()
-		is_on = client.is_on
-		is_screen_on = client.is_screen_on
-
-		return jsonify({'connected': connected, 'is_on': is_on, 'is_screen_on': is_screen_on})
-
-async def run_timed_event(message, minutes):
-	await asyncio.sleep(minutes*60)
-	# In case client is already connected, just quickly yeet the message
-	if client.is_connected():
-
-		await client.send_message(message)
-		return
-	else:
-
-		# Try to connect
-		with suppress(*WEBOSTV_EXCEPTIONS):
-			await client.connect()
-
-		# If connection failed, just fuck it we don't need no lame ass messages
-		if not client.is_connected():
-			return
-
-		# Otherwise send the message
-		await client.send_message(message)
-		await client.disconnect()
-
 async def main():
 	cfg.load()
-
-	global client
-	client = WebOsClient(cfg.get('app.tv.host'), cfg.get('app.tv.key'))
-
 	await app.run_task(host=cfg.get('app.host'), debug=cfg.get('app.debug'))
 
 if __name__ == '__main__':
