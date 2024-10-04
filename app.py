@@ -43,6 +43,13 @@ async def get_sensor_data_from_week(week):
 		'temperatures': temps,
 		'humidities': hums})
 
+@app.route('/sensor/max')
+async def get_sensor_max():
+	async with connect(cfg.get('db.file')) as db:
+		cursor = await db.execute('SELECT * FROM sensor')
+		data = await cursor.fetchall()
+		return jsonify(data)
+
 @app.route('/sensor')
 async def get_sensor_all_data():
 	dates = {}

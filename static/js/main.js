@@ -85,6 +85,15 @@ function deleteLogByTimestamp(timestamp) {
 		});
 }
 
+function getTotalSamplesCount() {
+	fetch('/sensor/max')
+	.then(r => r.json())
+	.then(result => {
+		const totalSamples = document.getElementById('total-samples');
+		totalSamples.innerText = `Total samples: ${result.length}`;
+	});
+}
+
 /**
  * Deletes all log entries from the database.
  */
