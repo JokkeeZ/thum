@@ -18,6 +18,10 @@
 	font-family: Arial, sans-serif;
 }
 
+hr {
+	border: 2px solid var(--border);
+}
+
 body {
 	margin: 0;
 	padding: 0;
