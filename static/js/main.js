@@ -43,8 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
  * Set chart styling to fit the page style.
  */
 Chart.defaults.color = "#ADBABD";
-Chart.defaults.borderColor = "rgba(255,255,255,0.1)";
-Chart.defaults.backgroundColor = "rgba(255,255,0,0.1)";
 
 /**
  * Updates chart datasets and labels.
