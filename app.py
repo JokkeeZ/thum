@@ -43,13 +43,6 @@ async def get_sensor_data_from_week(week):
 		'temperatures': temps,
 		'humidities': hums})
 
-@app.route('/sensor/max')
-async def get_sensor_max():
-	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT * FROM sensor')
-		data = await cursor.fetchall()
-		return jsonify(data)
-
 @app.route('/sensor')
 async def get_sensor_all_data():
 	dates = {}
@@ -179,10 +172,13 @@ async def route_commands():
 		cursor = await db.execute('SELECT COUNT(*), MIN(timestamp), MAX(timestamp), AVG(temperature), AVG(humidity) FROM sensor')
 		data = await cursor.fetchone()
 
-		cursor1 = await db.execute('SELECT COUNT(*), MAX(timestamp) FROM logs')
-		data1 = await cursor1.fetchone()
+		cursor = await db.execute('SELECT timestamp, MIN(temperature), MIN(humidity) FROM sensor')
+		data1 = await cursor.fetchone()
 
-	return await render_template('commands.html', Data = data, LogData = data1)
+		cursor = await db.execute('SELECT timestamp, MAX(temperature), MAX(humidity) FROM sensor')
+		data2 = await cursor.fetchone()
+
+	return await render_template('commands.html', Data = data, ColdestData = data1, HottestData = data2)
 
 @app.route('/daily')
 async def route_daily():

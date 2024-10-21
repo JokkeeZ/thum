@@ -10,7 +10,7 @@
 	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 </head>
 
-<body onload="getTotalSamplesCount()">
+<body>
 	<nav>
 		{%for item in get_navbar_items()%}
 		<a href="{{item['path']}}"{%if item['active']%} class="active"{%endif%}>
@@ -35,7 +35,20 @@
 			 	download>Download database backup</a>
 		</div>
 		<div class="box">
-			<h3 id="total-samples"></h3>
+			<h5 id="total-samples">Samples count: {{Data[0]}}</h5>
+			<h5 id="total-samples">First sample: {{Data[1]}}</h5>
+			<h5 id="total-samples">Latest sample: {{Data[2]}}</h5>
+			<h5 id="total-samples">Average Temperature: {{Data[3]}}°C</h5>
+			<h5 id="total-samples">Average Humidity: {{Data[4]}}%</h5>
+			<hr/>
+			<h5 id="total-samples">
+				Warmest Day: {{HottestData[0]}}
+				<p>{{HottestData[1]}}°C ({{HottestData[2]}}%)</p>
+			</h5>
+			<h5 id="total-samples">
+				Coldest Day: {{ColdestData[0]}}
+				<p>{{ColdestData[1]}}°C ({{ColdestData[2]}}%)</p>
+			</h5>
 		</div>
 	</div>
 </body>
