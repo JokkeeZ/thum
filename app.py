@@ -259,7 +259,7 @@ async def download_backup():
 	return await send_file(resp['path'],
 				  'application/vnd.sqlite3',
 					as_attachment=True,
-					download_name=resp['path'].split('/')[1])
+					attachment_filename=resp['path'].split('/')[1])
 
 async def main():
 	cfg.load()
