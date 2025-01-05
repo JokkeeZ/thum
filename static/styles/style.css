@@ -355,7 +355,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 	.nav-hamburger {
 		float: right;
-		width: 3%;
+		width: 5%;
 		text-align: right;
 		padding: 10px;
 		font-size: 15px;
