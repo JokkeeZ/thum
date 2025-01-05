@@ -345,7 +345,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 	#current-temperature {
 		display: block !important;
-		width: 85%;
+		width: 83%;
 	}
 
 	#current-temperature.nav-visible {
