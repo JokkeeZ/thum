@@ -261,6 +261,24 @@ function downloadDatabaseBackup() {
 }
 
 /**
+ * Toggles hamburger menu on smaller viewports.
+ */
+function toggleMenu() {
+	const nav = document.getElementById('navigation');
+
+	for (var i = 0; i < nav.children.length; ++i) {
+		const child = nav.children[i];
+		if (child.classList.contains('nav-item')) {
+			if (child.classList.contains('nav-visible')) {
+				child.classList.remove('nav-visible');
+			} else {
+				child.classList.add('nav-visible');
+			}
+		}
+	}
+}
+
+/**
  * Makes a notification pop up with text.
  * 
  * @param {String} text Text for the notification.

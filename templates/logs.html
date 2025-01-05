@@ -11,13 +11,19 @@
 </head>
 
 <body>
-	<nav>
+	<nav id="navigation">
+		<a href="#" class="nav-hamburger" onclick="toggleMenu()">
+			<div class="bar"></div>
+			<div class="bar"></div>
+			<div class="bar"></div>
+		</a>
+		
 		{%for item in get_navbar_items()%}
-		<a href="{{item['path']}}"{%if item['active']%} class="active"{%endif%}>
+		<a href="{{item['path']}}" class="nav-item {%if item['active']%}active{%endif%}">
 			{{item['text']}}
 		</a>
 		{%endfor%}
-		<a href="#" id="current-temperature" class="right">
+		<a href="#" id="current-temperature" class="nav-item right">
 			<div class="loader"></div>
 		</a>
 	</nav>
