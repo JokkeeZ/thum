@@ -1,7 +1,8 @@
+#!/bin/python
 import asyncio
 
 from thum_config import ThumConfig
-
+from sensor_reader import *
 from os import path
 from shutil import copyfile
 from pathlib import Path
@@ -11,7 +12,7 @@ from quart import Quart, render_template, jsonify, request, send_file
 from datetime import datetime as dt, timedelta
 
 app = Quart(__name__)
-cfg = ThumConfig('config.json')
+cfg = ThumConfig('./config.json')
 client = None
 
 ROUTE_NAMES = {
@@ -263,7 +264,10 @@ async def download_backup():
 
 async def main():
 	cfg.load()
-	await app.run_task(host=cfg.get('app.host'), debug=cfg.get('app.debug'))
+	server = asyncio.create_task(app.run_task(host=cfg.get('app.host'), debug=cfg.get('app.debug')))
+	reader = asyncio.create_task(start_reader())
+
+	await asyncio.gather(server, reader)
 
 if __name__ == '__main__':
 	asyncio.run(main())
