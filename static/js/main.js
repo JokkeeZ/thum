@@ -1,6 +1,9 @@
 let ctx;
 let chart;
 
+const chartPointHoverRadius = 8;
+const chartLineTension = 0.25;
+
 const spinner = document.getElementById('spinner');
 const canvas = document.getElementById('chart');
 
@@ -22,7 +25,6 @@ function initializeChart() {
 	const options = {
 		responsive: true,
 		maintainAspectRatio: false,
-		foreground:'pink',
 		interaction: {
 			intersect: false,
 			mode: 'index'
@@ -58,8 +60,18 @@ function updateChartData(labels, humidities, temperatures) {
 	chart.config.data = {
 		labels: labels,
 		datasets: [
-			{ label: 'Humidity', data: humidities },
-			{ label: 'Temperature', data: temperatures }
+			{ 
+				label: 'Humidity',
+				data: humidities,
+				pointHoverRadius: chartPointHoverRadius,
+				tension: chartLineTension
+			},
+			{ 
+				label: 'Temperature', 
+				data: temperatures,
+				pointHoverRadius: chartPointHoverRadius,
+				tension: chartLineTension
+			}
 		]
 	}
 
