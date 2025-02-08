@@ -162,4 +162,3 @@ cython_debug/
 # Backup folder and database files
 backup/
 *.db
-config.json

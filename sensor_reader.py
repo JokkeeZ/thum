@@ -11,32 +11,58 @@ cfg = ThumConfig('config.json')
 dht = DHT11(board.D4, use_pulseio=False)
 
 def poll_sensor_data():
-	try:
-		return {
-			'success': True,
-			'temp': dht.temperature,
-			'hum': dht.humidity,
-			'ts': get_timestamp()
-		}
-	except (RuntimeError, Exception) as e:
-		return { 'success': False, 'err': str(e), 'ts': get_timestamp() }
+  try:
+    (date, time) = get_timestamp()
+
+    return {
+      'success': True,
+      'temperature': dht.temperature,
+      'humidity': dht.humidity,
+      'timestamp_date': date,
+      'timestamp_time': time
+    }
+  except (RuntimeError, Exception) as e:
+    return { 'success': False, 'err': str(e), 'timestamp': f'{date} {time}'}
 
 def get_timestamp():
-	return datetime.now().strftime(cfg.get('db.timeformat'))
+	dt = datetime.now()
+	return (dt.strftime(cfg.get('db.dateformat')), dt.strftime(cfg.get('db.timeformat')))
 
 async def db_initialize():
 	async with connect(cfg.get('db.file')) as db:
-		await db.execute('CREATE TABLE IF NOT EXISTS logs(message, timestamp)')
-		await db.execute('CREATE TABLE IF NOT EXISTS sensor(temperature, humidity, timestamp)')
+		await db.execute("""
+			CREATE TABLE IF NOT EXISTS logs (
+				message	TEXT NOT NULL,
+				timestamp	TEXT NOT NULL
+			);
+		""")
 
-async def db_insert_log_entry(e):
+		await db.execute("""
+			CREATE TABLE IF NOT EXISTS sensor_data (
+				temperature	NUMERIC NOT NULL,
+				humidity	NUMERIC NOT NULL,
+				timestamp_date	date NOT NULL,
+				timestamp_time	time NOT NULL
+			);
+		""")
+
+async def db_insert_log_entry(entry):
 	async with connect(cfg.get('db.file')) as db:
-		await db.execute(f'INSERT INTO logs VALUES (?, ?)', (e['err'], e['ts']))
+		await db.execute(f'INSERT INTO logs VALUES (?, ?);', (entry['err'], entry['timestamp']))
 		await db.commit()
 
-async def db_insert_sensor_entry(e):
+async def db_insert_sensor_entry(entry):
 	async with connect(cfg.get('db.file')) as db:
-		await db.execute(f'INSERT INTO sensor VALUES (?, ?, ?)', (e['temp'], e['hum'], e['ts']))
+		await db.execute("""
+			INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time) VALUES (?, ?, ?, ?);
+		""",
+		(
+			entry['temperature'],
+			entry['humidity'],
+			entry['timestamp_date'],
+			entry['timestamp_time'])
+		)
+
 		await db.commit()
 
 async def main():
@@ -45,7 +71,7 @@ async def main():
 	print('Initializing the database ...')
 	await db_initialize()
 
-	print(f'Reading sensor data every {cfg.get("sensor.interval")}ms ...')
+	print(f'Reading sensor data every {cfg.get("sensor.interval")} seconds ...')
 	while True:
 		data = poll_sensor_data()
 

@@ -72,67 +72,55 @@ function deleteLogByTimestamp(timestamp) {
 	fetch(`/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
 	})
-		.then(r => r.json())
-		.then(result => {
-			if (result.count <= 0) {
-				showNotification(`Failed to remove a log entry with timestamp: "${timestamp}".`, false);
-				return;
-			}
+	.then(r => r.json())
+	.then(result => {
+		if (result.count <= 0) {
+			showNotification(`Failed to remove a log entry with timestamp: "${timestamp}".`, false);
+			return;
+		}
 
-			document.getElementById(`log_${timestamp}`).remove();
-		});
+		document.getElementById(`log_${timestamp}`).remove();
+	});
 }
 
 /**
  * Deletes all log entries from the database.
+ * 
+ * @param {boolean} logPage Indicates if this call is executed from /logs.
  */
 function deleteAllLogs(logPage) {
 	fetch('/sensor/logs/all', {
 		method: 'DELETE'
 	})
-		.then(r => r.json())
-		.then(result => {
-			if (result.count <= 0) {
-				showNotification('Failed to clear all logs. (There was no logs)', false);
-				return;
-			}
+	.then(r => r.json())
+	.then(result => {
+		if (result.count <= 0) {
+			showNotification('Failed to clear all logs. (There was no logs)', false);
+			return;
+		}
 
-			showNotification(`Successfully cleared ${result.count} log entires.`, true);
+		showNotification(`Successfully cleared ${result.count} log entires.`, true);
 
-			if (logPage) {
-				document.querySelectorAll('.log_entry').forEach(e => e.remove());
-			}
-		});
+		if (logPage) {
+			document.querySelectorAll('.log_entry').forEach(e => e.remove());
+		}
+	});
 }
 
 /**
- * Gets four AVG samples of data for each day from the database.
- * 
- * 1st sample: `00-06`
- * 
- * 2nd sample: `06-12`
- * 
- * 3rd sample: `12-18`
- * 
- * 4th sample: `18-00`
+ * Gets the average temperature and humidity for each day.
  */
 function getAllDataFromSensor() {
 	fetch('/sensor')
-		.then(r => r.json())
-		.then(result => {
-			const labels = Object.keys(result);
-			const temps = [];
-			const hums = [];
+	.then(r => r.json())
+	.then(result => {
+		const labels = Object.keys(result);
+		const temps = labels.map(label => result[label].temperature);
+		const hums = labels.map(label => result[label].humidity);
 
-			for (let i = 0; i < labels.length; ++i) {
-				const label = labels[i];
-				temps.push(...result[label].temp);
-				hums.push(...result[label].hum);
-			}
-
-			updateChartData(labels.flatMap(i => [i, i, i, i]), hums, temps);
-			spinner.remove();
-		});
+		updateChartData(labels, temps, hums);
+		spinner.remove();
+	});
 }
 
 /**
@@ -144,15 +132,15 @@ function getWeeklyDataFromSensor(week) {
 	week ??= document.getElementById('week').value;
 
 	fetch(`sensor/weekly/${week}`)
-		.then(r => r.json())
-		.then(result => {
-			updateChartData(
-				result.labels,
-				result.humidities,
-				result.temperatures);
+	.then(r => r.json())
+	.then(result => {
+		updateChartData(
+			result.labels,
+			result.humidities,
+			result.temperatures);
 
-				spinner.remove();
-		});
+			spinner.remove();
+	});
 }
 
 /**
@@ -163,16 +151,16 @@ function getWeeklyDataFromSensor(week) {
 function getDailyDataFromSensor(date) {
 	date ??= document.getElementById('date').value;
 
-	fetch(`/sensor/${date}`)
-		.then(r => r.json())
-		.then(result => {
-			updateChartData(
-				result.map(x => x.timestamp.split(' ')[1]),
-				result.map(x => x.humidities),
-				result.map(x => x.temperatures));
+	fetch(`/sensor/daily/${date}`)
+	.then(r => r.json())
+	.then(result => {
+		updateChartData(
+			result.map(x => x.timestamp),
+			result.map(x => x.humidity),
+			result.map(x => x.temperature));
 
-				spinner.remove();
-		});
+			spinner.remove();
+	});
 }
 
 /**
@@ -187,15 +175,15 @@ function getMonthlyDataFromSensor(month) {
 	const m = month.split('-')[1];
 
 	fetch(`/sensor/monthly/${y}/${m}`)
-		.then(r => r.json())
-		.then(result => {
-			updateChartData(
-				result.labels,
-				result.humidities,
-				result.temperatures);
+	.then(r => r.json())
+	.then(result => {
+		updateChartData(
+			result.labels,
+			result.humidities,
+			result.temperatures);
 
-				spinner.remove();
-		});
+			spinner.remove();
+	});
 }
 
 /**
@@ -203,14 +191,14 @@ function getMonthlyDataFromSensor(month) {
  */
 function backupDatabase() {
 	fetch('/sensor/database/backup')
-		.then(r => r.json())
-		.then(result => {
-			if (result.success) {
-				showNotification(`Successfully created a backup of the database. (${result.path})`, true);
-			} else {
-				showNotification(`Database backup creation failed. (${result.path})`, false);
-			}
-		});
+	.then(r => r.json())
+	.then(result => {
+		if (result.success) {
+			showNotification(`Successfully created a backup of the database. (${result.path})`, true);
+		} else {
+			showNotification(`Database backup creation failed. (${result.path})`, false);
+		}
+	});
 }
 
 /**
@@ -218,11 +206,8 @@ function backupDatabase() {
  */
 function optimizeDatabase() {
 	fetch('/sensor/database/optimize')
-		.then(r => r.json())
-		.then(result => {
-			console.log(result)
-			showNotification('Database VACUUM; executed', true);
-		});
+	.then(r => r.json())
+	.then(() => showNotification('PRAGMA optimize; executed', true));
 }
 
 /**
@@ -234,10 +219,10 @@ function emptyDatabase() {
 	}
 
 	fetch('/sensor/database/empty')
-		.then(r => r.json())
-		.then(result => {
-			showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
-		});
+	.then(r => r.json())
+	.then(result => {
+		showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
+	});
 }
 
 /**
@@ -245,12 +230,12 @@ function emptyDatabase() {
  */
 function getCurrentTemperature() {
 	fetch('/sensor/temperature/current')
-		.then(r => r.json())
-		.then(result => {
-			const currTemp = document.getElementById('current-temperature');
-			currTemp.innerText = result.temperature + '°C';
-			currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
-		});
+	.then(r => r.json())
+	.then(result => {
+		const currTemp = document.getElementById('current-temperature');
+		currTemp.innerText = result.temperature + '°C';
+		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
+	});
 }
 
 /**

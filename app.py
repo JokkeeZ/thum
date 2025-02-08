@@ -1,7 +1,4 @@
 import asyncio
-
-from thum_config import ThumConfig
-
 from os import path
 from shutil import copyfile
 from pathlib import Path
@@ -9,10 +6,10 @@ from calendar import monthrange, day_name
 from aiosqlite import connect
 from quart import Quart, render_template, jsonify, request, send_file
 from datetime import datetime as dt, timedelta
+from thum_config import ThumConfig
 
 app = Quart(__name__)
 cfg = ThumConfig('config.json')
-client = None
 
 ROUTE_NAMES = {
 	'/': 'All',
@@ -23,45 +20,20 @@ ROUTE_NAMES = {
 	'/commands': 'Commands'
 }
 
-@app.route('/sensor/weekly/<string:week>')
-async def get_sensor_data_from_week(week):
-	temps = []
-	hums = []
-
-	async with connect(cfg.get('db.file')) as db:
-		first = dt.strptime(f'{week}-1', '%Y-W%W-%w')
-		for date in [first + timedelta(days=i) for i in range(0, 7)]:
-			cursor = await db.execute('SELECT AVG(temperature), AVG(humidity) FROM sensor WHERE instr(timestamp, ?) > 0',
-					   [date.strftime('%Y-%m-%d')])
-			(temp, hum) = await cursor.fetchone()
-
-			temps.append(temp)
-			hums.append(hum)
-
-	return jsonify({
-		'labels': [n for n in day_name],
-		'temperatures': temps,
-		'humidities': hums})
-
 @app.route('/sensor')
 async def get_sensor_all_data():
 	dates = {}
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT timestamp FROM sensor')
+		cursor = await db.execute("""
+			SELECT timestamp_date, AVG(temperature) AS avg_temp, AVG(humidity) AS avg_hum
+			FROM sensor_data
+			GROUP BY timestamp_date
+		""")
+
 		result = await cursor.fetchall()
+		dates = {row[0]: {'temperature': row[1], 'humidity': row[2]} for row in result}
 
-	for date in result:
-		datet = dt.strptime(date[0], cfg.get('db.timeformat'))
-		x = dt.strftime(datet, '%Y-%m-%d')
-		if x not in dates.keys():
-			dates[x] = {'temp': [], 'hum': []}
-
-			for i in range(0, 4):
-				(temp, hum) = await query_between_times(x, datet, [i*6,0,0], [5+(i*6),59,59])
-				dates[x]['temp'].append(temp)
-				dates[x]['hum'].append(hum)
-
-	return jsonify(dates)
+		return jsonify(dates)
 
 @app.route('/sensor/monthly/<string:year>/<string:month>')
 async def get_sensor_data_from_year_month(year, month):
@@ -71,8 +43,11 @@ async def get_sensor_data_from_year_month(year, month):
 
 	async with connect(cfg.get('db.file')) as db:
 		for i in range(1, days + 1):
-			cursor = await db.execute('SELECT AVG(temperature), AVG(humidity) FROM sensor WHERE instr(timestamp, ?) > 0',
-					   [f'{year}-{month}-{str(i).zfill(2)}'])
+			cursor = await db.execute("""
+				SELECT AVG(temperature), AVG(humidity)
+				FROM sensor_data
+				WHERE timestamp_date = ?
+			""", [f'{year}-{month}-{str(i).zfill(2)}'])
 
 			(temp, hum) = await cursor.fetchone()
 
@@ -82,15 +57,47 @@ async def get_sensor_data_from_year_month(year, month):
 	return jsonify({
 		'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
 		'temperatures': temps,
-		'humidities': hums})
+		'humidities': hums
+	})
 
-@app.route('/sensor/<string:date>')
-async def get_sensor_data_from_date(date):
+@app.route('/sensor/weekly/<string:week>')
+async def get_sensor_data_from_week(week):
+	temps = []
+	hums = []
+
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT * FROM sensor WHERE instr(timestamp, ?) > 0', [date])
+		first = dt.strptime(f'{week}-1', '%Y-W%W-%w')
+
+		for date in [first + timedelta(days=i) for i in range(0, 7)]:
+			cursor = await db.execute("""
+				SELECT AVG(temperature), AVG(humidity)
+				FROM sensor_data
+				WHERE timestamp_date = ?
+			""", [date.strftime('%Y-%m-%d')])
+
+			(temp, hum) = await cursor.fetchone()
+
+			temps.append(temp)
+			hums.append(hum)
+
+	return jsonify({
+		'labels': [n for n in day_name],
+		'temperatures': temps,
+		'humidities': hums
+	})
+
+@app.route('/sensor/daily/<string:date>')
+async def get_sensor_data_from_date2(date):
+	async with connect(cfg.get('db.file')) as db:
+		cursor = await db.execute("""
+			SELECT temperature, humidity, timestamp_time
+			FROM sensor_data
+			WHERE timestamp_date = ?
+		""", [date])
+
 		result = await cursor.fetchall()
 
-	return jsonify([{'temperatures': x[0],'humidities': x[1],'timestamp': x[2]} for x in result])
+	return jsonify([{'temperature': x[0], 'humidity': x[1], 'timestamp': x[2]} for x in result])
 
 @app.route('/sensor/logs/<string:timestamp>', methods=['DELETE'])
 async def delete_log_by_timestamp(timestamp):
@@ -123,30 +130,19 @@ async def thum_backup_db():
 @app.route('/sensor/database/optimize')
 async def thum_optimize_db():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('VACUUM;')
+		cursor = await db.execute('PRAGMA optimize;')
 
 	return jsonify({'success': cursor.rowcount > 0})
 
 @app.route('/sensor/database/empty')
 async def thum_empty_db():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('DELETE FROM sensor')
+		cursor = await db.execute('DELETE FROM sensor_data')
 		await db.commit();
 		cursor1 = db.execute('DELETE FROM logs')
 		await db.commit()
 
 	return jsonify({'sensor_count': cursor.rowcount, 'logs_count': cursor1.rowcount})
-
-async def query_between_times(date, ts, start, end):
-	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT AVG(temperature), AVG(humidity) FROM sensor WHERE instr(timestamp, ?) > 0 AND timestamp >= ? AND timestamp <= ?',
-			[date,
-			ts.replace(hour=start[0], minute=start[1],second=start[2]),
-			ts.replace(hour=end[0], minute=end[1],second=end[2])])
-
-		(temp, hum) = await cursor.fetchone()
-
-	return (temp, hum)
 
 @app.template_global()
 def title():
@@ -169,13 +165,13 @@ async def route_index():
 @app.route('/commands')
 async def route_commands():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT COUNT(*), MIN(timestamp), MAX(timestamp), AVG(temperature), AVG(humidity) FROM sensor')
+		cursor = await db.execute('SELECT COUNT(*), MIN(timestamp_date), MAX(timestamp_date), AVG(temperature), AVG(humidity) FROM sensor_data')
 		data = await cursor.fetchone()
 
-		cursor = await db.execute('SELECT timestamp, MIN(temperature), MIN(humidity) FROM sensor')
+		cursor = await db.execute('SELECT timestamp_date, MIN(temperature), MIN(humidity) FROM sensor_data')
 		data1 = await cursor.fetchone()
 
-		cursor = await db.execute('SELECT timestamp, MAX(temperature), MAX(humidity) FROM sensor')
+		cursor = await db.execute('SELECT timestamp_date, MAX(temperature), MAX(humidity) FROM sensor_data')
 		data2 = await cursor.fetchone()
 
 	return await render_template('commands.html', Data = data, ColdestData = data1, HottestData = data2)
@@ -183,44 +179,35 @@ async def route_commands():
 @app.route('/daily')
 async def route_daily():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor')
+		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data')
 		(mi, ma) = await cursor.fetchone()
 
-	if mi is None or ma is None:
-		min = max = dt.now().strftime('%Y-%m-%d')
-	else:
-		min = dt.strptime(mi, cfg.get('db.timeformat')).strftime('%Y-%m-%d')
-		max = dt.strptime(ma, cfg.get('db.timeformat')).strftime('%Y-%m-%d')
+	min_date = (dt.now().strftime(cfg.get('db.dateformat')) if mi is None else mi)
+	max_date = (dt.now().strftime(cfg.get('db.dateformat')) if ma is None else ma)
 
-	return await render_template('daily.html', Min = min, Max = max)
+	return await render_template('daily.html', Min=min_date, Max=max_date)
 
 @app.route('/weekly')
 async def route_weekly():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor')
+		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data')
 		(mi, ma) = await cursor.fetchone()
 
-	if mi is None or ma is None:
-		min = max = dt.now().strftime('%Y-W%W')
-	else:
-		min = dt.strptime(mi, cfg.get('db.timeformat')).strftime('%Y-W%W')
-		max = dt.strptime(ma, cfg.get('db.timeformat')).strftime('%Y-W%W')
+	min_week = (dt.now().strftime('%Y-W%W') if mi is None else dt.strptime(mi, cfg.get('db.dateformat')).strftime('%Y-W%W'))
+	max_week = (dt.now().strftime('%Y-W%W') if ma is None else dt.strptime(ma, cfg.get('db.dateformat')).strftime('%Y-W%W'))
 
-	return await render_template('weekly.html', Min = min, Max = max)
+	return await render_template('weekly.html', Min=min_week, Max=max_week)
 
 @app.route('/monthly')
 async def route_monthly():
 	async with connect(cfg.get('db.file')) as db:
-		cursor = await db.execute('SELECT MIN(timestamp), MAX(timestamp) FROM sensor')
+		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data')
 		(mi, ma) = await cursor.fetchone()
 
-	if mi is None or ma is None:
-		min = max = dt.now().strftime('%Y-%m')
-	else:
-		min = dt.strptime(mi, cfg.get('db.timeformat')).strftime('%Y-%m')
-		max = dt.strptime(ma, cfg.get('db.timeformat')).strftime('%Y-%m')
+	min_month = (dt.now().strftime('%Y-%m') if mi is None else dt.strptime(mi, cfg.get('db.dateformat')).strftime('%Y-%m'))
+	max_month = (dt.now().strftime('%Y-%m') if ma is None else dt.strptime(ma, cfg.get('db.dateformat')).strftime('%Y-%m'))
 
-	return await render_template('monthly.html', Min = min, Max = max)
+	return await render_template('monthly.html', Min=min_month, Max=max_month)
 
 @app.route('/logs')
 async def route_logs():
@@ -257,13 +244,10 @@ async def download_backup():
 		return jsonify(resp)
 
 	return await send_file(resp['path'],
-				  'application/vnd.sqlite3',
+					'application/vnd.sqlite3',
 					as_attachment=True,
 					attachment_filename=resp['path'].split('/')[1])
 
-async def main():
-	cfg.load()
-	await app.run_task(host=cfg.get('app.host'), debug=cfg.get('app.debug'))
-
 if __name__ == '__main__':
-	asyncio.run(main())
+	cfg.load()
+	app.run(host=cfg.get('app.host'), port=cfg.get('app.port'), debug=cfg.get('app.debug'))
