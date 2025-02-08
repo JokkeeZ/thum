@@ -12,16 +12,6 @@ function initializeChart() {
 	Chart.defaults.font.size = 14;
 	ctx = canvas.getContext('2d');
 
-	const options = {
-		responsive: true,
-		maintainAspectRatio: false,
-		foreground:'pink',
-		interaction: {
-			intersect: false,
-			mode: 'index'
-		}
-	};
-
 	const callback = function (toolTipItems) {
 		const dewPoint = toolTipItems[1].parsed.y -
 			((100 - toolTipItems[0].parsed.y) / 5)
@@ -29,10 +19,19 @@ function initializeChart() {
 		return `Dew point: ${dewPoint.toFixed(2)}°C`;
 	}
 
-	chart = new Chart(ctx, {
-		type: 'line', data: {}, options,
-		plugins: { tooltip: { callbacks: { footer: callback }}}
-	});
+	const options = {
+		responsive: true,
+		maintainAspectRatio: false,
+		foreground:'pink',
+		interaction: {
+			intersect: false,
+			mode: 'index'
+		},
+
+		plugins: { tooltip: { callbacks: { footer: callback } } }
+	};
+
+	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
 if (window.location.pathname != '/tools') {
