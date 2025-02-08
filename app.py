@@ -1,3 +1,4 @@
+from asyncio import sleep
 from os import path
 from shutil import copyfile
 from pathlib import Path
@@ -224,7 +225,6 @@ async def route_logs():
 @app.route('/sensor/temperature/current')
 async def get_sensor_data_current():
 	import board
-	import time
 	from adafruit_dht import DHT11
 
 	dht = DHT11(board.D4, use_pulseio=False)
@@ -238,7 +238,7 @@ async def get_sensor_data_current():
 				return jsonify({'temperature': temp, 'humidity': hum})
 
 		except (RuntimeError, Exception):
-			time.sleep(0.2)
+			await sleep(0.2)
 
 @app.route('/sensor/database/backup/download')
 async def download_backup():
