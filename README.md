@@ -3,11 +3,17 @@ A lightweight web application that collects real-time temperature and humidity d
 
 ![monthly](https://github.com/user-attachments/assets/1c922bf8-6a29-41ae-b6ba-7da8f6098bf4)
 
-# Run
-- `chmod u+x thum.sh && ./thum.sh`
+### Usage
+```sh
+git clone https://github.com/JokkeeZ/thum.git
+cd thum
+python sensor_reader.py & python app.py &
+```
 
-# Requirements
-- Quart
-- asyncio
-- aiosqlite
-- adafruit_dht
+# Dependencies
+- [Quart](https://github.com/pallets/quart)
+- [aiosqlite](https://github.com/omnilib/aiosqlite)
+- [adafruit_dht](https://github.com/adafruit/DHT-sensor-library)
+
+# License
+thum is licensed under the [MIT License](https://github.com/JokkeeZ/thum/blob/main/LICENSE)
