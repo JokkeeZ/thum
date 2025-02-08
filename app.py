@@ -37,28 +37,33 @@ async def get_sensor_all_data():
 
 @app.route('/sensor/monthly/<string:year>/<string:month>')
 async def get_sensor_data_from_year_month(year, month):
-	(_, days) = monthrange(int(year), int(month))
-	temps = []
-	hums = []
+  (_, days) = monthrange(int(year), int(month))
+  temps = []
+  hums = []
 
-	async with connect(cfg.get('db.file')) as db:
-		for i in range(1, days + 1):
-			cursor = await db.execute("""
-				SELECT AVG(temperature), AVG(humidity)
-				FROM sensor_data
-				WHERE timestamp_date = ?
-			""", [f'{year}-{month}-{str(i).zfill(2)}'])
+  start_date = f'{year}-{month}-01'
+  end_date = f'{year}-{month}-{str(days).zfill(2)}'
 
-			(temp, hum) = await cursor.fetchone()
+  async with connect(cfg.get('db.file')) as db:
+    cursor = await db.execute("""
+      SELECT strftime('%d', timestamp_date) AS day, AVG(temperature) AS avg_temp, AVG(humidity) AS avg_hum
+      FROM sensor_data
+      WHERE timestamp_date BETWEEN ? AND ?
+      GROUP BY day
+      ORDER BY day
+    """, [start_date, end_date])
 
-			temps.append(temp)
-			hums.append(hum)
+    result = await cursor.fetchall()
 
-	return jsonify({
-		'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
-		'temperatures': temps,
-		'humidities': hums
-	})
+    for row in result:
+      temps.append(row[1])
+      hums.append(row[2])
+
+  return jsonify({
+    'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
+    'temperatures': temps,
+    'humidities': hums
+  })
 
 @app.route('/sensor/weekly/<string:week>')
 async def get_sensor_data_from_week(week):

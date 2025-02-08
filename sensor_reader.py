@@ -35,7 +35,7 @@ async def db_initialize():
 				message	TEXT NOT NULL,
 				timestamp	TEXT NOT NULL
 			);
-		""")
+			""")
 
 		await db.execute("""
 			CREATE TABLE IF NOT EXISTS sensor_data (
@@ -45,6 +45,8 @@ async def db_initialize():
 				timestamp_time	time NOT NULL
 			);
 		""")
+
+		await db.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
 
 async def db_insert_log_entry(entry):
 	async with connect(cfg.get('db.file')) as db:
@@ -62,8 +64,6 @@ async def db_insert_sensor_entry(entry):
 			entry['timestamp_date'],
 			entry['timestamp_time'])
 		)
-
-		await db.commit()
 
 async def main():
 	print('Loading configuration ...')
