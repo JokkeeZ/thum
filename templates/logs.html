@@ -1,67 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+{%extends "index.html" %}
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{title()}}</title>
-
-	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
-	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
-</head>
-
-<body>
-	<nav id="navigation">
-		<a href="#" class="nav-hamburger" onclick="toggleMenu()">
-			<div class="bar"></div>
-			<div class="bar"></div>
-			<div class="bar"></div>
-		</a>
-		
-		{%for item in get_navbar_items()%}
-		<a href="{{item['path']}}" class="nav-item {%if item['active']%}active{%endif%}">
-			{{item['text']}}
-		</a>
-		{%endfor%}
-		<a href="#" id="current-temperature" class="nav-item right">
-			<div class="loader"></div>
-		</a>
-	</nav>
-
-	<div class="container">
-		<div id="popup-container"></div>
-		<div class="log-actions">
-			<button class="btn error" onclick="deleteAllLogs(true)">Delete all</button>
-		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>Error</th>
-					<th>Timestamp</th>
-					<th>Delete</th>
-				</tr>
-			</thead>
-			<tbody>
-				{%if Logs%}
-					{%for log in Logs%}
-					<tr id="log_{{log[1]}}" class="log_entry">
-						<td>{{log[0]}}</td>
-						<td>{{log[1]}}</td>
-						<td><button class="btn error" onclick="deleteLogByTimestamp('{{log[1]}}')">Delete</button></td>
-					</tr>
-					{%endfor%}
-				{%else%}
-					<tr>
-						<td>—</td>
-						<td>No logs :)</td>
-						<td>—</td>
-					</tr>
-				{%endif%}
-			</tbody>
-		</table>
+{% block content %}
+<div class="container">
+	<div id="popup-container"></div>
+	<div class="log-actions">
+		<button class="btn error" onclick="deleteAllLogs(true)">Delete all</button>
 	</div>
-</body>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</html>
+	<table>
+		<thead>
+			<tr>
+				<th>Error</th>
+				<th>Timestamp</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%if Logs%}
+				{%for log in Logs%}
+				<tr id="log_{{log[1]}}" class="log_entry">
+					<td>{{log[0]}}</td>
+					<td>{{log[1]}}</td>
+					<td><button class="btn error" onclick="deleteLogByTimestamp('{{log[1]}}')">Delete</button></td>
+				</tr>
+				{%endfor%}
+			{%else%}
+				<tr>
+					<td>—</td>
+					<td>No logs :)</td>
+					<td>—</td>
+				</tr>
+			{%endif%}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

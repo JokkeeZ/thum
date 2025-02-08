@@ -4,30 +4,39 @@ let chart;
 const spinner = document.getElementById('spinner');
 const canvas = document.getElementById('chart');
 
-if (canvas != null) {
+/**
+ * Initialize chart.js.
+ */
+function initializeChart() {
+	Chart.defaults.color='#8D8D8D';
+	Chart.defaults.font.size = 14;
 	ctx = canvas.getContext('2d');
-	chart = new Chart(ctx, {
-		type: 'line', data: {}, options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			interaction: {
-				intersect: false,
-				mode: 'index'
-			},
-			plugins: {
-				tooltip: {
-					callbacks: {
-						footer: function (toolTipItems) {
-							const dewPoint = toolTipItems[1].parsed.y -
-								((100 - toolTipItems[0].parsed.y) / 5)
 
-							return `Dew point: ${dewPoint.toFixed(2)}°C`;
-						}
-					}
-				}
-			}
+	const options = {
+		responsive: true,
+		maintainAspectRatio: false,
+		foreground:'pink',
+		interaction: {
+			intersect: false,
+			mode: 'index'
 		}
+	};
+
+	const callback = function (toolTipItems) {
+		const dewPoint = toolTipItems[1].parsed.y -
+			((100 - toolTipItems[0].parsed.y) / 5)
+
+		return `Dew point: ${dewPoint.toFixed(2)}°C`;
+	}
+
+	chart = new Chart(ctx, {
+		type: 'line', data: {}, options,
+		plugins: { tooltip: { callbacks: { footer: callback }}}
 	});
+}
+
+if (window.location.pathname != '/tools') {
+	initializeChart();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -38,11 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		getCurrentTemperature();
 	}, 10 * 1000);
 });
-
-/**
- * Set chart styling to fit the page style.
- */
-Chart.defaults.color = "#ADBABD";
 
 /**
  * Updates chart datasets and labels.
@@ -95,7 +99,7 @@ function deleteAllLogs(logPage) {
 	.then(r => r.json())
 	.then(result => {
 		if (result.count <= 0) {
-			showNotification('Failed to clear all logs. (There was no logs)', false);
+			showNotification('There was no logs to clear.', false);
 			return;
 		}
 
@@ -233,7 +237,7 @@ function getCurrentTemperature() {
 	.then(r => r.json())
 	.then(result => {
 		const currTemp = document.getElementById('current-temperature');
-		currTemp.innerText = result.temperature + '°C';
+		currTemp.innerText = `${result.temperature}°C`;
 		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
 	});
 }
