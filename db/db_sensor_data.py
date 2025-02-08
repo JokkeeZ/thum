@@ -1,0 +1,129 @@
+import calendar
+from datetime import datetime, timedelta
+from aiosqlite import Row, connect
+
+class DatabaseSensorData:
+	def __init__(self, db_file: str, date_format: str, time_format: str):
+		self.dbfile:str = db_file
+		self.dateformat:str = date_format
+		self.timeformat:str = time_format
+
+	async def get_all_async(self) -> dict[any, dict[str, any]]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute("""
+				SELECT timestamp_date, AVG(temperature) AS avg_temp, AVG(humidity) AS avg_hum
+				FROM sensor_data
+				GROUP BY timestamp_date;
+			""")
+
+			result = await cursor.fetchall()
+		return {row[0]: {'temperature': row[1], 'humidity': row[2]} for row in result}
+
+	async def get_year_month_async(self, year: str, month: str) -> dict[str, list[any]]:
+		(_, days) = calendar.monthrange(int(year), int(month))
+
+		start_date = f'{year}-{month}-01'
+		end_date = f'{year}-{month}-{str(days).zfill(2)}'
+
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute("""
+				SELECT strftime('%d', timestamp_date) AS day, AVG(temperature) AS avg_temp, AVG(humidity) AS avg_hum
+				FROM sensor_data
+				WHERE timestamp_date BETWEEN ? AND ?
+				GROUP BY day
+				ORDER BY day;
+			""", [start_date, end_date])
+
+			result = await cursor.fetchall()
+
+		temps = []
+		hums = []
+		for row in result:
+			temps.append(row[1])
+			hums.append(row[2])
+
+		return {
+			'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
+			'temperatures': temps,
+			'humidities': hums
+		}
+
+	async def get_week_async(self, week: str) -> dict[str, any]:
+		temps = []
+		hums = []
+
+		async with connect(self.dbfile) as db:
+			first = datetime.strptime(f'{week}-1', '%Y-W%W-%w')
+
+			for date in [first + timedelta(days=i) for i in range(0, 7)]:
+				cursor = await db.execute("""
+					SELECT AVG(temperature), AVG(humidity)
+					FROM sensor_data
+					WHERE timestamp_date = ?;
+				""", [date.strftime('%Y-%m-%d')])
+
+				(temp, hum) = await cursor.fetchone()
+
+				temps.append(temp)
+				hums.append(hum)
+
+		return {
+			'labels': [n for n in calendar.day_name],
+			'temperatures': temps,
+			'humidities': hums
+		}
+
+	async def get_date_async(self, date: str) -> list[dict[str, any]]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute("""
+			SELECT temperature, humidity, timestamp_time
+			FROM sensor_data
+			WHERE timestamp_date = ?;
+			""", [date])
+
+			result = await cursor.fetchall()
+
+		return [{'temperature': x[0], 'humidity': x[1], 'timestamp': x[2]} for x in result]
+
+	async def get_date_range_async(self) -> tuple[str, str]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+			(min, max) = await cursor.fetchone()
+
+		now = datetime.now()
+		min_date = (now.strftime(self.dateformat) if min is None else min)
+		max_date = (now.strftime(self.dateformat) if max is None else max)
+		return (min_date, max_date)
+
+	async def get_week_range_async(self) -> tuple[str, str]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+			(min, max) = await cursor.fetchone()
+
+		now = datetime.now()
+		min_week = (now.strftime('%Y-W%W') if min is None else datetime.strptime(min, self.dateformat).strftime('%Y-W%W'))
+		max_week = (now.strftime('%Y-W%W') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-W%W'))
+		return (min_week, max_week)
+
+	async def get_month_range_async(self) -> tuple[str, str]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+			(min, max) = await cursor.fetchone()
+
+		now = datetime.now()
+		min_month = (now.strftime('%Y-%m') if min is None else datetime.strptime(min, self.dateformat).strftime('%Y-%m'))
+		max_month = (now.strftime('%Y-%m') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-%m'))
+		return (min_month, max_month)
+
+	async def get_summary_async(self) -> tuple[Row, Row, Row]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute('SELECT COUNT(*), MIN(timestamp_date), MAX(timestamp_date), AVG(temperature), AVG(humidity) FROM sensor_data')
+			data = await cursor.fetchone()
+
+			cursor = await db.execute('SELECT timestamp_date, MIN(temperature), MIN(humidity) FROM sensor_data')
+			coldest = await cursor.fetchone()
+
+			cursor = await db.execute('SELECT timestamp_date, MAX(temperature), MAX(humidity) FROM sensor_data')
+			warmest = await cursor.fetchone()
+
+		return (data, coldest, warmest)

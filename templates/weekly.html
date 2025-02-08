@@ -1,50 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+{%extends "index.html" %}
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{title()}}</title>
+{% block content %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		getWeeklyDataFromSensor('{{Max}}');
+	});
+</script>
 
-	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
-	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
-</head>
+<div class="form">
+	<form>
+		<div>
+			<span>Select week</span>
+			<input type="week" id="week" min="{{Min}}" max="{{Max}}" value="{{Max}}"
+				onchange="getWeeklyDataFromSensor()" />
+		</div>
+	</form>
+</div>
 
-<body onload="getWeeklyDataFromSensor('{{Max}}')">
-	<nav id="navigation">
-		<a href="#" class="nav-hamburger" onclick="toggleMenu()">
-			<div class="bar"></div>
-			<div class="bar"></div>
-			<div class="bar"></div>
-		</a>
-		
-		{%for item in get_navbar_items()%}
-		<a href="{{item['path']}}" class="nav-item {%if item['active']%}active{%endif%}">
-			{{item['text']}}
-		</a>
-		{%endfor%}
-		<a href="#" id="current-temperature" class="nav-item right">
-			<div class="loader"></div>
-		</a>
-	</nav>
-
-	<div class="form">
-		<form>
-			<div>
-				<span>Select week</span>
-				<input type="week" id="week" min="{{Min}}" max="{{Max}}" value="{{Max}}"
-					onchange="getWeeklyDataFromSensor()" />
-			</div>
-		</form>
-	</div>
-
-	<div class="container">
-		<div id="popup-container"></div>
-		<div class="loader big" id="spinner"></div>
-		<canvas id="chart"></canvas>
-	</div>
-</body>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</html>
+<div class="container">
+	<div id="popup-container"></div>
+	<div class="loader big" id="spinner"></div>
+	<canvas id="chart"></canvas>
+</div>
+{% endblock %}
