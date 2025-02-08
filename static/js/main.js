@@ -38,7 +38,7 @@ function initializeChart() {
 	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
-if (window.location.pathname != '/tools') {
+if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
 	initializeChart();
 }
 
@@ -241,6 +241,7 @@ function getCurrentTemperature() {
 	fetch('/sensor/temperature/current')
 	.then(r => r.json())
 	.then(result => {
+		console.log(result);
 		const currTemp = document.getElementById('current-temperature');
 		currTemp.innerText = `${result.temperature}°C`;
 		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
