@@ -1,0 +1,12 @@
+{
+	"editor.tabSize": 2,
+	"editor.insertSpaces": true,
+	"editor.trimAutoWhitespace": true,
+	
+	// Ignore files & folders on project view
+	"files.exclude": {
+			"**/.venv": true,
+			"**/__pycache__": true,
+			"**/.gitattributes": true
+	}
+}
