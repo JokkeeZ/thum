@@ -7,7 +7,7 @@ from aiosqlite import connect
 from datetime import datetime
 from adafruit_dht import DHT11
 
-cfg = ThumConfig('config.json')
+cfg = ThumConfig('./config.json')
 dht = DHT11(board.D4, use_pulseio=False)
 
 def poll_sensor_data():
@@ -78,7 +78,7 @@ async def main():
 		# Incase sensor reading fails, add log of
 		# the error that occurred to the database
 		# and jump back to the start of the loop;
-		# not waiting the cfg.get('sensor.interval') ms for new reading.
+		# not waiting the config.get('sensor.interval') ms for new reading.
 		if not data['success']:
 			print('OOPS, error occurred. Attempting again ...')
 			await db_insert_log_entry(data)

@@ -1,4 +1,3 @@
-import asyncio
 from os import path
 from shutil import copyfile
 from pathlib import Path
