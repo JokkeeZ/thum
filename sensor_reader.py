@@ -75,11 +75,13 @@ async def main():
 	while True:
 		data = poll_sensor_data()
 
-		# Incase sensor reading fails, add log of
-		# the error that occurred to the database
-		# and jump back to the start of the loop;
+		# Incase sensor reading fails, add log of the error that occurred to the database
+		# the error that occurred to the database and jump back to the start of the loop;
 		# not waiting the config.get('sensor.interval') ms for new reading.
-		if not data['success']:
+		#
+		# Same goes if temperature or humidity is None; just try again, since we want
+		# both of those readings to be inserted in to the database.
+		if not data['success'] or not data['temperature'] or not data['humidity']:
 			print('OOPS, error occurred. Attempting again ...')
 			await db_insert_log_entry(data)
 			continue
