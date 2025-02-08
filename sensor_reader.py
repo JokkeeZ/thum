@@ -1,28 +1,37 @@
 import asyncio
 import board
 
-from thum_config import ThumConfig
-
 from aiosqlite import connect
 from datetime import datetime
 from adafruit_dht import DHT11
+from thum_config import ThumConfig
 
-cfg = ThumConfig('./config.json')
 dht = DHT11(board.D4, use_pulseio=False)
+cfg:ThumConfig = ThumConfig('config.json')
 
 def poll_sensor_data():
-  try:
-    (date, time) = get_timestamp()
+	try:
+		(date, time) = get_timestamp()
 
-    return {
-      'success': True,
-      'temperature': dht.temperature,
-      'humidity': dht.humidity,
-      'timestamp_date': date,
-      'timestamp_time': time
-    }
-  except (RuntimeError, Exception) as e:
-    return { 'success': False, 'err': str(e), 'timestamp': f'{date} {time}'}
+		temperature = dht.temperature
+		humidity = dht.humidity
+
+		if temperature == None or humidity == None:
+			return {
+				'success': False,
+				'err': 'Temperature reading: {temperature}, Humidity: {humidity}',
+				'timestamp': f'{date} {time}'
+			}
+
+		return {
+			'success': True,
+			'temperature': temperature,
+			'humidity': humidity,
+			'timestamp_date': date,
+			'timestamp_time': time
+		}
+	except (RuntimeError, Exception) as e:
+		return { 'success': False, 'err': str(e), 'timestamp': f'{date} {time}'}
 
 def get_timestamp():
 	dt = datetime.now()
@@ -65,7 +74,7 @@ async def db_insert_sensor_entry(entry):
 			entry['timestamp_time'])
 		)
 
-async def main():
+async def start_sensor_reader():
 	print('Loading configuration ...')
 	cfg.load()
 	print('Initializing the database ...')
@@ -81,13 +90,10 @@ async def main():
 		#
 		# Same goes if temperature or humidity is None; just try again, since we want
 		# both of those readings to be inserted in to the database.
-		if not data['success'] or not data['temperature'] or not data['humidity']:
-			print('OOPS, error occurred. Attempting again ...')
+		if not data['success']:
+			print('OOPS, error occurred. Attempting again in 2 seconds...')
 			await db_insert_log_entry(data)
 			continue
 
 		await db_insert_sensor_entry(data)
 		await asyncio.sleep(cfg.get('sensor.interval'))
-
-if __name__ == '__main__':
-	asyncio.run(main())
