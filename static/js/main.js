@@ -3,6 +3,8 @@ let chart;
 
 const chartPointHoverRadius = 8;
 const chartLineTension = 0.25;
+const chartFontSize = 14;
+const chartColor = '#8D8D8D';
 
 const spinner = document.getElementById('spinner');
 const canvas = document.getElementById('chart');
@@ -11,8 +13,8 @@ const canvas = document.getElementById('chart');
  * Initialize chart.js.
  */
 function initializeChart() {
-	Chart.defaults.color='#8D8D8D';
-	Chart.defaults.font.size = 14;
+	Chart.defaults.color = chartColor;
+	Chart.defaults.font.size = chartFontSize;
 	ctx = canvas.getContext('2d');
 
 	const callback = function (toolTipItems) {
@@ -149,12 +151,8 @@ function getWeeklyDataFromSensor(week) {
 	fetch(`sensor/weekly/${week}`)
 	.then(r => r.json())
 	.then(result => {
-		updateChartData(
-			result.labels,
-			result.humidities,
-			result.temperatures);
-
-			spinner.remove();
+		updateChartData(result.labels, result.humidities, result.temperatures);
+		spinner.remove();
 	});
 }
 
@@ -192,12 +190,8 @@ function getMonthlyDataFromSensor(month) {
 	fetch(`/sensor/monthly/${y}/${m}`)
 	.then(r => r.json())
 	.then(result => {
-		updateChartData(
-			result.labels,
-			result.humidities,
-			result.temperatures);
-
-			spinner.remove();
+		updateChartData(result.labels, result.humidities, result.temperatures);
+		spinner.remove();
 	});
 }
 
