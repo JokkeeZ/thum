@@ -1,8 +1,10 @@
 {
 	"db.file": "sensordata.db",
-	"db.timeformat": "%Y-%m-%d %H:%M:%S",
+	"db.dateformat": "%Y-%m-%d",
+	"db.timeformat": "%H:%M:%S",
 	"sensor.interval": 600,
 	"app.title": "THUM",
 	"app.host": "0.0.0.0",
+	"app.port": 5000,
 	"app.debug": true
 }
