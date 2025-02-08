@@ -7,15 +7,13 @@
 	});
 </script>
 
-<div class="form">
-	<form>
-		<div>
-			<span>Select month</span>
-			<input type="month" id="month" min="{{Min}}" max="{{Max}}" value="{{Max}}"
-				onchange="getMonthlyDataFromSensor()" />
-		</div>
-	</form>
-</div>
+<form>
+	<div>
+		<span>Select month</span>
+		<input type="month" id="month" min="{{Min}}" max="{{Max}}" value="{{Max}}"
+			onchange="getMonthlyDataFromSensor()" />
+	</div>
+</form>
 
 <div class="container">
 	<div id="popup-container"></div>

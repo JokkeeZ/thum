@@ -7,15 +7,13 @@
 	});
 </script>
 
-<div class="form">
-	<form>
-		<div>
-			<span>Select week</span>
-			<input type="week" id="week" min="{{Min}}" max="{{Max}}" value="{{Max}}"
-				onchange="getWeeklyDataFromSensor()" />
-		</div>
-	</form>
-</div>
+<form>
+	<div>
+		<span>Select week</span>
+		<input type="week" id="week" min="{{Min}}" max="{{Max}}" value="{{Max}}"
+			onchange="getWeeklyDataFromSensor()" />
+	</div>
+</form>
 
 <div class="container">
 	<div id="popup-container"></div>
