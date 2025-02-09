@@ -12,41 +12,47 @@
 </head>
 
 <body>
-	<nav id="navigation">
-		<a href="#" class="nav-hamburger" onclick="toggleMenu()">
-			<div class="bar"></div>
-			<div class="bar"></div>
-			<div class="bar"></div>
-		</a>
-		
-		{% set active_page = request.endpoint %}
+	<main>
+		<nav id="navigation">
+			<a href="#" class="nav-hamburger" onclick="toggleMenu()">
+				<div class="bar"></div>
+				<div class="bar"></div>
+				<div class="bar"></div>
+			</a>
+			
+			{% set active_page = request.endpoint %}
 
-		<a href="{{ url_for('index') }}" class="nav-item {% if active_page == 'index' %}active{% endif %}">All</a>
-		<a href="{{ url_for('daily') }}" class="nav-item {% if active_page == 'daily' %}active{% endif %}">Daily</a>
-		<a href="{{ url_for('weekly') }}" class="nav-item {% if active_page == 'weekly' %}active{% endif %}">Weekly</a>
-		<a href="{{ url_for('monthly') }}" class="nav-item {% if active_page == 'monthly' %}active{% endif %}">Monthly</a>
-		<a href="{{ url_for('tools') }}" class="nav-item {% if active_page == 'tools' %}active{% endif %}">Tools</a>
-		<a href="{{ url_for('logs') }}" class="nav-item {% if active_page == 'logs' %}active{% endif %}">Logs</a>
+			<a href="{{ url_for('index') }}" class="nav-item {% if active_page == 'index' %}active{% endif %}">All</a>
+			<a href="{{ url_for('daily') }}" class="nav-item {% if active_page == 'daily' %}active{% endif %}">Daily</a>
+			<a href="{{ url_for('weekly') }}" class="nav-item {% if active_page == 'weekly' %}active{% endif %}">Weekly</a>
+			<a href="{{ url_for('monthly') }}" class="nav-item {% if active_page == 'monthly' %}active{% endif %}">Monthly</a>
+			<a href="{{ url_for('tools') }}" class="nav-item {% if active_page == 'tools' %}active{% endif %}">Tools</a>
+			<a href="{{ url_for('logs') }}" class="nav-item {% if active_page == 'logs' %}active{% endif %}">Logs</a>
 
-		<a href="#" id="current-temperature" class="nav-item right">
-			<div class="loader"></div>
-		</a>
-	</nav>
+			<a href="#" id="current-temperature" class="nav-item right">
+				<div class="loader"></div>
+			</a>
+		</nav>
 	
-	{% block content %}
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			getAllDataFromSensor();
-		});
-	</script>
+		{% block content %}
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				getAllDataFromSensor();
+			});
+		</script>
+	
+		<div class="container">
+			<div class="popup-container"></div>
+			<div class="loader big" id="spinner"></div>
+			<canvas id="chart"></canvas>
+		</div>
+	
+		{% endblock %}
+	</main>
 
-	<div class="container">
-		<div class="popup-container"></div>
-		<div class="loader big" id="spinner"></div>
-		<canvas id="chart"></canvas>
-	</div>
-
-	{% endblock %}
+  <footer>
+    <p>Developed with ♥️ and ☕ in <a class="gh-link" href="https://github.com/jokkeez/thum">Github</a></p>
+  </footer>
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

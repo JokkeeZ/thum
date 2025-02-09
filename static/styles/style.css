@@ -22,10 +22,17 @@ hr {
 	border: 2px solid var(--border);
 }
 
-body {
+html, body {
 	margin: 0;
 	padding: 0;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 	background-color: var(--body-bg);
+}
+
+main {
+	flex: 1;
 }
 
 .container {
@@ -118,9 +125,14 @@ nav>a.active:hover {
 }
 
 form {
-	padding: 20px 0 20px 0;
+	box-sizing: border-box;
 	text-align: center;
+	margin-top: 10px;
 	color: var(--text);
+}
+
+#chart {
+	margin-top: 15px;
 }
 
 form span {
@@ -320,8 +332,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 3px;
 }
 
-#chart {
-	margin-top: 20px;
+.gh-link {
+	color: var(--active-highlight) !important;
+	text-decoration: wavy;
+}
+
+.gh-link:visited,
+.gh-link:focus,
+.gh-link:hover,
+.gh-link:active {
+  color: var(--active-highlight) !important;
+}
+
+footer {
+  color: var(--disabled-text);
+  text-align: center;
+  padding: 5px;
+  bottom: 0;
+  position: relative;
 }
 
 @media screen and (min-width: 701px) {

@@ -216,7 +216,9 @@ function backupDatabase() {
 function optimizeDatabase() {
 	fetch('/sensor/database/optimize')
 	.then(r => r.json())
-	.then(() => showNotification('PRAGMA optimize; executed', true));
+	.then(result => {
+		showNotification(`Database optimization ${result.success ? 'completed successfully' : 'failed'}`, result.success);
+	});
 }
 
 /**
@@ -241,7 +243,6 @@ function getCurrentTemperature() {
 	fetch('/sensor/temperature/current')
 	.then(r => r.json())
 	.then(result => {
-		console.log(result);
 		const currTemp = document.getElementById('current-temperature');
 		currTemp.innerText = `${result.temperature}°C`;
 		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;

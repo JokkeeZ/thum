@@ -56,6 +56,7 @@ async def db_initialize():
 		""")
 
 		await db.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
+		await db.commit()
 
 async def db_insert_log_entry(entry):
 	async with connect(cfg.get('db.file')) as db:
@@ -73,6 +74,7 @@ async def db_insert_sensor_entry(entry):
 			entry['timestamp_date'],
 			entry['timestamp_time'])
 		)
+		await db.commit()
 
 async def start_sensor_reader():
 	print('Loading configuration ...')
@@ -94,6 +96,8 @@ async def start_sensor_reader():
 			print('OOPS, error occurred. Attempting again in 2 seconds...')
 			await db_insert_log_entry(data)
 			continue
+
+
 
 		await db_insert_sensor_entry(data)
 		await asyncio.sleep(cfg.get('sensor.interval'))

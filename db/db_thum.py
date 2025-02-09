@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from shutil import copyfile
-from aiosqlite import connect
+from aiosqlite import connect, Error
 from db.db_log import DatabaseLog
 from db.db_sensor_data import DatabaseSensorData
 from thum_config import ThumConfig
@@ -18,13 +18,15 @@ class ThumDatabase:
 
 	async def optimize_async(self) -> bool:
 		async with connect(self.dbfile) as db:
-			cursor = await db.execute('PRAGMA optimize;')
-			return cursor.rowcount > 0
+			try:
+				await db.execute('PRAGMA optimize;')
+				return True
+			except Error as e:
+				return False
 
 	async def empty_all_tables_async(self) -> tuple[int, int]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute('DELETE FROM sensor_data')
-			await db.commit();
 			cursor1 = await db.execute('DELETE FROM logs')
 			await db.commit()
 
