@@ -293,7 +293,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	border-radius: 50%;
 	width: 10px;
 	height: 10px;
-	animation: spin 0.8s linear infinite;
+	animation: spin 0.8s alternate infinite;
 	margin: auto;
 }
 
