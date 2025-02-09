@@ -7,7 +7,8 @@ A lightweight web application that collects real-time temperature and humidity d
 ```sh
 git clone https://github.com/JokkeeZ/thum.git
 cd thum
-python sensor_reader.py & python app.py &
+pip install -r requirements.txt
+python app.py
 ```
 
 # Dependencies
