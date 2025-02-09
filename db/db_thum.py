@@ -4,17 +4,13 @@ from shutil import copyfile
 from aiosqlite import connect, Error
 from db.db_log import DatabaseLog
 from db.db_sensor_data import DatabaseSensorData
-from thum_config import ThumConfig
+from thum_config import CONFIG
 
 class ThumDatabase:
-	def __init__(self, config: ThumConfig):
-		self.dbfile = config.get('db.file')
-		self.log = DatabaseLog(self.dbfile)
-		self.sensor = DatabaseSensorData(
-			self.dbfile,
-			config.get('db.dateformat'),
-			config.get('db.timeformat')
-		)
+	def __init__(self):
+		self.dbfile = CONFIG['db.file']
+		self.log = DatabaseLog()
+		self.sensor = DatabaseSensorData()
 
 	async def optimize_async(self) -> bool:
 		async with connect(self.dbfile) as db:

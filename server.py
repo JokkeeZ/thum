@@ -1,14 +1,11 @@
 from asyncio import sleep
 from quart import Quart, render_template, jsonify, send_file
 from db.db_thum import ThumDatabase
+from thum_config import CONFIG
 import sensor_reader
-from thum_config import ThumConfig
 
 app = Quart(__name__)
-cfg:ThumConfig = ThumConfig('config.json')
-cfg.load()
-
-db:ThumDatabase = ThumDatabase(cfg)
+db = ThumDatabase()
 
 @app.route('/sensor')
 async def get_sensor_all_data():
@@ -110,4 +107,4 @@ async def download_backup():
 		attachment_filename=file_path.split('/')[1])
 
 async def start_server():
-	await app.run_task(host=cfg.get('app.host'), port=cfg.get('app.port'), debug=cfg.get('app.debug'))
+	await app.run_task(host=CONFIG['app.host'], port=CONFIG['app.port'], debug=CONFIG['app.debug'])

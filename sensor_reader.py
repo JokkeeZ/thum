@@ -3,11 +3,14 @@ import board
 
 from aiosqlite import connect
 from datetime import datetime
-from adafruit_dht import DHT11
-from thum_config import ThumConfig
+from adafruit_dht import DHT11, DHTBase
+from thum_config import CONFIG
 
-dht = DHT11(board.D4, use_pulseio=False)
-cfg:ThumConfig = ThumConfig('config.json')
+dht:DHTBase = CONFIG['sensor.type'](CONFIG['sensor.pin'], use_pulseio=False)
+
+def init_dht(version: str) -> DHTBase:
+	if version == '11':
+		return DHT11()
 
 def poll_sensor_data():
 	try:
@@ -35,10 +38,10 @@ def poll_sensor_data():
 
 def get_timestamp():
 	dt = datetime.now()
-	return (dt.strftime(cfg.get('db.dateformat')), dt.strftime(cfg.get('db.timeformat')))
+	return (dt.strftime(CONFIG['db.dateformat']), dt.strftime(CONFIG['db.timeformat']))
 
 async def db_initialize():
-	async with connect(cfg.get('db.file')) as db:
+	async with connect(CONFIG['db.file']) as db:
 		await db.execute("""
 			CREATE TABLE IF NOT EXISTS logs (
 				message	TEXT NOT NULL,
@@ -59,12 +62,12 @@ async def db_initialize():
 		await db.commit()
 
 async def db_insert_log_entry(entry):
-	async with connect(cfg.get('db.file')) as db:
+	async with connect(CONFIG['db.file']) as db:
 		await db.execute(f'INSERT INTO logs VALUES (?, ?);', (entry['err'], entry['timestamp']))
 		await db.commit()
 
 async def db_insert_sensor_entry(entry):
-	async with connect(cfg.get('db.file')) as db:
+	async with connect(CONFIG['db.file']) as db:
 		await db.execute("""
 			INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time) VALUES (?, ?, ?, ?);
 		""",
@@ -77,12 +80,10 @@ async def db_insert_sensor_entry(entry):
 		await db.commit()
 
 async def start_sensor_reader():
-	print('Loading configuration ...')
-	cfg.load()
 	print('Initializing the database ...')
 	await db_initialize()
 
-	print(f'Reading sensor data every {cfg.get("sensor.interval")} seconds ...')
+	print(f'Reading sensor data every {CONFIG["sensor.interval"]} seconds ...')
 	while True:
 		data = poll_sensor_data()
 
@@ -97,7 +98,5 @@ async def start_sensor_reader():
 			await db_insert_log_entry(data)
 			continue
 
-
-
 		await db_insert_sensor_entry(data)
-		await asyncio.sleep(cfg.get('sensor.interval'))
+		await asyncio.sleep(CONFIG['sensor.interval'])

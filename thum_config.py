@@ -1,17 +1,29 @@
-import json
-from pathlib import Path
+import board
+import adafruit_dht
 
-class ThumConfig(dict):
-	def __init__(self, file_path):
-		self.file_path = file_path
-		self.obj = {}
+#
+# Thum settings
+#
+CONFIG:dict = {
 
-	def get(self, key):
-		return self.obj[key]
+	#
+	# Database specific settings
+  #
+	'db.file': 					'sensordata.db',
+	'db.dateformat': 		'%Y-%m-%d',
+	'db.timeformat': 		'%H:%M:%S',
 
-	def load(self):
-		if not Path(self.file_path).is_file():
-			exit(f'Thum configuration file {self.file_path} do not exist.')
+	#
+  # Sensor specific settings
+  #
+	'sensor.interval': 	600,
+	'sensor.pin': 			board.D4,
+	'sensor.type':			adafruit_dht.DHT11, # DHT22, DHT21
 
-		with open(self.file_path, 'r+') as f:
-			self.obj = json.load(f)
+	#
+  # App specific settings
+  #
+	'app.host': 				'0.0.0.0',
+	'app.port': 				5000,
+	'app.debug': 				True
+}

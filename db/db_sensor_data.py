@@ -1,12 +1,13 @@
 import calendar
 from datetime import datetime, timedelta
 from aiosqlite import Row, connect
+from thum_config import CONFIG
 
 class DatabaseSensorData:
-	def __init__(self, db_file: str, date_format: str, time_format: str):
-		self.dbfile:str = db_file
-		self.dateformat:str = date_format
-		self.timeformat:str = time_format
+	def __init__(self):
+		self.dbfile:str = CONFIG['db.file']
+		self.dateformat:str = CONFIG['db.dateformat']
+		self.timeformat:str = CONFIG['db.timeformat']
 
 	async def get_all_async(self) -> dict[any, dict[str, any]]:
 		async with connect(self.dbfile) as db:
