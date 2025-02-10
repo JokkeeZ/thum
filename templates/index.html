@@ -12,7 +12,7 @@
 </head>
 
 <body>
-	<main>
+	<header>
 		<nav id="navigation">
 			<a href="#" class="nav-hamburger" onclick="toggleMenu()">
 				<div class="bar"></div>
@@ -33,7 +33,9 @@
 				<div class="loader"></div>
 			</a>
 		</nav>
-	
+	</header>
+
+	<main>
 		{% block content %}
 		<script>
 			document.addEventListener('DOMContentLoaded', function() {
