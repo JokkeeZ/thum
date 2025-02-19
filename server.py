@@ -83,16 +83,17 @@ async def logs():
 
 @app.route('/sensor/temperature/current')
 async def get_sensor_data_current():
-	while True:
-		try:
-			temp = sensor_reader.dht.temperature
-			hum = sensor_reader.dht.humidity
+	try:
+		temp = sensor_reader.dht.temperature
+		hum = sensor_reader.dht.humidity
 
-			if temp is not None and hum is not None:
-				return jsonify({'temperature': temp, 'humidity': hum})
+		if temp is not None and hum is not None:
+			return jsonify({'success': True, 'temperature': temp, 'humidity': hum})
 
-		except (RuntimeError, Exception):
-			await sleep(5.0)
+		return jsonify({'success': False})
+
+	except (RuntimeError, Exception):
+		return jsonify({'success': False})
 
 @app.route('/sensor/database/backup/download')
 async def download_backup():

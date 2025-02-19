@@ -243,6 +243,10 @@ function getCurrentTemperature() {
 	fetch('/sensor/temperature/current')
 	.then(r => r.json())
 	.then(result => {
+		if (!result.success) {
+			return;
+		}
+
 		const currTemp = document.getElementById('current-temperature');
 		currTemp.innerText = `${result.temperature}°C`;
 		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
