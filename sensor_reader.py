@@ -1,16 +1,10 @@
 import asyncio
-import board
-
 from aiosqlite import connect
 from datetime import datetime
-from adafruit_dht import DHT11, DHTBase
+from adafruit_dht import DHTBase
 from thum_config import CONFIG
 
 dht:DHTBase = CONFIG['sensor.type'](CONFIG['sensor.pin'], use_pulseio=False)
-
-def init_dht(version: str) -> DHTBase:
-	if version == '11':
-		return DHT11()
 
 def poll_sensor_data():
 	try:
