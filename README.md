@@ -4,11 +4,21 @@ A lightweight web application that collects real-time temperature and humidity d
 ![monthly](https://github.com/user-attachments/assets/1c922bf8-6a29-41ae-b6ba-7da8f6098bf4)
 
 ### Usage
+Clone the repository and install requirements:
 ```sh
 git clone https://github.com/JokkeeZ/thum.git
 cd thum
 pip install -r requirements.txt
-python app.py
+```
+
+Configuration is located at:
+```sh
+./thum_config.py
+```
+
+Run the app:
+```
+python3 app.py
 ```
 
 # Dependencies
