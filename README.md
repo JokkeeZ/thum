@@ -3,6 +3,9 @@ A lightweight web application that collects real-time temperature and humidity d
 
 ![monthly](https://github.com/user-attachments/assets/1c922bf8-6a29-41ae-b6ba-7da8f6098bf4)
 
+> [!NOTE]
+> Tested with DHT11 and Raspberry Pi 4B
+
 ### Usage
 Clone the repository and install requirements:
 ```sh
@@ -17,7 +20,7 @@ Configuration is located at:
 ```
 
 Run the app:
-```
+```sh
 python3 app.py
 ```
 
