@@ -6,25 +6,34 @@ import adafruit_dht
 #
 CONFIG:dict = {
 
-	#
-	# Database specific settings
-  #
+  # Name and/or path for the database file
 	'db.file': 					'sensordata.db',
+
+  # Specifies in what format will data be saved and displayed
 	'db.dateformat': 		'%Y-%m-%d',
+
+  # Specifies in what format will data be saved and displayed
 	'db.timeformat': 		'%H:%M:%S',
 
-	#
-  # Sensor specific settings
-  #
+  # How often should sensor_reader read values from the sensor
+  #	Value is in milliseconds
 	'sensor.interval': 	600,
+
+  # Specifies the pin which sensor is connected to
 	'sensor.pin': 			board.D4,
+
+  # What DHT sensor is used
 	'sensor.type':			adafruit_dht.DHT11, # DHT22, DHT21
 
-	#
-  # App specific settings
-  #
+	# App hosting ip address
 	'app.host': 				'0.0.0.0',
+
+	# App hosting port
 	'app.port': 				5000,
+
+  # Specifies if Quart is started with debug mode
 	'app.debug': 				True,
+
+  # Determines which locale to use from ./static/js/i18n/*.js
   'app.locale':				'en'
 }
