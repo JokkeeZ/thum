@@ -52,6 +52,10 @@ async def thum_empty_db():
 	(sensor_rows_deleted, log_rows_deleted) = await db.empty_all_tables_async()
 	return jsonify({'sensor_count': sensor_rows_deleted, 'logs_count': log_rows_deleted})
 
+@app.template_global()
+def locale():
+	return CONFIG['app.locale']
+
 @app.route('/')
 async def index():
 	return await render_template('index.html')
@@ -71,10 +75,18 @@ async def monthly():
 	(min_month, max_month) = await db.sensor.get_month_range_async()
 	return await render_template('monthly.html', Min=min_month, Max=max_month)
 
+@app.route('/sensor/statistics')
+async def get_sensor_statistics():
+	(data, coldest, warmest) = await db.sensor.get_summary_async()
+	return jsonify({
+		'data': data,
+		'coldest': coldest,
+		'warmest': warmest
+	})
+
 @app.route('/tools')
 async def tools():
-	(data, coldest, warmest) = await db.sensor.get_summary_async()
-	return await render_template('tools.html', Data = data, ColdestData = coldest, HottestData = warmest)
+	return await render_template('tools.html')
 
 @app.route('/logs')
 async def logs():

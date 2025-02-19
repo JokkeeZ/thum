@@ -4,14 +4,16 @@
 <div class="container">
 	<div id="popup-container"></div>
 	<div class="log-actions">
-		<button class="btn error" onclick="deleteAllLogs(true)">Delete all</button>
+		<button class="btn error" 
+			onclick="deleteAllLogs(true)" 
+			data-i18n="delete_all"/>
 	</div>
 	<table>
 		<thead>
 			<tr>
-				<th>Error</th>
-				<th>Timestamp</th>
-				<th>Delete</th>
+				<th data-i18n="error"></th>
+				<th data-i18n="timestamp"></th>
+				<th data-i18n="delete"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -20,13 +22,17 @@
 				<tr id="log_{{log[1]}}" class="log_entry">
 					<td>{{log[0]}}</td>
 					<td>{{log[1]}}</td>
-					<td><button class="btn error" onclick="deleteLogByTimestamp('{{log[1]}}')">Delete</button></td>
+					<td>
+						<button class="btn error" 
+							onclick="deleteLogByTimestamp('{{log[1]}}')" 
+							data-i18n="delete"/>
+					</td>
 				</tr>
 				{%endfor%}
 			{%else%}
 				<tr>
 					<td>—</td>
-					<td>No logs :)</td>
+					<td data-i18n="logs_empty"></td>
 					<td>—</td>
 				</tr>
 			{%endif%}

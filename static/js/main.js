@@ -10,6 +10,21 @@ const spinner = document.getElementById('spinner');
 const canvas = document.getElementById('chart');
 
 /**
+ * Get locale value with key. 
+ * Optionally replaces placeholders from the string with given values.
+ * 
+ * @param {String} key Locale key
+ * @param {...*} values Values to be replaced from the locale value.
+ * 
+ * @returns {String} 
+ */
+function getLocaleValue(key, ...values) {
+	return locales[current_locale][key].replace(/{(\d+)}/g, (match, index) => {
+		return values[index] || match;
+	});
+}
+
+/**
  * Initialize chart.js.
  */
 function initializeChart() {
@@ -18,10 +33,8 @@ function initializeChart() {
 	ctx = canvas.getContext('2d');
 
 	const callback = function (toolTipItems) {
-		const dewPoint = toolTipItems[1].parsed.y -
-			((100 - toolTipItems[0].parsed.y) / 5)
-
-		return `Dew point: ${dewPoint.toFixed(2)}°C`;
+		const dewPoint = toolTipItems[1].parsed.y - ((100 - toolTipItems[0].parsed.y) / 5);
+		return getLocaleValue('dew_point', dewPoint.toFixed(2));
 	}
 
 	const options = {
@@ -63,13 +76,13 @@ function updateChartData(labels, humidities, temperatures) {
 		labels: labels,
 		datasets: [
 			{ 
-				label: 'Humidity',
+				label: getLocaleValue('humidity'),
 				data: humidities,
 				pointHoverRadius: chartPointHoverRadius,
 				tension: chartLineTension
 			},
 			{ 
-				label: 'Temperature', 
+				label: getLocaleValue('temperature'),
 				data: temperatures,
 				pointHoverRadius: chartPointHoverRadius,
 				tension: chartLineTension
@@ -92,7 +105,7 @@ function deleteLogByTimestamp(timestamp) {
 	.then(r => r.json())
 	.then(result => {
 		if (result.count <= 0) {
-			showNotification(`Failed to remove a log entry with timestamp: "${timestamp}".`, false);
+			showNotification(getLocaleValue('log_entry_removal_failed', timestamp), false);
 			return;
 		}
 
@@ -112,11 +125,11 @@ function deleteAllLogs(logPage) {
 	.then(r => r.json())
 	.then(result => {
 		if (result.count <= 0) {
-			showNotification('There was no logs to clear.', false);
+			showNotification(getLocaleValue('log_clear_fail'), false);
 			return;
 		}
 
-		showNotification(`Successfully cleared ${result.count} log entires.`, true);
+		showNotification(getLocaleValue('log_clear_success', result.count), true);
 
 		if (logPage) {
 			document.querySelectorAll('.log_entry').forEach(e => e.remove());
@@ -202,11 +215,8 @@ function backupDatabase() {
 	fetch('/sensor/database/backup')
 	.then(r => r.json())
 	.then(result => {
-		if (result.success) {
-			showNotification(`Successfully created a backup of the database. (${result.path})`, true);
-		} else {
-			showNotification(`Database backup creation failed. (${result.path})`, false);
-		}
+		const messageKey = result.success ? 'db_backup_success' : 'db_backup_fail';
+		showNotification(getLocaleValue(messageKey, result.path), result.success);
 	});
 }
 
@@ -217,7 +227,8 @@ function optimizeDatabase() {
 	fetch('/sensor/database/optimize')
 	.then(r => r.json())
 	.then(result => {
-		showNotification(`Database optimization ${result.success ? 'completed successfully' : 'failed'}`, result.success);
+		const messageKey = result.success ? 'db_optimize_success' : 'db_optimize_fail';
+		showNotification(getLocaleValue(messageKey), result.success);
 	});
 }
 
@@ -225,14 +236,14 @@ function optimizeDatabase() {
  * Deletes all rows from the database. 
  */
 function emptyDatabase() {
-	if (!confirm('Are you completely sure you want to erase all of the data from the database?')) {
+	if (!confirm(getLocaleValue('db_empty_confirm'))) {
 		return;
 	}
 
 	fetch('/sensor/database/empty')
 	.then(r => r.json())
 	.then(result => {
-		showNotification(`Successfully emptied the database.\n(${result.sensor_count} sensor entries, ${result.logs_count} log entries)`, true);
+		showNotification(getLocaleValue('db_empty_success', result.sensor_count, result.logs_count), true);
 	});
 }
 
@@ -249,7 +260,43 @@ function getCurrentTemperature() {
 
 		const currTemp = document.getElementById('current-temperature');
 		currTemp.innerText = `${result.temperature}°C`;
-		currTemp.title = `Temperature: ${result.temperature}°C\nHumidity: ${result.humidity}%`;
+		currTemp.title = getLocaleValue('nav_temp_hum_tooltip', result.temperature, result.humidity);
+	});
+}
+
+/**
+ * Get sensor statistics from the database.
+ */
+function getSensorStatistics() {
+	fetch('/sensor/statistics')
+	.then(r => r.json())
+	.then(result => {
+		const statCount = document.getElementById('stat-count');
+		statCount.innerText = getLocaleValue('tools_samples_count', result.data[0]);
+
+		const statFirst = document.getElementById('stat-first');
+		statFirst.innerText = getLocaleValue('tools_first_sample', result.data[1]);
+
+		const statLast = document.getElementById('stat-last');
+		statLast.innerText = getLocaleValue('tools_last_sample', result.data[2]);
+
+		const statAvgTemp = document.getElementById('stat-avg-temp');
+		statAvgTemp.innerText = getLocaleValue('tools_avg_temperature', result.data[3].toFixed(2));
+
+		const statAvgHum = document.getElementById('stat-avg-hum');
+		statAvgHum.innerText = getLocaleValue('tools_avg_humidity', result.data[4].toFixed(2));
+
+		const statWarmestDay = document.getElementById('stat-warmest-day');
+		statWarmestDay.innerText = getLocaleValue('tools_warmest_day', 
+			result.warmest[0],
+			result.warmest[1],
+			result.warmest[2]);
+
+		const statColdestDay = document.getElementById('stat-coldest-day');
+		statColdestDay.innerText = getLocaleValue('tools_coldest_day', 
+			result.warmest[0],
+			result.warmest[1],
+			result.warmest[2]);
 	});
 }
 
@@ -257,7 +304,7 @@ function getCurrentTemperature() {
  * Sends a notification that download has started.
  */
 function downloadDatabaseBackup() {
-	showNotification('Database backup download started..', true);
+	showNotification(getLocaleValue('db_backup_started'), true);
 }
 
 /**

@@ -25,5 +25,6 @@ CONFIG:dict = {
   #
 	'app.host': 				'0.0.0.0',
 	'app.port': 				5000,
-	'app.debug': 				True
+	'app.debug': 				True,
+  'app.locale':				'en'
 }
