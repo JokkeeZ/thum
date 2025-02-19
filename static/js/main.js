@@ -294,9 +294,9 @@ function getSensorStatistics() {
 
 		const statColdestDay = document.getElementById('stat-coldest-day');
 		statColdestDay.innerText = getLocaleValue('tools_coldest_day', 
-			result.warmest[0],
-			result.warmest[1],
-			result.warmest[2]);
+			result.coldest[0],
+			result.coldest[1],
+			result.coldest[2]);
 	});
 }
 
