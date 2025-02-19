@@ -14,7 +14,7 @@ python app.py
 # Dependencies
 - [Quart](https://github.com/pallets/quart)
 - [aiosqlite](https://github.com/omnilib/aiosqlite)
-- [adafruit_dht](https://github.com/adafruit/DHT-sensor-library)
+- [Adafruit_CircuitPython_DHT](https://github.com/adafruit/Adafruit_CircuitPython_DHT)
 
 # License
 thum is licensed under the [MIT License](https://github.com/JokkeeZ/thum/blob/main/LICENSE)
