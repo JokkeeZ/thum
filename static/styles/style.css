@@ -71,11 +71,11 @@ nav a:hover {
 	color: var(--text);
 }
 
-nav>a.active {
+nav > a.active {
 	background-color: var(--active-highlight);
 }
 
-nav>a.active:hover {
+nav > a.active:hover {
 	background-color: var(--active-highlight);
 	color: var(--text);
 }
@@ -236,16 +236,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	color: var(--text);
 }
 
-.box>input[type="text"],
-.box>input[type="number"],
-.box>.btn {
+.box > input[type="text"],
+.box > input[type="number"],
+.box > .btn {
 	width: 90%;
 	box-sizing: border-box;
 	margin-bottom: 5px;
 	padding: 5px 10px;
 }
 
-.box>.btn.btn-long {
+.box > .btn.btn-long {
 	width: calc(100% - 100px);
 }
 
@@ -416,19 +416,19 @@ footer {
 
 	.box {
 		width: calc(100% - 10px);
-		margin: 5px 0;
+		margin: 5px;
 	}
 
-	.box>input[type="text"],
-	.box>input[type="number"],
-	.box>.btn {
+	.box > input[type="text"],
+	.box > input[type="number"],
+	.box > .btn {
 		width: 90%;
 		box-sizing: border-box;
 		margin-bottom: 5px;
 		padding: 5px 10px;
 	}
 
-	.box>.btn.btn-long {
+	.box > .btn.btn-long {
 		width: calc(100% - 40px);
 	}
 }
