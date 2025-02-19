@@ -135,7 +135,7 @@ function getAllDataFromSensor() {
 		const temps = labels.map(label => result[label].temperature);
 		const hums = labels.map(label => result[label].humidity);
 
-		updateChartData(labels, temps, hums);
+		updateChartData(labels, hums, temps);
 		spinner.remove();
 	});
 }
