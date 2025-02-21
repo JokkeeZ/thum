@@ -1,7 +1,6 @@
 import asyncio
-import signal
 
-from sensor_reader import start_sensor_reader
+from db.sensor_reader import start_sensor_reader
 from server import start_server
 
 async def main():
