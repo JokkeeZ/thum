@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import sleep
 from aiosqlite import connect
 from datetime import datetime
 from adafruit_dht import DHTBase
@@ -93,4 +93,4 @@ async def start_sensor_reader():
 			continue
 
 		await db_insert_sensor_entry(data)
-		await asyncio.sleep(CONFIG['sensor.interval'])
+		await sleep(CONFIG['sensor.interval'])

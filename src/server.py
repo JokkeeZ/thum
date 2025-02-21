@@ -1,8 +1,7 @@
-from asyncio import sleep
 from quart import Quart, render_template, jsonify, send_file
 from db.db_thum import ThumDatabase
 from thum_config import CONFIG
-import sensor_reader
+import db.sensor_reader as sensor_reader
 
 app = Quart(__name__)
 db = ThumDatabase()
