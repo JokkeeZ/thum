@@ -1,4 +1,6 @@
+/** @type {CanvasRenderingContext2D} */
 let ctx;
+/** @type {Chart} */
 let chart;
 
 const chartPointHoverRadius = 8;
@@ -7,6 +9,10 @@ const chartFontSize = 14;
 const chartColor = '#8D8D8D';
 
 const spinner = document.getElementById('spinner');
+
+/**
+ * @type {HTMLCanvasElement}
+ */
 const canvas = document.getElementById('chart');
 
 /**
@@ -332,26 +338,26 @@ function toggleMenu() {
  * @param {boolean} success true: green, false: red
  */
 function showNotification(text, success) {
-	const popupContainer = document.getElementById('popup-container');
-	const popup = document.createElement('div');
+	const notifContainer = document.getElementById('notification-container');
+	const notification = document.createElement('div');
 
-	popup.id = 'notification';
-	popup.innerText = text;
-	popup.classList.add(success ? 'success' : 'error');
+	notification.id = 'notification';
+	notification.innerText = text;
+	notification.classList.add(success ? 'success' : 'error');
 
-	popup.addEventListener('click', () => {
-		popup.classList.remove(...popup.classList);
-		setTimeout(() => popupContainer.removeChild(popup), 1000);
+	notification.addEventListener('click', () => {
+		notification.classList.remove(...notification.classList);
+		setTimeout(() => notifContainer.removeChild(notification), 1000);
 	});
 
-	popupContainer.appendChild(popup);
+	notifContainer.appendChild(notification);
 
-	setTimeout(() => popup.classList.add('show'), 100);
+	setTimeout(() => notification.classList.add('show'), 100);
 
-	if (!popupContainer.contains(popup)) return;
+	if (!notifContainer.contains(notification)) return;
 
 	setTimeout(() => {
-		popup.classList.remove(...popup.classList);
-		setTimeout(() => popupContainer.removeChild(popup), 1000);
+		notification.classList.remove(...notification.classList);
+		setTimeout(() => notifContainer.removeChild(notification), 1000);
 	}, 5000);
 }

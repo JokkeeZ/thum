@@ -7,15 +7,13 @@
 	});
 </script>
 
-<div>
-	<form>
-		<div>
-			<span data-i18n="daily_select"></span>
-			<input type="date" id="date" min="{{Min}}" max="{{Max}}" value="{{Max}}"
-				onchange="getDailyDataFromSensor()" />
-		</div>
-	</form>
-</div>
+<form>
+	<div>
+		<span data-i18n="daily_select"></span>
+		<input type="date" id="date" min="{{Min}}" max="{{Max}}" value="{{Max}}"
+			onchange="getDailyDataFromSensor()" />
+	</div>
+</form>
 
 <div class="container">
 	<div id="popup-container"></div>
