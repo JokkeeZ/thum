@@ -278,31 +278,31 @@ function getSensorStatistics() {
 	.then(r => r.json())
 	.then(result => {
 		const statCount = document.getElementById('stat-count');
-		statCount.innerText = getLocaleValue('tools_samples_count', result.data[0]);
+		statCount.innerText = getLocaleValue('tools_samples_count', result.count);
 
 		const statFirst = document.getElementById('stat-first');
-		statFirst.innerText = getLocaleValue('tools_first_sample', result.data[1]);
+		statFirst.innerText = getLocaleValue('tools_first_sample', result.first_date);
 
 		const statLast = document.getElementById('stat-last');
-		statLast.innerText = getLocaleValue('tools_last_sample', result.data[2]);
+		statLast.innerText = getLocaleValue('tools_last_sample', result.last_date);
 
 		const statAvgTemp = document.getElementById('stat-avg-temp');
-		statAvgTemp.innerText = getLocaleValue('tools_avg_temperature', result.data[3].toFixed(2));
+		statAvgTemp.innerText = getLocaleValue('tools_avg_temperature', result.avg_temperature.toFixed(2));
 
 		const statAvgHum = document.getElementById('stat-avg-hum');
-		statAvgHum.innerText = getLocaleValue('tools_avg_humidity', result.data[4].toFixed(2));
+		statAvgHum.innerText = getLocaleValue('tools_avg_humidity', result.avg_humidity.toFixed(2));
 
 		const statWarmestDay = document.getElementById('stat-warmest-day');
 		statWarmestDay.innerText = getLocaleValue('tools_warmest_day', 
-			result.warmest[0],
-			result.warmest[1],
-			result.warmest[2]);
+			result.warmest_day.date,
+			result.warmest_day.temperature,
+			result.warmest_day.humidity);
 
 		const statColdestDay = document.getElementById('stat-coldest-day');
 		statColdestDay.innerText = getLocaleValue('tools_coldest_day', 
-			result.coldest[0],
-			result.coldest[1],
-			result.coldest[2]);
+			result.coldest_day.date,
+			result.coldest_day.temperature,
+			result.coldest_day.humidity);
 	});
 }
 

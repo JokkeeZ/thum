@@ -76,12 +76,8 @@ async def monthly():
 
 @app.route('/sensor/statistics')
 async def get_sensor_statistics():
-	(data, coldest, warmest) = await db.sensor.get_summary_async()
-	return jsonify({
-		'data': data,
-		'coldest': coldest,
-		'warmest': warmest
-	})
+	stats = await db.sensor.get_statistics_async()
+	return jsonify(stats)
 
 @app.route('/tools')
 async def tools():

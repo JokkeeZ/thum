@@ -82,9 +82,9 @@ class DatabaseSensorData:
 			WHERE timestamp_date = ?;
 			""", [date])
 
-			result = await cursor.fetchall()
+			rows = await cursor.fetchall()
 
-		return [{'temperature': x[0], 'humidity': x[1], 'timestamp': x[2]} for x in result]
+		return [{'temperature': row[0], 'humidity': row[1], 'timestamp': row[2]} for row in rows]
 
 	async def get_date_range_async(self) -> tuple[str, str]:
 		async with connect(self.dbfile) as db:
@@ -116,15 +116,57 @@ class DatabaseSensorData:
 		max_month = (now.strftime('%Y-%m') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-%m'))
 		return (min_month, max_month)
 
-	async def get_summary_async(self) -> tuple[Row, Row, Row]:
+	async def get_statistics_async(self) -> tuple[Row, Row, Row]:
 		async with connect(self.dbfile) as db:
-			cursor = await db.execute('SELECT COUNT(*), MIN(timestamp_date), MAX(timestamp_date), AVG(temperature), AVG(humidity) FROM sensor_data')
+			cursor = await db.execute("""
+			SELECT
+				COUNT(*),
+				MIN(timestamp_date),
+				MAX(timestamp_date),
+				AVG(temperature),
+				AVG(humidity),
+				(SELECT timestamp_date
+				FROM sensor_data
+				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1),
+				(SELECT temperature
+				FROM sensor_data
+				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1),
+				(SELECT humidity
+				FROM sensor_data
+				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1),
+				(SELECT timestamp_date
+				FROM sensor_data
+				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1),
+				(SELECT temperature
+				FROM sensor_data
+				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1),
+				(SELECT humidity
+				FROM sensor_data
+				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
+				ORDER BY timestamp_date LIMIT 1)
+			FROM sensor_data;
+			""")
+
 			data = await cursor.fetchone()
-
-			cursor = await db.execute('SELECT timestamp_date, MIN(temperature), MIN(humidity) FROM sensor_data')
-			coldest = await cursor.fetchone()
-
-			cursor = await db.execute('SELECT timestamp_date, MAX(temperature), MAX(humidity) FROM sensor_data')
-			warmest = await cursor.fetchone()
-
-		return (data, coldest, warmest)
+			return {
+				"count": data[0],
+				"first_date": data[1],
+				"last_date": data[2],
+				"avg_temperature": data[3],
+				"avg_humidity": data[4],
+				"coldest_day": {
+					"date": data[5],
+					"temperature": data[6],
+					"humidity": data[7]
+				},
+				"warmest_day": {
+					"date": data[8],
+					"temperature": data[9],
+					"humidity": data[10]
+				}
+			}
