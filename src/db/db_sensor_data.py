@@ -50,28 +50,24 @@ class DatabaseSensorData:
 		}
 
 	async def get_week_async(self, week: str) -> dict[str, any]:
-		temps = []
-		hums = []
+		first = datetime.strptime(f'{week}-1', '%Y-W%W-%w')
+		dates = [(first + timedelta(days=i)).strftime(CONFIG['db.dateformat']) for i in range(7)]
 
 		async with connect(self.dbfile) as db:
-			first = datetime.strptime(f'{week}-1', '%Y-W%W-%w')
+			cursor = await db.execute(f"""
+			SELECT timestamp_date, AVG(temperature), AVG(humidity)
+			FROM sensor_data
+			WHERE timestamp_date BETWEEN ? AND ?
+			GROUP BY timestamp_date
+			ORDER BY timestamp_date;
+			""", (dates[0], dates[-1]))
 
-			for date in [first + timedelta(days=i) for i in range(0, 7)]:
-				cursor = await db.execute("""
-					SELECT AVG(temperature), AVG(humidity)
-					FROM sensor_data
-					WHERE timestamp_date = ?;
-				""", [date.strftime('%Y-%m-%d')])
-
-				(temp, hum) = await cursor.fetchone()
-
-				temps.append(temp)
-				hums.append(hum)
+			results = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
 
 		return {
-			'labels': [n for n in calendar.day_name],
-			'temperatures': temps,
-			'humidities': hums
+			'labels': list(calendar.day_name),
+			'temperatures': [results.get(date)[0] for date in dates],
+			'humidities': [results.get(date)[1] for date in dates]
 		}
 
 	async def get_date_async(self, date: str) -> list[dict[str, any]]:
