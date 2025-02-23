@@ -116,6 +116,19 @@ class DatabaseSensorData:
 		max_month = (now.strftime('%Y-%m') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-%m'))
 		return (min_month, max_month)
 
+	async def insert_sensor_entry_async(self, entry):
+		async with connect(self.dbfile) as db:
+			await db.execute("""
+			INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time) VALUES (?, ?, ?, ?);
+			""", (
+				entry['temperature'],
+				entry['humidity'],
+				entry['timestamp_date'],
+				entry['timestamp_time'])
+			)
+
+			await db.commit()
+
 	async def get_statistics_async(self) -> tuple[Row, Row, Row]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""

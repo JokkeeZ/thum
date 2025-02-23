@@ -2,9 +2,11 @@ from asyncio import sleep
 from aiosqlite import connect
 from datetime import datetime
 from adafruit_dht import DHTBase
+from db.db_thum import ThumDatabase
 from thum_config import CONFIG
 
 dht:DHTBase = CONFIG['sensor.type'](CONFIG['sensor.pin'], use_pulseio=False)
+db = ThumDatabase()
 
 def poll_sensor_data():
 	try:
@@ -34,48 +36,9 @@ def get_timestamp():
 	dt = datetime.now()
 	return (dt.strftime(CONFIG['db.dateformat']), dt.strftime(CONFIG['db.timeformat']))
 
-async def db_initialize():
-	async with connect(CONFIG['db.file']) as db:
-		await db.execute("""
-			CREATE TABLE IF NOT EXISTS logs (
-				message	TEXT NOT NULL,
-				timestamp	TEXT NOT NULL
-			);
-			""")
-
-		await db.execute("""
-			CREATE TABLE IF NOT EXISTS sensor_data (
-				temperature	NUMERIC NOT NULL,
-				humidity	NUMERIC NOT NULL,
-				timestamp_date	date NOT NULL,
-				timestamp_time	time NOT NULL
-			);
-		""")
-
-		await db.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
-		await db.commit()
-
-async def db_insert_log_entry(entry):
-	async with connect(CONFIG['db.file']) as db:
-		await db.execute(f'INSERT INTO logs VALUES (?, ?);', (entry['err'], entry['timestamp']))
-		await db.commit()
-
-async def db_insert_sensor_entry(entry):
-	async with connect(CONFIG['db.file']) as db:
-		await db.execute("""
-			INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time) VALUES (?, ?, ?, ?);
-		""",
-		(
-			entry['temperature'],
-			entry['humidity'],
-			entry['timestamp_date'],
-			entry['timestamp_time'])
-		)
-		await db.commit()
-
 async def start_sensor_reader():
 	print('Initializing the database ...')
-	await db_initialize()
+	await db.db_initialize()
 
 	print(f'Reading sensor data every {CONFIG["sensor.interval"]} seconds ...')
 	while True:
@@ -89,8 +52,8 @@ async def start_sensor_reader():
 		# both of those readings to be inserted in to the database.
 		if not data['success']:
 			print('OOPS, error occurred. Attempting again in 2 seconds...')
-			await db_insert_log_entry(data)
+			await db.log.insert_log_entry_async(data)
 			continue
 
-		await db_insert_sensor_entry(data)
+		await db.sensor.insert_sensor_entry_async(data)
 		await sleep(CONFIG['sensor.interval'])

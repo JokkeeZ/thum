@@ -25,3 +25,8 @@ class DatabaseLog:
 			await db.commit()
 
 			return cursor.rowcount
+
+	async def insert_log_entry_async(self, entry):
+		async with connect(self.dbfile) as db:
+			await db.execute(f'INSERT INTO logs VALUES (?, ?);', (entry['err'], entry['timestamp']))
+			await db.commit()

@@ -35,3 +35,23 @@ class ThumDatabase:
 		dest = copyfile(self.dbfile, f'backup/{ts}.db')
 		return dest if Path(dest).is_file else None
 
+	async def db_initialize(self):
+		async with connect(self.dbfile) as db:
+			await db.execute("""
+			CREATE TABLE IF NOT EXISTS logs (
+				message	TEXT NOT NULL,
+				timestamp	TEXT NOT NULL
+			);
+			""")
+
+			await db.execute("""
+			CREATE TABLE IF NOT EXISTS sensor_data (
+				temperature	NUMERIC NOT NULL,
+				humidity	NUMERIC NOT NULL,
+				timestamp_date	date NOT NULL,
+				timestamp_time	time NOT NULL
+			);
+			""")
+
+			await db.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
+			await db.commit()
