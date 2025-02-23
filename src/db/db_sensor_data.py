@@ -44,7 +44,7 @@ class DatabaseSensorData:
 			hums.append(row[2])
 
 		return {
-			'labels': [f'{str(x).zfill(2)}.{month}.{year}' for x in range(1, days + 1)],
+			'labels': [datetime(int(year), int(month), day).strftime(CONFIG['db.dateformat']) for day in range(1, days + 1)],
 			'temperatures': temps,
 			'humidities': hums
 		}
