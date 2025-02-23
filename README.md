@@ -7,16 +7,22 @@ A lightweight web application that collects real-time temperature and humidity d
 > Tested with DHT11 and Raspberry Pi 4B
 
 ### Usage
-Clone the repository, create venv, install requirements and run:
+Clone the repository:
 ```sh
 git clone https://github.com/JokkeeZ/thum.git
 cd thum
-chmod +x start.sh && ./start.sh
 ```
 
-Configuration is located at:
+Create venv and install requirements:
 ```sh
-./src/thum_config.py
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r ./requirements.txt
+```
+
+Run the app:
+```sh
+python3 src/app.py
 ```
 
 # Dependencies
