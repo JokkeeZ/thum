@@ -66,8 +66,8 @@ class DatabaseSensorData:
 
 		return {
 			'labels': list(calendar.day_name),
-			'temperatures': [results.get(date)[0] for date in dates],
-			'humidities': [results.get(date)[1] for date in dates]
+			'temperatures': [results.get(date, (None, None))[0] for date in dates],
+			'humidities': [results.get(date, (None, None))[1] for date in dates]
 		}
 
 	async def get_date_async(self, date: str) -> list[dict[str, any]]:
