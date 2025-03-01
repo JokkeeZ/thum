@@ -1,77 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Thum</title>
 
-	<title>Thum</title>
+		<link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}">
+		<link rel="stylesheet" href="{{url_for('static', filename='styles/style_new.css')}}">
+	</head>
 
-	<link rel="stylesheet" href="{{url_for('static', filename='styles/style.css')}}">
+	<body>
+		<header>
+			<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+				<div class="container-fluid">
+					<a class="navbar-brand" href="{{ url_for('index') }}">Thum</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav" aria-controls="topnav" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="topnav">
+						{% set active_page = request.endpoint %}
+						<ul class="navbar-nav me-auto">
+							<li class="nav-item">
+								<a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_all"></a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ url_for('daily') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_daily"></a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ url_for('weekly') }}" class="nav-link {% if active_page == 'weekly' %}active{% endif %}" data-i18n="nav_weekly"></a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ url_for('monthly') }}" class="nav-link {% if active_page == 'monthly' %}active{% endif %}" data-i18n="nav_monthly"></a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ url_for('tools') }}" class="nav-link {% if active_page == 'tools' %}active{% endif %}" data-i18n="nav_tools"></a>
+							</li>
+							<li class="nav-item">
+								<a href="{{ url_for('logs') }}" class="nav-link {% if active_page == 'logs' %}active{% endif %}" data-i18n="nav_logs"></a>
+							</li>
+						</ul>
+						<span class="navbar-text" id="current-temperature">
+							<div class="loader"></div>
+						</span>
+					</div>
+				</div>
+			</nav>
+		</header>
 
-	<script>
-		const locales = {};
-		const current_locale = '{{locale()}}';
-	</script>
-	<script src="{{url_for('static', filename='js/i18n/' + locale() + '.js')}}"></script>
-	<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
+		<main>
+			{% block content %}
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					getAllDataFromSensor();
+				});
+			</script>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			document.querySelectorAll('[data-i18n]').forEach(element => {
-				const key = element.getAttribute('data-i18n');
-				element.textContent = locales[current_locale][key];
-			});
-		});
-	</script>
-</head>
+			<div class="container mt-3">
+				<div id="notification-container"></div>
+				<div class="row justify-content-center">
+					<div class="col-md-12">
+						<div class="loader big" id="spinner"></div>
+						<div class="chart-container">
+							<canvas id="chart"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			{% endblock %}
+		</main>
 
-<body>
-	<header>
-		<nav id="navigation">
-			<a href="#" class="nav-hamburger" onclick="toggleMenu()">
-				<div class="bar"></div>
-				<div class="bar"></div>
-				<div class="bar"></div>
-			</a>
-			
-			{% set active_page = request.endpoint %}
+		<footer class="text-center text-lg-start footer">
+			<div class="text-center p-3">
+				Crafted with ♥️ and ☕ — open-source on
+				<a class="text-info" href="https://github.com/jokkeez/thum">Github</a>.
+			</div>
+		</footer>
 
-			<a href="{{ url_for('index') }}" class="nav-item {% if active_page == 'index' %}active{% endif %}" data-i18n="nav_all"></a>
-			<a href="{{ url_for('daily') }}" class="nav-item {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_daily"></a>
-			<a href="{{ url_for('weekly') }}" class="nav-item {% if active_page == 'weekly' %}active{% endif %}" data-i18n="nav_weekly"></a>
-			<a href="{{ url_for('monthly') }}" class="nav-item {% if active_page == 'monthly' %}active{% endif %}" data-i18n="nav_monthly"></a>
-			<a href="{{ url_for('tools') }}" class="nav-item {% if active_page == 'tools' %}active{% endif %}" data-i18n="nav_tools"></a>
-			<a href="{{ url_for('logs') }}" class="nav-item {% if active_page == 'logs' %}active{% endif %}" data-i18n="nav_logs"></a>
+		<template id="notification-template">
+			<div class="alert alert-dismissible" id="notification">
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				<h4 class="alert-heading" id="notification-heading"></h4>
+				<p class="mb-0" id="notification-text"></p>
+			</div>
+		</template>
 
-			<a href="#" id="current-temperature" class="nav-item right">
-				<div class="loader"></div>
-			</a>
-		</nav>
-	</header>
-
-	<main>
-		{% block content %}
 		<script>
+			const locales = {};
+			const current_locale = '{{locale()}}';
+		
 			document.addEventListener('DOMContentLoaded', function() {
-				getAllDataFromSensor();
+				document.querySelectorAll('[data-i18n]').forEach(element => {
+					const key = element.getAttribute('data-i18n');
+					element.textContent = locales[current_locale][key];
+				});
 			});
 		</script>
-	
-		<div class="container">
-			<div class="notification-container"></div>
-			<div class="loader big" id="spinner"></div>
-			<canvas id="chart"></canvas>
-		</div>
-	
-		{% endblock %}
-	</main>
-
-  <footer>
-    <p>Crafted with ♥️ and ☕ — open-source on <a class="gh-link" href="https://github.com/jokkeez/thum">Github</a>.</p>
-  </footer>
-</body>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+		
+		<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		
+		<script src="{{url_for('static', filename='js/i18n/' + locale() + '.js')}}"></script>
+		<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
+	</body>
 </html>

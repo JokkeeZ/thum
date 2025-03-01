@@ -1,42 +1,48 @@
 {%extends "index.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-3">
 	<div id="notification-container"></div>
-	<div class="log-actions">
-		<button class="btn error" 
-			onclick="deleteAllLogs(true)" 
-			data-i18n="delete_all"/>
+	<div class="row justify-content-center gap-2">
+		<div class="col-lg-12 flex-nowrap justify-content-end d-sm-flex">
+			<div class="log-actions">
+				<button class="btn btn-primary btn-sm" 
+					onclick="deleteAllLogs(true)" 
+					data-i18n="delete_all"/>
+			</div>
+		</div>
+		<div class="col-lg-12">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col" data-i18n="error"></th>
+						<th scope="col" data-i18n="timestamp"></th>
+						<th scope="col" data-i18n="delete"></th>
+					</tr>
+				</thead>
+				<tbody>
+					{%if Logs%}
+						{%for log in Logs%}
+						<tr id="log_{{log[1]}}" class="log_entry">
+							<th scope="row">{{log[0]}}</th>
+							<td>{{log[1]}}</td>
+							<td>
+								<button class="btn btn-danger btn-sm" 
+									onclick="deleteLogByTimestamp('{{log[1]}}')" 
+									data-i18n="delete"/>
+							</td>
+						</tr>
+						{%endfor%}
+					{%else%}
+						<tr>
+							<th scope="row">—</td>
+							<td>—</td>
+							<td>—</td>
+						</tr>
+					{%endif%}
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<table>
-		<thead>
-			<tr>
-				<th data-i18n="error"></th>
-				<th data-i18n="timestamp"></th>
-				<th data-i18n="delete"></th>
-			</tr>
-		</thead>
-		<tbody>
-			{%if Logs%}
-				{%for log in Logs%}
-				<tr id="log_{{log[1]}}" class="log_entry">
-					<td>{{log[0]}}</td>
-					<td>{{log[1]}}</td>
-					<td>
-						<button class="btn error" 
-							onclick="deleteLogByTimestamp('{{log[1]}}')" 
-							data-i18n="delete"/>
-					</td>
-				</tr>
-				{%endfor%}
-			{%else%}
-				<tr>
-					<td>—</td>
-					<td data-i18n="logs_empty"></td>
-					<td>—</td>
-				</tr>
-			{%endif%}
-		</tbody>
-	</table>
 </div>
 {% endblock %}
