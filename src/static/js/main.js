@@ -104,7 +104,7 @@ function updateChartData(labels, humidities, temperatures) {
  * 
  * @param {String} timestamp Format: `2024-05-18 21:39:20`
  */
-function deleteLogByTimestamp(timestamp) {
+function deleteLogByTimestamp(idx, timestamp) {
 	fetch(`/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
 	})
@@ -115,7 +115,7 @@ function deleteLogByTimestamp(timestamp) {
 			return;
 		}
 
-		document.getElementById(`log_${timestamp}`).remove();
+		document.getElementById(`log_${idx}`).remove();
 	});
 }
 
@@ -138,7 +138,7 @@ function deleteAllLogs(logPage) {
 		showNotification(getLocaleValue('log_clear_success', result.count), true);
 
 		if (logPage) {
-			document.querySelectorAll('.log_entry').forEach(e => e.remove());
+			document.querySelectorAll('.log-entry').forEach(e => e.remove());
 		}
 	});
 }
