@@ -7,6 +7,7 @@ const chartPointHoverRadius = 8;
 const chartLineTension = 0.25;
 const chartFontSize = 14;
 const chartColor = '#8D8D8D';
+const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 const spinner = document.getElementById('spinner');
 
@@ -57,11 +58,20 @@ function initializeChart() {
 	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
-if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
-	initializeChart();
+function onThemeChange(e) {
+	const html = document.querySelector('html');
+	html.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+	darkModeMediaQuery.addEventListener('change', onThemeChange);
+	onThemeChange(darkModeMediaQuery);
+
+	if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
+		initializeChart();
+	}
+
 	getCurrentTemperature();
 
 	// Update current temperature every 10sec.
