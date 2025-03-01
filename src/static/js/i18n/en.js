@@ -44,6 +44,7 @@ locales["en"] = {
 	
 	delete_all: "Delete all",
 	error: "Error",
+	success: "Success",
 	timestamp: "Timestamp",
 	delete: "Delete",
 	logs_empty: "No logs :)"

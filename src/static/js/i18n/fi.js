@@ -44,6 +44,7 @@ locales["fi"] = {
 	
 	delete_all: "Poista kaikki",
 	error: "Virhe",
+	success: "Onnistui",
 	timestamp: "Aikaleima",
 	delete: "Poista",
 	logs_empty: "Ei logeja :)"

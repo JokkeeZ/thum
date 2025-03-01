@@ -4,33 +4,64 @@
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		getSensorStatistics();
+
+		const clearLogs = document.getElementById('clear-logs');
+		clearLogs.addEventListener('click', () => deleteAllLogs(false));
+
+		const backup = document.getElementById('backup');
+		backup.addEventListener('click', () => backupDatabase());
+
+		const optimize = document.getElementById('optimize');
+		optimize.addEventListener('click', () => optimizeDatabase());
+
+		const empty = document.getElementById('empty-db');
+		empty.addEventListener('click', () => emptyDatabase());
+
+		const downloadBackup = document.getElementById('download-backup');
+		downloadBackup.addEventListener('click', () => downloadDatabaseBackup());
 	});
 </script>
 
-<div class="box-container">
+<div class="container mt-3">
 	<div id="notification-container"></div>
-	<div class="box">
-		<h3 data-i18n="tools_title"></h3>
-		<button class="btn error" onclick="deleteAllLogs(false)" data-i18n="tools_clear_logs"></button>
-		<button class="btn success" onclick="backupDatabase()" data-i18n="tools_db_backup"></button>
-		<button class="btn success" onclick="optimizeDatabase()" data-i18n="tools_db_optimize"></button>
-		<button class="btn error" onclick="emptyDatabase()" data-i18n="tools_db_empty"></button>
-		<a href="/sensor/database/backup/download"
-			class="btn success"
-			onclick="downloadDatabaseBackup()"
-			data-i18n="tools_download_db"
-			download></a>
-	</div>
-	<div class="box">
-		<h3 data-i18n="tools_statistics_title"></h3>
-		<h5 id="stat-count"></h5>
-		<h5 id="stat-first"></h5>
-		<h5 id="stat-last"></h5>
-		<h5 id="stat-avg-temp"></h5>
-		<h5 id="stat-avg-hum"></h5>
-		<hr/>
-		<h5 id="stat-warmest-day"></h5>
-		<h5 id="stat-coldest-day"></h5>
+	<div class="row justify-content-center gap-2">
+		<div class="col-lg-4">
+			<div class="card bg-primary h-100 d-flex flex-column">
+				<div class="card-body">
+					<h4 class="card-title" data-i18n="tools_title"></h4>
+					<div class="d-grid gap-2">
+						<button class="btn btn-lg btn-outline-success" id="backup" data-i18n="tools_db_backup"></button>
+						<button class="btn btn-lg btn-outline-success" id="optimize" data-i18n="tools_db_optimize"></button>
+						<a href="/sensor/database/backup/download"
+							class="btn btn-lg btn-outline-success"
+							id="download-backup"
+							data-i18n="tools_download_db"
+							download></a>
+
+						<hr/>
+
+						<button class="btn btn-lg btn-outline-danger" id="empty-db" data-i18n="tools_db_empty"></button>
+						<button class="btn btn-lg btn-outline-danger" id="clear-logs" data-i18n="tools_clear_logs"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-4">
+			<div class="card bg-primary h-100 d-flex flex-column">
+				<div class="card-body">
+					<h4 class="card-title" data-i18n="tools_statistics_title"></h4>
+					<p class="card-text" id="stat-count"></p>
+					<p class="card-text" id="stat-first"></p>
+					<p class="card-text" id="stat-last"></p>
+					<p class="card-text" id="stat-avg-temp"></p>
+					<p class="card-text" id="stat-avg-hum"></p>
+					<hr/>
+					<p class="card-text" id="stat-warmest-day"></p>
+					<p class="card-text" id="stat-coldest-day"></p>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 {% endblock %}

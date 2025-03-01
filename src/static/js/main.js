@@ -339,14 +339,17 @@ function toggleMenu() {
  */
 function showNotification(text, success) {
 	const notifContainer = document.getElementById('notification-container');
-	const notification = document.createElement('div');
+	const template = document.getElementById('notification-template').content.cloneNode(true);
 
-	notification.id = 'notification';
-	notification.innerText = text;
-	notification.classList.add(success ? 'success' : 'error');
+	const notification = template.children[0];
+	notification.classList.add(success ? 'alert-success' : 'alert-danger');
+	notification.children[1].textContent = success ? getLocaleValue('success') : getLocaleValue('error');
+	notification.children[2].innerText = text;
 
 	notification.addEventListener('click', () => {
-		notification.classList.remove(...notification.classList);
+		if (!notifContainer.contains(notification)) return;
+
+		notification.classList.remove('show');
 		setTimeout(() => notifContainer.removeChild(notification), 1000);
 	});
 
@@ -354,10 +357,10 @@ function showNotification(text, success) {
 
 	setTimeout(() => notification.classList.add('show'), 100);
 
-	if (!notifContainer.contains(notification)) return;
-
 	setTimeout(() => {
-		notification.classList.remove(...notification.classList);
+		if (!notifContainer.contains(notification)) return;
+		
+		notification.classList.remove('show');
 		setTimeout(() => notifContainer.removeChild(notification), 1000);
 	}, 5000);
 }
