@@ -1,7 +1,7 @@
 # t h u m
 A lightweight web application that collects real-time temperature and humidity data from a DHT11/DHT21/DHT22 sensor and displays it in a simple and user-friendly interface.
 
-![monthly](https://github.com/user-attachments/assets/1c922bf8-6a29-41ae-b6ba-7da8f6098bf4)
+![thum_monthly](https://github.com/user-attachments/assets/0f72e5e4-8393-4b76-b83b-b785aca523b4)
 
 > [!NOTE]
 > Tested with DHT11 and Raspberry Pi 4B
