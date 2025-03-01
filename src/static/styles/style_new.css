@@ -55,18 +55,6 @@ body {
 	height: 100% !important;
 }
 
-@media screen and (max-width: 600px) {
-	.chart-container {
-		height: 60vh;
-	}
-}
-
-@media screen and (max-width: 768px) { 
-	.chart-container {
-		height: 70vh;
-	}
-}
-
 #notification-container {
 	position: fixed;
 	top: 20px;
@@ -89,4 +77,10 @@ body {
 #notification.show {
 	opacity: 1;
 	transform: translateX(-50%) translateY(0);
+}
+
+@media screen and (max-width: 600px) {
+	.chart-container {
+		height: 60vh;
+	}
 }

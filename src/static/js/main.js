@@ -6,7 +6,8 @@ let chart;
 const chartPointHoverRadius = 8;
 const chartLineTension = 0.25;
 const chartFontSize = 14;
-const chartColor = '#8D8D8D';
+const chartColor = 'rgba(141, 141, 141, 1)';
+const chartGridColor = 'rgba(141, 141, 141, 0.2)';
 
 const spinner = document.getElementById('spinner');
 
@@ -51,17 +52,31 @@ function initializeChart() {
 			mode: 'index'
 		},
 
+		scales: {
+			x: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
+			y: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
+		},
+
 		plugins: { tooltip: { callbacks: { footer: callback } } }
 	};
 
 	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
-if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
-	initializeChart();
+function onThemeChange(e) {
+	const html = document.querySelector('html');
+	html.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+	darkModeMediaQuery.addEventListener('change', onThemeChange);
+	onThemeChange(darkModeMediaQuery);
+
+	if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
+		initializeChart();
+	}
+
 	getCurrentTemperature();
 
 	// Update current temperature every 10sec.
@@ -104,7 +119,7 @@ function updateChartData(labels, humidities, temperatures) {
  * 
  * @param {String} timestamp Format: `2024-05-18 21:39:20`
  */
-function deleteLogByTimestamp(timestamp) {
+function deleteLogByTimestamp(idx, timestamp) {
 	fetch(`/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
 	})
@@ -115,7 +130,7 @@ function deleteLogByTimestamp(timestamp) {
 			return;
 		}
 
-		document.getElementById(`log_${timestamp}`).remove();
+		document.getElementById(`log_${idx}`).remove();
 	});
 }
 
@@ -138,7 +153,7 @@ function deleteAllLogs(logPage) {
 		showNotification(getLocaleValue('log_clear_success', result.count), true);
 
 		if (logPage) {
-			document.querySelectorAll('.log_entry').forEach(e => e.remove());
+			document.querySelectorAll('.log-entry').forEach(e => e.remove());
 		}
 	});
 }

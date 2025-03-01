@@ -12,7 +12,7 @@
 
 	<body>
 		<header>
-			<nav class="navbar navbar-expand-sm bg-dark" data-bs-theme="dark">
+			<nav class="navbar navbar-expand-sm bg-primary" data-bs-theme="light">
 				<div class="container-fluid">
 					<a class="navbar-brand" href="{{ url_for('index') }}">Thum</a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav" aria-controls="topnav" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,7 +22,7 @@
 						{% set active_page = request.endpoint %}
 						<ul class="navbar-nav me-auto">
 							<li class="nav-item">
-								<a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_all"></a>
+								<a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'index' %}active{% endif %}" data-i18n="nav_all"></a>
 							</li>
 							<li class="nav-item">
 								<a href="{{ url_for('daily') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_daily"></a>
