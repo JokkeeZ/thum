@@ -6,8 +6,8 @@ let chart;
 const chartPointHoverRadius = 8;
 const chartLineTension = 0.25;
 const chartFontSize = 14;
-const chartColor = '#8D8D8D';
-const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+const chartColor = 'rgba(141, 141, 141, 1)';
+const chartGridColor = 'rgba(141, 141, 141, 0.2)';
 
 const spinner = document.getElementById('spinner');
 
@@ -50,6 +50,11 @@ function initializeChart() {
 		interaction: {
 			intersect: false,
 			mode: 'index'
+		},
+
+		scales: {
+			x: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
+			y: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
 		},
 
 		plugins: { tooltip: { callbacks: { footer: callback } } }
