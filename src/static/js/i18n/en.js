@@ -16,7 +16,7 @@ locales["en"] = {
 	db_empty_success: "Successfully emptied the database.\n({0} sensor entries, {1} log entries)",
 
 	nav_temp_hum_tooltip: "Temperature: {0}°C\nHumidity: {1}%",
-	nav_all: "All",
+	nav_all: "Home",
 	nav_daily: "Daily",
 	nav_weekly: "Weekly",
 	nav_monthly: "Monthly",
