@@ -9,6 +9,10 @@ class DatabaseSensorData:
 		self.dateformat:str = CONFIG['db.dateformat']
 		self.timeformat:str = CONFIG['db.timeformat']
 
+		self.wformat = '%G-W%V'
+		self.mformat = '%Y-%m'
+		self.iso_w_format = '%G-W%V-%u'
+
 	async def get_all_async(self) -> dict[any, dict[str, any]]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
@@ -50,7 +54,7 @@ class DatabaseSensorData:
 		}
 
 	async def get_week_async(self, week: str) -> dict[str, any]:
-		first = datetime.strptime(f'{week}-1', '%Y-W%W-%w')
+		first = datetime.strptime(f'{week}-1', self.iso_w_format)
 		dates = [(first + timedelta(days=i)).strftime(CONFIG['db.dateformat']) for i in range(7)]
 
 		async with connect(self.dbfile) as db:
@@ -98,8 +102,8 @@ class DatabaseSensorData:
 			(min, max) = await cursor.fetchone()
 
 		now = datetime.now()
-		min_week = (now.strftime('%Y-W%W') if min is None else datetime.strptime(min, self.dateformat).strftime('%Y-W%W'))
-		max_week = (now.strftime('%Y-W%W') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-W%W'))
+		min_week = (now.strftime(self.wformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.wformat))
+		max_week = (now.strftime(self.wformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.wformat))
 		return (min_week, max_week)
 
 	async def get_month_range_async(self) -> tuple[str, str]:
@@ -108,8 +112,8 @@ class DatabaseSensorData:
 			(min, max) = await cursor.fetchone()
 
 		now = datetime.now()
-		min_month = (now.strftime('%Y-%m') if min is None else datetime.strptime(min, self.dateformat).strftime('%Y-%m'))
-		max_month = (now.strftime('%Y-%m') if max is None else datetime.strptime(max, self.dateformat).strftime('%Y-%m'))
+		min_month = (now.strftime(self.mformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.mformat))
+		max_month = (now.strftime(self.mformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.mformat))
 		return (min_month, max_month)
 
 	async def insert_sensor_entry_async(self, entry):
