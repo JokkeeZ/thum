@@ -29,6 +29,8 @@ python3 src/app.py
 - [Quart](https://github.com/pallets/quart)
 - [aiosqlite](https://github.com/omnilib/aiosqlite)
 - [Adafruit_CircuitPython_DHT](https://github.com/adafruit/Adafruit_CircuitPython_DHT)
+- [Bootstrap](https://getbootstrap.com/)
+- [Bootswatch theme](https://bootswatch.com/)
 
 # License
 thum is licensed under the [MIT License](https://github.com/JokkeeZ/thum/blob/main/LICENSE)
