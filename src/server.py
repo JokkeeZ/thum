@@ -6,7 +6,7 @@ import sensor_reader as sensor_reader
 app = Quart(__name__)
 db = ThumDatabase()
 
-@app.route('/api/sensor')
+@app.route('/api/sensor/all')
 async def get_sensor_all_data():
 	all_values = await db.sensor.get_all_async()
 	return jsonify(all_values)
@@ -26,32 +26,32 @@ async def get_sensor_data_from_date2(date):
 	daily_data = await db.sensor.get_date_async(date)
 	return jsonify(daily_data)
 
-@app.route('/api/sensor/logs/<string:timestamp>', methods=['DELETE'])
+@app.route('/api/logs/delete-entry/<string:timestamp>', methods=['DELETE'])
 async def delete_log_by_timestamp(timestamp):
 	result_count = await db.log.delete_by_timestamp_async(timestamp)
 	return jsonify({'count': result_count})
 
-@app.route('/api/sensor/logs/all', methods=['DELETE'])
+@app.route('/api/logs/purge', methods=['DELETE'])
 async def delete_logs_all():
 	result_count = await db.log.delete_all_async()
 	return jsonify({'count': result_count})
 
-@app.route('/api/sensor/database/backup')
+@app.route('/api/tools/database/backup')
 async def thum_backup_db():
 	file_path = await db.thum_make_db_backup_async()
 	return jsonify({'success': file_path != None, 'path': file_path})
 
-@app.route('/api/sensor/database/optimize')
+@app.route('/api/tools/database/optimize')
 async def thum_optimize_db():
 	success = await db.optimize_async()
 	return jsonify({'success': success})
 
-@app.route('/api/sensor/database/empty', methods=['DELETE'])
+@app.route('/api/tools/database/empty', methods=['DELETE'])
 async def thum_empty_db():
 	(sensor_rows_deleted, log_rows_deleted) = await db.empty_all_tables_async()
 	return jsonify({'sensor_count': sensor_rows_deleted, 'logs_count': log_rows_deleted})
 
-@app.route('/api/sensor/statistics')
+@app.route('/api/statistics')
 async def get_sensor_statistics():
 	stats = await db.sensor.get_statistics_async()
 	return jsonify(stats)
@@ -70,7 +70,7 @@ async def get_sensor_data_current():
 	except (RuntimeError, Exception):
 		return jsonify({'success': False})
 
-@app.route('/api/sensor/database/backup/download')
+@app.route('/api/tools/database/backup/download')
 async def download_backup():
 	file_path = await db.thum_make_db_backup_async()
 

@@ -126,7 +126,7 @@ function updateChartData(labels, humidities, temperatures) {
  * @param {String} timestamp Format: `2024-05-18 21:39:20`
  */
 function deleteLogByTimestamp(idx, timestamp) {
-	fetch(`/api/sensor/logs/${timestamp}`, {
+	fetch(`/api/logs/delete-entry/${timestamp}`, {
 		method: 'DELETE'
 	})
 	.then(r => r.json())
@@ -143,10 +143,10 @@ function deleteLogByTimestamp(idx, timestamp) {
 /**
  * Deletes all log entries from the database.
  * 
- * @param {boolean} logPage Indicates if this call is executed from /logs.
+ * @param {boolean} logPage Indicates if this call is executed from /logs.html.
  */
 function deleteAllLogs(logPage) {
-	fetch('/api/sensor/logs/all', {
+	fetch('/api/logs/purge', {
 		method: 'DELETE'
 	})
 	.then(r => r.json())
@@ -168,7 +168,7 @@ function deleteAllLogs(logPage) {
  * Gets the average temperature and humidity for each day.
  */
 function getAllDataFromSensor() {
-	fetch('/api/sensor')
+	fetch('/api/sensor/all')
 	.then(r => r.json())
 	.then(result => {
 		const labels = Object.keys(result);
@@ -238,7 +238,7 @@ function getMonthlyDataFromSensor(month) {
  * Makes a backup file of the database.
  */
 function backupDatabase() {
-	fetch('/api/sensor/database/backup')
+	fetch('/api/tools/database/backup')
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_backup_success' : 'db_backup_fail';
@@ -250,7 +250,7 @@ function backupDatabase() {
  * Runs a `VACUUM;` command on the database.
  */
 function optimizeDatabase() {
-	fetch('/api/sensor/database/optimize')
+	fetch('/api/tools/database/optimize')
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_optimize_success' : 'db_optimize_fail';
@@ -266,7 +266,7 @@ function emptyDatabase() {
 		return;
 	}
 
-	fetch('/api/sensor/database/empty', {
+	fetch('/api/tools/database/empty', {
 		method: 'DELETE'
 	})
 	.then(r => r.json())
@@ -296,7 +296,7 @@ function getCurrentTemperature() {
  * Get sensor statistics from the database.
  */
 function getSensorStatistics() {
-	fetch('/api/sensor/statistics')
+	fetch('/api/statistics')
 	.then(r => r.json())
 	.then(result => {
 		const statCount = document.getElementById('stat-count');
