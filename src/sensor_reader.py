@@ -18,7 +18,7 @@ def poll_sensor_data():
 		if temperature == None or humidity == None:
 			return {
 				'success': False,
-				'err': 'Temperature reading: {temperature}, Humidity: {humidity}',
+				'err': f'Temperature reading: {temperature}, Humidity: {humidity}',
 				'timestamp': f'{date} {time}'
 			}
 
