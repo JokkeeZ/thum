@@ -224,8 +224,7 @@ function getDailyDataFromSensor(date) {
 function getMonthlyDataFromSensor(month) {
 	month ??= document.getElementById('month').value;
 
-	const y = month.split('-')[0];
-	const m = month.split('-')[1];
+	const [y, m] = month.split('-');
 
 	fetch(`/api/sensor/monthly/${y}/${m}`)
 	.then(r => r.json())
