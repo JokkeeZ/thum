@@ -13,23 +13,35 @@ async def get_sensor_all_data():
 
 @app.route('/api/sensor/monthly/<string:year>/<string:month>')
 async def get_sensor_data_from_year_month(year, month):
-  monthly_values = await db.sensor.get_year_month_async(year, month)
-  return jsonify(monthly_values)
+	try:
+		monthly_values = await db.sensor.get_year_month_async(year, month)
+		return jsonify(monthly_values)
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/sensor/weekly/<string:week>')
 async def get_sensor_data_from_week(week):
-	weekly_data = await db.sensor.get_week_async(week)
-	return jsonify(weekly_data)
+	try:
+		weekly_data = await db.sensor.get_week_async(week)
+		return jsonify(weekly_data)
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/sensor/daily/<string:date>')
 async def get_sensor_data_from_date2(date):
-	daily_data = await db.sensor.get_date_async(date)
-	return jsonify(daily_data)
+	try:
+		daily_data = await db.sensor.get_date_async(date)
+		return jsonify(daily_data)
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/logs/delete-entry/<string:timestamp>', methods=['DELETE'])
 async def delete_log_by_timestamp(timestamp):
-	result_count = await db.log.delete_by_timestamp_async(timestamp)
-	return jsonify({'count': result_count})
+	try:
+		result_count = await db.log.delete_by_timestamp_async(timestamp)
+		return jsonify({'count': result_count})
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/logs/purge', methods=['DELETE'])
 async def delete_logs_all():
@@ -112,14 +124,14 @@ async def tools():
 @app.route('/logs')
 async def logs():
 	all_logs = await db.log.get_all_async()
-	return await render_template('logs.html', Logs = all_logs)
+	return await render_template('logs.html', Logs=all_logs)
 
 @app.route('/api')
 async def api():
 	routes = [(r.rule, [m for m in r.methods if m not in {'HEAD', 'OPTIONS'}])
 		for r in app.url_map.iter_rules() if r.rule.startswith('/api/')]
 
-	return await render_template('api.html', Routes = routes)
+	return await render_template('api.html', Routes=routes)
 
 async def start_server():
 	await app.run_task(host=CONFIG['app.host'], port=CONFIG['app.port'], debug=CONFIG['app.debug'])
