@@ -33,7 +33,6 @@ python3 src/app.py
 - [Bootswatch theme](https://bootswatch.com/)
 - [Chart.js](https://www.chartjs.org)
 - [@kurkle/color](https://github.com/kurkle/color)
-- [Open Sans Font](https://github.com/googlefonts/opensans)
 
 # License
 thum is licensed under the [MIT License](https://github.com/JokkeeZ/thum/blob/main/LICENSE)
