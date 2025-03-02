@@ -266,7 +266,9 @@ function emptyDatabase() {
 		return;
 	}
 
-	fetch('/api/sensor/database/empty')
+	fetch('/api/sensor/database/empty', {
+		method: 'DELETE'
+	})
 	.then(r => r.json())
 	.then(result => {
 		showNotification(getLocaleValue('db_empty_success', result.sensor_count, result.logs_count), true);

@@ -46,7 +46,7 @@ async def thum_optimize_db():
 	success = await db.optimize_async()
 	return jsonify({'success': success})
 
-@app.route('/api/sensor/database/empty')
+@app.route('/api/sensor/database/empty', methods=['DELETE'])
 async def thum_empty_db():
 	(sensor_rows_deleted, log_rows_deleted) = await db.empty_all_tables_async()
 	return jsonify({'sensor_count': sensor_rows_deleted, 'logs_count': log_rows_deleted})
