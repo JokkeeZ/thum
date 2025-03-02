@@ -1,27 +1,22 @@
-:root {
-	--footer-height: 60px;
-	--cyan:    #5bc0de;
-}
-
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
-  margin-bottom: var(--footer-height);
+  margin-bottom: 60px;
 }
 
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: var(--footer-height);
+  height: 60px;
 }
 
 .loader {
 	border: 4px solid transparent;
-	border-top: 4px solid var(--cyan);
+	border-top: 4px solid var(--bs-indigo);
 	border-radius: 50%;
 	width: 20px;
 	height: 20px;
