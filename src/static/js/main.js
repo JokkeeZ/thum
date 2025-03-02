@@ -6,8 +6,22 @@ const chartLineTension = 0.25;
 const chartFontSize = 14;
 const chartColor = 'rgba(141, 141, 141, 1)';
 const chartGridColor = 'rgba(141, 141, 141, 0.2)';
-
 const spinner = document.getElementById('spinner');
+
+document.addEventListener('DOMContentLoaded', function () {
+	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+	darkModeMediaQuery.addEventListener('change', onThemeChange);
+	onThemeChange(darkModeMediaQuery);
+
+	initializeChart();
+
+	getCurrentTemperature();
+
+	// Update current temperature every 10sec.
+	setInterval(function () {
+		getCurrentTemperature();
+	}, 10 * 1000);
+});
 
 /**
  * Get locale value with key. 
@@ -71,21 +85,6 @@ function onThemeChange(e) {
 	const html = document.querySelector('html');
 	html.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-	const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-	darkModeMediaQuery.addEventListener('change', onThemeChange);
-	onThemeChange(darkModeMediaQuery);
-
-	initializeChart();
-
-	getCurrentTemperature();
-
-	// Update current temperature every 10sec.
-	setInterval(function () {
-		getCurrentTemperature();
-	}, 10 * 1000);
-});
 
 /**
  * Updates chart datasets and labels.
