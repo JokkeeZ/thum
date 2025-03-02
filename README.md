@@ -31,6 +31,9 @@ python3 src/app.py
 - [Adafruit_CircuitPython_DHT](https://github.com/adafruit/Adafruit_CircuitPython_DHT)
 - [Bootstrap](https://getbootstrap.com/)
 - [Bootswatch theme](https://bootswatch.com/)
+- [Chart.js](https://www.chartjs.org)
+- [@kurkle/color](https://github.com/kurkle/color)
+- [Open Sans Font](https://github.com/googlefonts/opensans)
 
 # License
 thum is licensed under the [MIT License](https://github.com/JokkeeZ/thum/blob/main/LICENSE)
