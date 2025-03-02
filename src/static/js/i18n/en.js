@@ -22,6 +22,7 @@ locales["en"] = {
 	nav_monthly: "Monthly",
 	nav_tools: "Tools",
 	nav_logs: "Logs",
+	nav_api: "Api",
 
 	daily_select: "Select date",
 	weekly_select: "Select week",
@@ -42,6 +43,9 @@ locales["en"] = {
 	tools_warmest_day: "Warmest day: {0}\n {1}°C ({2}%)",
 	tools_coldest_day: "Coldest day: {0}\n {1}°C ({2}%)",
 	
+	api_endpoints: "Endpoints",
+	api_methods: "Methods",
+
 	delete_all: "Delete all",
 	error: "Error",
 	success: "Success",

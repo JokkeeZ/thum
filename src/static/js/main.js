@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	darkModeMediaQuery.addEventListener('change', onThemeChange);
 	onThemeChange(darkModeMediaQuery);
 
-	if (window.location.pathname != '/tools' && window.location.pathname != '/logs') {
+	if (window.location.pathname != '/tools' && window.location.pathname != '/logs' && window.location.pathname != '/api') {
 		initializeChart();
 	}
 

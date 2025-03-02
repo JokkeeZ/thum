@@ -22,6 +22,7 @@ locales["fi"] = {
 	nav_monthly: "Kuukausi",
 	nav_tools: "Työkalut",
 	nav_logs: "Logit",
+	nav_api: "Api",
 
 	daily_select: "Valitse päivä",
 	weekly_select: "Valitse viikko",
@@ -42,6 +43,9 @@ locales["fi"] = {
 	tools_warmest_day: "Lämpimin päivä: {0}\n {1}°C ({2}%)",
 	tools_coldest_day: "Kylmin päivä: {0}\n {1}°C ({2}%)",
 	
+	api_endpoints: "Rajapinnat",
+	api_methods: "Metodit",
+
 	delete_all: "Poista kaikki",
 	error: "Virhe",
 	success: "Onnistui",

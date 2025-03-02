@@ -114,5 +114,12 @@ async def logs():
 	all_logs = await db.log.get_all_async()
 	return await render_template('logs.html', Logs = all_logs)
 
+@app.route('/api')
+async def api():
+	routes = [(r.rule, [m for m in r.methods if m not in {'HEAD', 'OPTIONS'}])
+		for r in app.url_map.iter_rules() if r.rule.startswith('/api/')]
+
+	return await render_template('api.html', Routes = routes)
+
 async def start_server():
 	await app.run_task(host=CONFIG['app.host'], port=CONFIG['app.port'], debug=CONFIG['app.debug'])
