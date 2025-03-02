@@ -63,6 +63,12 @@ function initializeChart() {
 	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
+/**
+ * On theme change, sets the bootstrap theme to match
+ * user preferred color scheme (light/dark).
+ * 
+ * @param {MediaQueryList} e 
+ */
 function onThemeChange(e) {
 	const html = document.querySelector('html');
 	html.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
@@ -120,7 +126,7 @@ function updateChartData(labels, humidities, temperatures) {
  * @param {String} timestamp Format: `2024-05-18 21:39:20`
  */
 function deleteLogByTimestamp(idx, timestamp) {
-	fetch(`/sensor/logs/${timestamp}`, {
+	fetch(`/api/sensor/logs/${timestamp}`, {
 		method: 'DELETE'
 	})
 	.then(r => r.json())
@@ -140,7 +146,7 @@ function deleteLogByTimestamp(idx, timestamp) {
  * @param {boolean} logPage Indicates if this call is executed from /logs.
  */
 function deleteAllLogs(logPage) {
-	fetch('/sensor/logs/all', {
+	fetch('/api/sensor/logs/all', {
 		method: 'DELETE'
 	})
 	.then(r => r.json())
@@ -162,7 +168,7 @@ function deleteAllLogs(logPage) {
  * Gets the average temperature and humidity for each day.
  */
 function getAllDataFromSensor() {
-	fetch('/sensor')
+	fetch('/api/sensor')
 	.then(r => r.json())
 	.then(result => {
 		const labels = Object.keys(result);
@@ -182,7 +188,7 @@ function getAllDataFromSensor() {
 function getWeeklyDataFromSensor(week) {
 	week ??= document.getElementById('week').value;
 
-	fetch(`sensor/weekly/${week}`)
+	fetch(`/api/sensor/weekly/${week}`)
 	.then(r => r.json())
 	.then(result => {
 		updateChartData(result.labels, result.humidities, result.temperatures);
@@ -198,7 +204,7 @@ function getWeeklyDataFromSensor(week) {
 function getDailyDataFromSensor(date) {
 	date ??= document.getElementById('date').value;
 
-	fetch(`/sensor/daily/${date}`)
+	fetch(`/api/sensor/daily/${date}`)
 	.then(r => r.json())
 	.then(result => {
 		updateChartData(
@@ -221,7 +227,7 @@ function getMonthlyDataFromSensor(month) {
 	const y = month.split('-')[0];
 	const m = month.split('-')[1];
 
-	fetch(`/sensor/monthly/${y}/${m}`)
+	fetch(`/api/sensor/monthly/${y}/${m}`)
 	.then(r => r.json())
 	.then(result => {
 		updateChartData(result.labels, result.humidities, result.temperatures);
@@ -233,7 +239,7 @@ function getMonthlyDataFromSensor(month) {
  * Makes a backup file of the database.
  */
 function backupDatabase() {
-	fetch('/sensor/database/backup')
+	fetch('/api/sensor/database/backup')
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_backup_success' : 'db_backup_fail';
@@ -245,7 +251,7 @@ function backupDatabase() {
  * Runs a `VACUUM;` command on the database.
  */
 function optimizeDatabase() {
-	fetch('/sensor/database/optimize')
+	fetch('/api/sensor/database/optimize')
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_optimize_success' : 'db_optimize_fail';
@@ -261,7 +267,7 @@ function emptyDatabase() {
 		return;
 	}
 
-	fetch('/sensor/database/empty')
+	fetch('/api/sensor/database/empty')
 	.then(r => r.json())
 	.then(result => {
 		showNotification(getLocaleValue('db_empty_success', result.sensor_count, result.logs_count), true);
@@ -272,7 +278,7 @@ function emptyDatabase() {
  * Gets the current temperature and humidity and sets the navbar text.
  */
 function getCurrentTemperature() {
-	fetch('/sensor/temperature/current')
+	fetch('/api/sensor/temperature/current')
 	.then(r => r.json())
 	.then(result => {
 		if (!result.success) {
@@ -289,7 +295,7 @@ function getCurrentTemperature() {
  * Get sensor statistics from the database.
  */
 function getSensorStatistics() {
-	fetch('/sensor/statistics')
+	fetch('/api/sensor/statistics')
 	.then(r => r.json())
 	.then(result => {
 		const statCount = document.getElementById('stat-count');
@@ -329,24 +335,6 @@ function downloadDatabaseBackup() {
 }
 
 /**
- * Toggles hamburger menu on smaller viewports.
- */
-function toggleMenu() {
-	const nav = document.getElementById('navigation');
-
-	for (var i = 0; i < nav.children.length; ++i) {
-		const child = nav.children[i];
-		if (child.classList.contains('nav-item')) {
-			if (child.classList.contains('nav-visible')) {
-				child.classList.remove('nav-visible');
-			} else {
-				child.classList.add('nav-visible');
-			}
-		}
-	}
-}
-
-/**
  * Makes a notification pop up with text.
  * 
  * @param {String} text Text for the notification.
@@ -361,21 +349,17 @@ function showNotification(text, success) {
 	notification.children[1].textContent = success ? getLocaleValue('success') : getLocaleValue('error');
 	notification.children[2].innerText = text;
 
-	notification.addEventListener('click', () => {
+	const dismissNotification = () => {
 		if (!notifContainer.contains(notification)) return;
 
 		notification.classList.remove('show');
 		setTimeout(() => notifContainer.removeChild(notification), 1000);
-	});
+	};
+
+	notification.addEventListener('click', () => dismissNotification());
 
 	notifContainer.appendChild(notification);
 
 	setTimeout(() => notification.classList.add('show'), 100);
-
-	setTimeout(() => {
-		if (!notifContainer.contains(notification)) return;
-		
-		notification.classList.remove('show');
-		setTimeout(() => notifContainer.removeChild(notification), 1000);
-	}, 5000);
+	setTimeout(() => dismissNotification(), 5000);
 }
