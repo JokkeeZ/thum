@@ -1,5 +1,3 @@
-/** @type {CanvasRenderingContext2D} */
-let ctx;
 /** @type {Chart} */
 let chart;
 
@@ -10,11 +8,6 @@ const chartColor = 'rgba(141, 141, 141, 1)';
 const chartGridColor = 'rgba(141, 141, 141, 0.2)';
 
 const spinner = document.getElementById('spinner');
-
-/**
- * @type {HTMLCanvasElement}
- */
-const canvas = document.getElementById('chart');
 
 /**
  * Get locale value with key. 
@@ -32,12 +25,16 @@ function getLocaleValue(key, ...values) {
 }
 
 /**
- * Initialize chart.js.
+ * Initialize chart.js if page contains canvas.
  */
 function initializeChart() {
+	/** @type {HTMLCanvasElement} */
+	const canvas = document.getElementById('chart');
+
+	if (!canvas) return;
+
 	Chart.defaults.color = chartColor;
 	Chart.defaults.font.size = chartFontSize;
-	ctx = canvas.getContext('2d');
 
 	const callback = function (toolTipItems) {
 		const dewPoint = toolTipItems[1].parsed.y - ((100 - toolTipItems[0].parsed.y) / 5);
@@ -53,13 +50,14 @@ function initializeChart() {
 		},
 
 		scales: {
-			x: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
-			y: { grid: { color: 'rgba(141, 141, 141, 0.2)' }},
+			x: { grid: { color: chartGridColor }},
+			y: { grid: { color: chartGridColor }},
 		},
 
 		plugins: { tooltip: { callbacks: { footer: callback } } }
 	};
 
+	const ctx = canvas.getContext('2d');
 	chart = new Chart(ctx, {type: 'line', data: {}, options});
 }
 
@@ -79,9 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	darkModeMediaQuery.addEventListener('change', onThemeChange);
 	onThemeChange(darkModeMediaQuery);
 
-	if (window.location.pathname != '/tools' && window.location.pathname != '/logs' && window.location.pathname != '/api') {
-		initializeChart();
-	}
+	initializeChart();
 
 	getCurrentTemperature();
 
