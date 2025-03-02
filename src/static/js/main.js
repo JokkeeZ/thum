@@ -325,6 +325,8 @@ function getSensorStatistics() {
 			result.coldest_day.date,
 			result.coldest_day.temperature,
 			result.coldest_day.humidity);
+
+		spinner.remove();
 	});
 }
 
