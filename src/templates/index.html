@@ -6,13 +6,16 @@
 
 		<title>Thum</title>
 
+		<link rel="preload" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" as="style">
+		<link rel="preload" href="{{url_for('static', filename='styles/style_new.css')}}" as="style">
+		
 		<link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}">
 		<link rel="stylesheet" href="{{url_for('static', filename='styles/style_new.css')}}">
 	</head>
 
 	<body>
 		<header>
-			<nav class="navbar navbar-expand-sm bg-primary" data-bs-theme="light">
+			<nav class="navbar navbar-expand-sm bg-primary">
 				<div class="container-fluid">
 					<a class="navbar-brand" href="{{ url_for('index') }}">Thum</a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav" aria-controls="topnav" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +80,7 @@
 		<footer class="text-center text-lg-start footer">
 			<div class="text-center p-3">
 				Crafted with ♥️ and ☕ — open-source on
-				<a class="text-info" href="https://github.com/jokkeez/thum">Github</a>.
+				<a class="text-info gh-link" href="https://github.com/jokkeez/thum">Github</a>.
 			</div>
 		</footer>
 
@@ -101,10 +104,10 @@
 			});
 		</script>
 		
-		<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="{{url_for('static', filename='js/bootstrap.min.js')}}" defer></script>
+		<script src="{{url_for('static', filename='js/chart.min.js')}}" defer></script>
 		
-		<script src="{{url_for('static', filename='js/i18n/' + locale() + '.js')}}"></script>
+		<script src="{{url_for('static', filename='js/i18n/' + locale() + '.js')}}" defer></script>
 		<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 	</body>
 </html>

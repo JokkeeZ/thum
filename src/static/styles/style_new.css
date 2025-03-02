@@ -1,9 +1,15 @@
+@font-face {
+	font-family: 'Open Sans';
+	src: url('../fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf');
+}
+
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
+	font-family: 'Open Sans', serif;
   margin-bottom: 60px;
 }
 
@@ -27,6 +33,16 @@ body {
 .loader.big {
 	width: 50px;
 	height: 50px;
+}
+
+.gh-link {
+	color: var(--bs-info-text-emphasis) !important;
+}
+
+.navbar-brand,
+.navbar-text,
+.nav-link {
+	color: var(--bs-black) !important;
 }
 
 @keyframes spin {
