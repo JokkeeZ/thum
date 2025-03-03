@@ -254,23 +254,6 @@ function optimizeDatabase() {
 }
 
 /**
- * Deletes all rows from the database. 
- */
-function emptyDatabase() {
-	if (!confirm(getLocaleValue('db_empty_confirm'))) {
-		return;
-	}
-
-	fetch('/api/tools/database/empty', {
-		method: 'DELETE'
-	})
-	.then(r => r.json())
-	.then(result => {
-		showNotification(getLocaleValue('db_empty_success', result.sensor_count, result.logs_count), true);
-	});
-}
-
-/**
  * Gets the current temperature and humidity and sets the navbar text.
  */
 function getCurrentTemperature() {

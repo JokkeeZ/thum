@@ -20,14 +20,6 @@ class ThumDatabase:
 			except Error as e:
 				return False
 
-	async def empty_all_tables_async(self) -> tuple[int, int]:
-		async with connect(self.dbfile) as db:
-			cursor = await db.execute('DELETE FROM sensor_data')
-			cursor1 = await db.execute('DELETE FROM logs')
-			await db.commit()
-
-		return (cursor.rowcount, cursor1.rowcount)
-
 	async def thum_make_db_backup_async(self) -> str | None:
 		ts = datetime.now().strftime('%Y%m%d%H%M%S')
 		Path('backup').mkdir(parents=True, exist_ok=True)

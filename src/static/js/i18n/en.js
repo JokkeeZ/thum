@@ -12,8 +12,6 @@ locales["en"] = {
 	db_backup_started: "Database backup download started",
 	db_optimize_fail: "Database optimization failed",
 	db_optimize_success: "Database optimization completed successfully",
-	db_empty_confirm: "Are you completely sure you want to erase all of the data from the database?",
-	db_empty_success: "Successfully emptied the database.\n({0} sensor entries, {1} log entries)",
 
 	nav_temp_hum_tooltip: "Temperature: {0}°C\nHumidity: {1}%",
 	nav_all: "Home",
@@ -32,7 +30,6 @@ locales["en"] = {
 	tools_clear_logs: "Clear logs",
 	tools_db_backup: "Backup database",
 	tools_db_optimize: "Optimize database",
-	tools_db_empty: "Empty database",
 	tools_download_db: "Download database backup",
 	tools_statistics_title: "Statistics",
 	tools_samples_count: "Samples count: {0}",

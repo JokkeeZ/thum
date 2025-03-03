@@ -12,8 +12,6 @@ locales["fi"] = {
 	db_backup_started: "Tietokannan varmuuskopion lataus aloitettiin",
 	db_optimize_fail: "Tietokannan optimointi epäonnistui",
 	db_optimize_success: "Tietokannan optimointi suoritettu onnistuneesti",
-	db_empty_confirm: "Haluatko varmasti poistaa kaikki tiedot tietokannasta?",
-	db_empty_success: "Tietokanta tyhjennettiin onnistuneesti.\n({0} sensorin saraketta, {1} log saraketta)",
 
 	nav_temp_hum_tooltip: "Lämpötila: {0}°C\nIlmankosteus: {1}%",
 	nav_all: "Etusivu",
@@ -32,7 +30,6 @@ locales["fi"] = {
 	tools_clear_logs: "Tyhjennä logit",
 	tools_db_backup: "Varmuuskopioi tietokanta",
 	tools_db_optimize: "Optimoi tietokanta",
-	tools_db_empty: "Tyhjennä tietokanta",
 	tools_download_db: "Lataa varmuuskopio tietokannasta",
 	tools_statistics_title: "Tilastot",
 	tools_samples_count: "Mittausten kertoja: {0}",
