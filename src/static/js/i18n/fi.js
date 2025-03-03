@@ -43,8 +43,8 @@ locales["fi"] = {
 	tools_warmest_day: "Lämpimin päivä: {0}\n {1}°C ({2}%)",
 	tools_coldest_day: "Kylmin päivä: {0}\n {1}°C ({2}%)",
 	
-	api_endpoints: "Rajapinnat",
-	api_methods: "Metodit",
+	api_endpoints: "Rajapinta",
+	api_methods: "Metodi",
 
 	delete_all: "Poista kaikki",
 	error: "Virhe",

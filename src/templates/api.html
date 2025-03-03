@@ -3,34 +3,28 @@
 {% block content %}
 <div class="container mt-5">
 	<div id="notification-container"></div>
-	<div class="row justify-content-center gap-2">
+	<div class="row justify-content-center">
 		<div class="col-lg-12">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Endpoint</th>
-						<th scope="col">Methods</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% if Routes %}
-						{% for route in Routes %}
-						<tr id="log_{{ loop.index }}" class="log-entry">
-							<th scope="row">{{ loop.index }}</th>
-							<td><a href="{{ route[0] }}">{{ route[0] }}</a></td>
-							<td>{{ route[1][0] }}</td>
-						</tr>
-						{% endfor %}
-					{% else %}
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
 						<tr>
-							<th scope="row">—</td>
-							<td>—</td>
-							<td>—</td>
+							<th scope="col">#</th>
+							<th scope="col" data-i18n="api_endpoints"></th>
+							<th scope="col" data-i18n="api_methods"></th>
 						</tr>
-					{% endif %}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+							{% for route in Routes %}
+							<tr>
+								<th scope="row">{{ loop.index }}</th>
+								<td><a href="{{ route[0] }}">{{ route[0] }}</a></td>
+								<td>{{ route[1][0] }}</td>
+							</tr>
+							{% endfor %}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

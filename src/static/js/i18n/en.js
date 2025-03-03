@@ -43,8 +43,8 @@ locales["en"] = {
 	tools_warmest_day: "Warmest day: {0}\n {1}°C ({2}%)",
 	tools_coldest_day: "Coldest day: {0}\n {1}°C ({2}%)",
 	
-	api_endpoints: "Endpoints",
-	api_methods: "Methods",
+	api_endpoints: "Endpoint",
+	api_methods: "Method",
 
 	delete_all: "Delete all",
 	error: "Error",
