@@ -15,12 +15,21 @@
 
 	<body>
 		<header>
-			<nav class="navbar navbar-expand-sm bg-primary">
+			<nav class="navbar navbar-expand-md bg-primary">
 				<div class="container-fluid">
 					<a class="navbar-brand" href="{{ url_for('index') }}">Thum</a>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav" aria-controls="topnav" aria-expanded="false" aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>
+
+					<div class="d-flex align-items-center">
+						<!-- mobile temperature -->
+						<span class="navbar-text me-3 d-md-none current-temperature">
+							<div class="loader"></div>
+						</span>
+
+						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav" aria-controls="topnav" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+					</div>
+
 					<div class="collapse navbar-collapse" id="topnav">
 						{% set active_page = request.endpoint %}
 						<ul class="navbar-nav me-auto">
@@ -46,10 +55,14 @@
 								<a href="{{ url_for('api') }}" class="nav-link {% if active_page == 'api' %}active{% endif %}" data-i18n="nav_api"></a>
 							</li>
 						</ul>
-						<span class="navbar-text" id="current-temperature">
-							<div class="loader"></div>
-						</span>
 					</div>
+				</div>
+
+				<div class="d-flex align-items-center">
+					<!-- mobile temperature -->
+					<span class="navbar-text me-3 d-none d-md-block current-temperature">
+						<div class="loader"></div>
+					</span>
 				</div>
 			</nav>
 		</header>

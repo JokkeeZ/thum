@@ -281,9 +281,12 @@ function getCurrentTemperature() {
 			return;
 		}
 
-		const currTemp = document.getElementById('current-temperature');
-		currTemp.innerText = `${result.temperature}°C`;
-		currTemp.title = getLocaleValue('nav_temp_hum_tooltip', result.temperature, result.humidity);
+		const currTemp = document.getElementsByClassName('current-temperature');
+
+		for (const elem of currTemp) {
+			elem.innerText = `${result.temperature}°C`;
+			elem.title = getLocaleValue('nav_temp_hum_tooltip', result.temperature, result.humidity);
+		}
 	});
 }
 
