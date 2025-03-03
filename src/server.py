@@ -11,7 +11,7 @@ async def get_sensor_all_data():
 	all_values = await db.sensor.get_all_async()
 	return jsonify(all_values)
 
-@app.route('/api/sensor/monthly/<string:year>/<string:month>')
+@app.route('/api/sensor/monthly/<int:year>/<int:month>')
 async def get_sensor_data_from_year_month(year, month):
 	try:
 		monthly_values = await db.sensor.get_year_month_async(year, month)
@@ -28,7 +28,7 @@ async def get_sensor_data_from_week(week):
 		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/sensor/daily/<string:date>')
-async def get_sensor_data_from_date2(date):
+async def get_sensor_data_from_date(date):
 	try:
 		daily_data = await db.sensor.get_date_async(date)
 		return jsonify(daily_data)
@@ -60,8 +60,11 @@ async def thum_optimize_db():
 
 @app.route('/api/statistics')
 async def get_sensor_statistics():
-	stats = await db.sensor.get_statistics_async()
-	return jsonify(stats)
+	try:
+		stats = await db.sensor.get_statistics_async()
+		return jsonify(stats)
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/sensor/temperature/current')
 async def get_sensor_data_current():

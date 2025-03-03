@@ -24,11 +24,11 @@ class DatabaseSensorData:
 			result = await cursor.fetchall()
 		return {row[0]: {'temperature': row[1], 'humidity': row[2]} for row in result}
 
-	async def get_year_month_async(self, year: str, month: str) -> dict[str, list[any]]:
-		(_, days) = calendar.monthrange(int(year), int(month))
+	async def get_year_month_async(self, year: int, month: int) -> dict[str, list[any]]:
+		(_, days) = calendar.monthrange(year, month)
 
-		start_date = f'{year}-{month}-01'
-		end_date = f'{year}-{month}-{str(days).zfill(2)}'
+		start_date = datetime(year, month, 1).strftime(CONFIG['db.dateformat'])
+		end_date = datetime(year, month, days).strftime(CONFIG['db.dateformat'])
 
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
@@ -48,7 +48,7 @@ class DatabaseSensorData:
 			hums.append(row[2])
 
 		return {
-			'labels': [datetime(int(year), int(month), day).strftime(CONFIG['db.dateformat']) for day in range(1, days + 1)],
+			'labels': [datetime(year, month, day).strftime(CONFIG['db.dateformat']) for day in range(1, days + 1)],
 			'temperatures': temps,
 			'humidities': hums
 		}
@@ -64,7 +64,7 @@ class DatabaseSensorData:
 			WHERE timestamp_date BETWEEN ? AND ?
 			GROUP BY timestamp_date
 			ORDER BY timestamp_date;
-			""", (dates[0], dates[-1]))
+			""", [dates[0], dates[-1]])
 
 			results = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
 
@@ -133,36 +133,30 @@ class DatabaseSensorData:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
 			SELECT
-				COUNT(*),
-				MIN(timestamp_date),
-				MAX(timestamp_date),
-				AVG(temperature),
-				AVG(humidity),
-				(SELECT timestamp_date
-				FROM sensor_data
-				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1),
-				(SELECT temperature
-				FROM sensor_data
-				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1),
-				(SELECT humidity
-				FROM sensor_data
-				WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1),
-				(SELECT timestamp_date
-				FROM sensor_data
-				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1),
-				(SELECT temperature
-				FROM sensor_data
-				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1),
-				(SELECT humidity
-				FROM sensor_data
-				WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)
-				ORDER BY timestamp_date LIMIT 1)
-			FROM sensor_data;
+					COUNT(*),
+					MIN(sd.timestamp_date),
+					MAX(sd.timestamp_date),
+					AVG(sd.temperature),
+					AVG(sd.humidity),
+					min_temp.timestamp_date,
+					min_temp.temperature,
+					min_temp.humidity,
+					max_temp.timestamp_date,
+					max_temp.temperature,
+					max_temp.humidity
+			FROM sensor_data sd
+			CROSS JOIN (
+					SELECT timestamp_date, temperature, humidity
+					FROM sensor_data
+					ORDER BY temperature ASC, timestamp_date ASC
+					LIMIT 1
+			) AS min_temp
+			CROSS JOIN (
+					SELECT timestamp_date, temperature, humidity
+					FROM sensor_data
+					ORDER BY temperature DESC, timestamp_date ASC
+					LIMIT 1
+			) AS max_temp;
 			""")
 
 			data = await cursor.fetchone()
