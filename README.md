@@ -4,7 +4,7 @@ A lightweight web application that collects real-time temperature and humidity d
 ![thum_monthly](https://github.com/user-attachments/assets/0f72e5e4-8393-4b76-b83b-b785aca523b4)
 
 > [!NOTE]
-> Tested with DHT11 and Raspberry Pi 4B
+> Developed with Raspberry Pi 4B and DHT11 sensor.
 
 ### Usage
 Clone the repository:
