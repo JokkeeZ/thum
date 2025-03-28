@@ -281,13 +281,13 @@ function getSensorStatistics() {
 	.then(r => r.json())
 	.then(result => {
 		const statCount = document.getElementById('stat-count');
-		statCount.innerText = getLocaleValue('tools_samples_count', result.count);
+		statCount.innerText = getLocaleValue('tools_readings_count', result.count);
 
 		const statFirst = document.getElementById('stat-first');
-		statFirst.innerText = getLocaleValue('tools_first_sample', result.first_date);
+		statFirst.innerText = getLocaleValue('tools_first_reading', result.first_date);
 
 		const statLast = document.getElementById('stat-last');
-		statLast.innerText = getLocaleValue('tools_last_sample', result.last_date);
+		statLast.innerText = getLocaleValue('tools_last_reading', result.last_date);
 
 		const statAvgTemp = document.getElementById('stat-avg-temp');
 		statAvgTemp.innerText = getLocaleValue('tools_avg_temperature', result.avg_temperature.toFixed(2));
