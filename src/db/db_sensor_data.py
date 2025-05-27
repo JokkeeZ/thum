@@ -43,9 +43,17 @@ class DatabaseSensorData:
 
 		temps = []
 		hums = []
-		for row in result:
-			temps.append(row[1])
-			hums.append(row[2])
+
+		for i in range(1, days):
+			day_str = str(i).zfill(2)
+			row = next((row for row in result if row[0] == day_str), None)
+
+			if row:
+				temps.append(row[1])
+				hums.append(row[2])
+			else:
+				temps.append(None)
+				hums.append(None)
 
 		return {
 			'labels': [datetime(year, month, day).strftime(CONFIG['db.dateformat']) for day in range(1, days + 1)],
