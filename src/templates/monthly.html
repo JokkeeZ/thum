@@ -5,8 +5,37 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		getMonthlyDataFromSensor('{{Max}}');
 
-		const monthSelector = document.getElementById('month');
-		monthSelector.addEventListener('change', () => getMonthlyDataFromSensor());
+		if (!firefox) {
+			const monthSelector = document.getElementById('month');
+			monthSelector.addEventListener('change', () => getMonthlyDataFromSensor());
+			return;
+		}
+
+		const firefoxMonth = document.getElementById('firefox-month');
+		const firefoxYear = document.getElementById('firefox-year');
+
+		for (let i = 1; i <= 12; i++) {
+			const month = i < 10 ? `0${i}` : `${i}`;
+			const option = document.createElement('option');
+			option.value = month;
+			option.selected = (i === new Date().getMonth() + 1);
+			option.textContent = new Date(0, i - 1).toLocaleString('default', { month: 'long' });
+			firefoxMonth.appendChild(option);
+		}
+
+		document.getElementById('firefox-group').style.display = 'block';
+		document.getElementById('month').style.display = 'none';
+		firefoxYear.addEventListener('change', (e) => {
+			const year = e.target.value;
+			const month = firefoxMonth.value;
+			getMonthlyDataFromSensor(`${year}-${month}`);
+		});
+		
+		firefoxMonth.addEventListener('change', (e) => {
+			const year = firefoxYear.value;
+			const month = e.target.value;
+			getMonthlyDataFromSensor(`${year}-${month}`);
+		});
 	});
 </script>
 
@@ -18,6 +47,10 @@
 				<div class="form-group">
 					<label for="date" data-str="monthly_select"></label>
 					<input class="form-control" type="month" id="month" min="{{Min}}" max="{{Max}}" value="{{Max}}"/>
+				</div>
+				<div class="form-group" id="firefox-group" style="display: none;">
+					<input type="number" class="form-control" id="firefox-year" value="{{Max[:4]}}" min="{{Min[:4]}}" max="{{Max[:4]}}" />
+					<select id="firefox-month" class="form-control"></select>
 				</div>
 			</form>
 		</div>
