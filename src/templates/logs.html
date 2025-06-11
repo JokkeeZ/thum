@@ -8,7 +8,7 @@
 			<div class="log-actions">
 				<button class="btn btn-outline-danger" 
 					onclick="deleteAllLogs(true)" 
-					data-i18n="delete_all"/>
+					data-str="delete_all"/>
 			</div>
 		</div>
 		<div class="col-lg-12">
@@ -16,9 +16,9 @@
 				<thead>
 					<tr>
 						<th scope="col">#</th>
-						<th scope="col" data-i18n="error"></th>
-						<th scope="col" data-i18n="timestamp"></th>
-						<th scope="col" data-i18n="delete"></th>
+						<th scope="col" data-str="error"></th>
+						<th scope="col" data-str="timestamp"></th>
+						<th scope="col" data-str="delete"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -31,7 +31,7 @@
 							<td>
 								<button class="btn btn-outline-danger btn-sm" 
 									onclick="deleteLogByTimestamp('{{ loop.index }}', '{{ log[1] }}')" 
-									data-i18n="delete"/>
+									data-str="delete"/>
 							</td>
 						</tr>
 						{% endfor %}
@@ -39,7 +39,7 @@
 						<tr>
 							<th scope="row">—</td>
 							<td>—</td>
-							<td data-i18n="logs_empty"></td>
+							<td data-str="logs_empty"></td>
 							<td>—</td>
 						</tr>
 					{% endif %}

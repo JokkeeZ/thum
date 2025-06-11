@@ -92,10 +92,6 @@ async def download_backup():
 		as_attachment=True,
 		attachment_filename=file_path.split('/')[1])
 
-@app.template_global()
-def locale():
-	return CONFIG['app.locale']
-
 @app.route('/')
 async def index():
 	return await render_template('index.html')

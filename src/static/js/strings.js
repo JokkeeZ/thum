@@ -1,4 +1,4 @@
-locales["en"] = {
+strings = {
 	dew_point: "Dew point: {0}°C",
 	humidity: "Humidity",
 	temperature: "Temperature",

@@ -33,7 +33,4 @@ CONFIG:dict = {
 
   # Specifies if Quart is started with debug mode
 	'app.debug': 				True,
-
-  # Determines which locale to use from ./static/js/i18n/*.js
-  'app.locale':				'en'
 }

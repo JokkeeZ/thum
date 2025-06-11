@@ -34,25 +34,25 @@
 						{% set active_page = request.endpoint %}
 						<ul class="navbar-nav me-auto">
 							<li class="nav-item">
-								<a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'index' %}active{% endif %}" data-i18n="nav_all"></a>
+								<a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'index' %}active{% endif %}" data-str="nav_all"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('daily') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-i18n="nav_daily"></a>
+								<a href="{{ url_for('daily') }}" class="nav-link {% if active_page == 'daily' %}active{% endif %}" data-str="nav_daily"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('weekly') }}" class="nav-link {% if active_page == 'weekly' %}active{% endif %}" data-i18n="nav_weekly"></a>
+								<a href="{{ url_for('weekly') }}" class="nav-link {% if active_page == 'weekly' %}active{% endif %}" data-str="nav_weekly"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('monthly') }}" class="nav-link {% if active_page == 'monthly' %}active{% endif %}" data-i18n="nav_monthly"></a>
+								<a href="{{ url_for('monthly') }}" class="nav-link {% if active_page == 'monthly' %}active{% endif %}" data-str="nav_monthly"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('tools') }}" class="nav-link {% if active_page == 'tools' %}active{% endif %}" data-i18n="nav_tools"></a>
+								<a href="{{ url_for('tools') }}" class="nav-link {% if active_page == 'tools' %}active{% endif %}" data-str="nav_tools"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('logs') }}" class="nav-link {% if active_page == 'logs' %}active{% endif %}" data-i18n="nav_logs"></a>
+								<a href="{{ url_for('logs') }}" class="nav-link {% if active_page == 'logs' %}active{% endif %}" data-str="nav_logs"></a>
 							</li>
 							<li class="nav-item">
-								<a href="{{ url_for('api') }}" class="nav-link {% if active_page == 'api' %}active{% endif %}" data-i18n="nav_api"></a>
+								<a href="{{ url_for('api') }}" class="nav-link {% if active_page == 'api' %}active{% endif %}" data-str="nav_api"></a>
 							</li>
 						</ul>
 					</div>
@@ -106,13 +106,12 @@
 		</template>
 
 		<script>
-			const locales = {};
-			const current_locale = '{{locale()}}';
-		
+			let strings = {};
+
 			document.addEventListener('DOMContentLoaded', function() {
-				document.querySelectorAll('[data-i18n]').forEach(element => {
-					const key = element.getAttribute('data-i18n');
-					element.textContent = locales[current_locale][key];
+				document.querySelectorAll('[data-str]').forEach(element => {
+					const key = element.getAttribute('data-str');
+					element.textContent = strings[key];
 				});
 			});
 		</script>
@@ -120,7 +119,7 @@
 		<script src="{{url_for('static', filename='js/bootstrap.min.js')}}" defer></script>
 		<script src="{{url_for('static', filename='js/chart.min.js')}}" defer></script>
 		
-		<script src="{{url_for('static', filename='js/i18n/' + locale() + '.js')}}" defer></script>
+		<script src="{{url_for('static', filename='js/strings.js')}}" defer></script>
 		<script src="{{url_for('static', filename='js/main.js')}}" defer></script>
 	</body>
 </html>

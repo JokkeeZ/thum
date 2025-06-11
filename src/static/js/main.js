@@ -24,16 +24,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /**
- * Get locale value with key. 
+ * Get string value by key.
  * Optionally replaces placeholders from the string with given values.
  * 
- * @param {String} key Locale key
- * @param {...*} values Values to be replaced from the locale value.
+ * @param {String} key String key
+ * @param {...*} values Values to be replaced from the string value.
  * 
  * @returns {String} 
  */
-function getLocaleValue(key, ...values) {
-	return locales[current_locale][key].replace(/{(\d+)}/g, (match, index) => {
+function getStringValue(key, ...values) {
+	return strings[key].replace(/{(\d+)}/g, (match, index) => {
 		return values[index] || match;
 	});
 }
@@ -52,7 +52,7 @@ function initializeChart() {
 
 	const callback = function (toolTipItems) {
 		const dewPoint = toolTipItems[1].parsed.y - ((100 - toolTipItems[0].parsed.y) / 5);
-		return getLocaleValue('dew_point', dewPoint.toFixed(2));
+		return getStringValue('dew_point', dewPoint.toFixed(2));
 	}
 
 	const options = {
@@ -98,13 +98,13 @@ function updateChartData(labels, humidities, temperatures) {
 		labels: labels,
 		datasets: [
 			{ 
-				label: getLocaleValue('humidity'),
+				label: getStringValue('humidity'),
 				data: humidities,
 				pointHoverRadius: chartPointHoverRadius,
 				tension: chartLineTension
 			},
 			{ 
-				label: getLocaleValue('temperature'),
+				label: getStringValue('temperature'),
 				data: temperatures,
 				pointHoverRadius: chartPointHoverRadius,
 				tension: chartLineTension
@@ -127,7 +127,7 @@ function deleteLogByTimestamp(idx, timestamp) {
 	.then(r => r.json())
 	.then(result => {
 		if (result.count <= 0) {
-			showNotification(getLocaleValue('log_entry_removal_failed', timestamp), false);
+			showNotification(getStringValue('log_entry_removal_failed', timestamp), false);
 			return;
 		}
 
@@ -147,11 +147,11 @@ function deleteAllLogs(logPage) {
 	.then(r => r.json())
 	.then(result => {
 		if (result.count <= 0) {
-			showNotification(getLocaleValue('log_clear_fail'), false);
+			showNotification(getStringValue('log_clear_fail'), false);
 			return;
 		}
 
-		showNotification(getLocaleValue('log_clear_success', result.count), true);
+		showNotification(getStringValue('log_clear_success', result.count), true);
 
 		if (logPage) {
 			document.querySelectorAll('.log-entry').forEach(e => e.remove());
@@ -237,7 +237,7 @@ function backupDatabase() {
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_backup_success' : 'db_backup_fail';
-		showNotification(getLocaleValue(messageKey, result.path), result.success);
+		showNotification(getStringValue(messageKey, result.path), result.success);
 	});
 }
 
@@ -249,7 +249,7 @@ function optimizeDatabase() {
 	.then(r => r.json())
 	.then(result => {
 		const messageKey = result.success ? 'db_optimize_success' : 'db_optimize_fail';
-		showNotification(getLocaleValue(messageKey), result.success);
+		showNotification(getStringValue(messageKey), result.success);
 	});
 }
 
@@ -268,7 +268,7 @@ function getCurrentTemperature() {
 
 		for (const elem of currTemp) {
 			elem.innerText = `${result.temperature}°C`;
-			elem.title = getLocaleValue('nav_temp_hum_tooltip', result.temperature, result.humidity);
+			elem.title = getStringValue('nav_temp_hum_tooltip', result.temperature, result.humidity);
 		}
 	});
 }
@@ -281,28 +281,28 @@ function getSensorStatistics() {
 	.then(r => r.json())
 	.then(result => {
 		const statCount = document.getElementById('stat-count');
-		statCount.innerText = getLocaleValue('tools_readings_count', result.count);
+		statCount.innerText = getStringValue('tools_readings_count', result.count);
 
 		const statFirst = document.getElementById('stat-first');
-		statFirst.innerText = getLocaleValue('tools_first_reading', result.first_date);
+		statFirst.innerText = getStringValue('tools_first_reading', result.first_date);
 
 		const statLast = document.getElementById('stat-last');
-		statLast.innerText = getLocaleValue('tools_last_reading', result.last_date);
+		statLast.innerText = getStringValue('tools_last_reading', result.last_date);
 
 		const statAvgTemp = document.getElementById('stat-avg-temp');
-		statAvgTemp.innerText = getLocaleValue('tools_avg_temperature', result.avg_temperature.toFixed(2));
+		statAvgTemp.innerText = getStringValue('tools_avg_temperature', result.avg_temperature.toFixed(2));
 
 		const statAvgHum = document.getElementById('stat-avg-hum');
-		statAvgHum.innerText = getLocaleValue('tools_avg_humidity', result.avg_humidity.toFixed(2));
+		statAvgHum.innerText = getStringValue('tools_avg_humidity', result.avg_humidity.toFixed(2));
 
 		const statWarmestDay = document.getElementById('stat-warmest-day');
-		statWarmestDay.innerText = getLocaleValue('tools_warmest_day', 
+		statWarmestDay.innerText = getStringValue('tools_warmest_day', 
 			result.warmest_day.date,
 			result.warmest_day.temperature,
 			result.warmest_day.humidity);
 
 		const statColdestDay = document.getElementById('stat-coldest-day');
-		statColdestDay.innerText = getLocaleValue('tools_coldest_day', 
+		statColdestDay.innerText = getStringValue('tools_coldest_day', 
 			result.coldest_day.date,
 			result.coldest_day.temperature,
 			result.coldest_day.humidity);
@@ -315,7 +315,7 @@ function getSensorStatistics() {
  * Sends a notification that download has started.
  */
 function downloadDatabaseBackup() {
-	showNotification(getLocaleValue('db_backup_started'), true);
+	showNotification(getStringValue('db_backup_started'), true);
 }
 
 /**
@@ -330,7 +330,7 @@ function showNotification(text, success) {
 
 	const notification = template.children[0];
 	notification.classList.add(success ? 'alert-success' : 'alert-danger');
-	notification.children[1].textContent = success ? getLocaleValue('success') : getLocaleValue('error');
+	notification.children[1].textContent = success ? getStringValue('success') : getStringValue('error');
 	notification.children[2].innerText = text;
 
 	const dismissNotification = () => {
