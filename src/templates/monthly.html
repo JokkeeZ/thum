@@ -5,14 +5,14 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		getMonthlyDataFromSensor('{{Max}}');
 
-		if (!firefox) {
+		if (isChromiumBased()) {
 			const monthSelector = document.getElementById('month');
 			monthSelector.addEventListener('change', () => getMonthlyDataFromSensor());
 			return;
 		}
 
-		const firefoxMonth = document.getElementById('firefox-month');
-		const firefoxYear = document.getElementById('firefox-year');
+		const nonChromiumMonth = document.getElementById('non-chromium-month');
+		const nonChromiumYear = document.getElementById('non-chromium-year');
 
 		for (let i = 1; i <= 12; i++) {
 			const month = i < 10 ? `0${i}` : `${i}`;
@@ -20,19 +20,19 @@
 			option.value = month;
 			option.selected = (i === new Date().getMonth() + 1);
 			option.textContent = new Date(0, i - 1).toLocaleString('default', { month: 'long' });
-			firefoxMonth.appendChild(option);
+			nonChromiumMonth.appendChild(option);
 		}
 
-		document.getElementById('firefox-group').style.display = 'block';
+		document.getElementById('non-chromium-group').style.display = 'block';
 		document.getElementById('month').style.display = 'none';
-		firefoxYear.addEventListener('change', (e) => {
+		nonChromiumYear.addEventListener('change', (e) => {
 			const year = e.target.value;
-			const month = firefoxMonth.value;
+			const month = nonChromiumMonth.value;
 			getMonthlyDataFromSensor(`${year}-${month}`);
 		});
 		
-		firefoxMonth.addEventListener('change', (e) => {
-			const year = firefoxYear.value;
+		nonChromiumMonth.addEventListener('change', (e) => {
+			const year = nonChromiumYear.value;
 			const month = e.target.value;
 			getMonthlyDataFromSensor(`${year}-${month}`);
 		});
@@ -48,9 +48,9 @@
 					<label for="date" data-str="monthly_select"></label>
 					<input class="form-control" type="month" id="month" min="{{Min}}" max="{{Max}}" value="{{Max}}"/>
 				</div>
-				<div class="form-group" id="firefox-group" style="display: none;">
-					<input type="number" class="form-control" id="firefox-year" value="{{Max[:4]}}" min="{{Min[:4]}}" max="{{Max[:4]}}" />
-					<select id="firefox-month" class="form-control"></select>
+				<div class="form-group" id="non-chromium-group" style="display: none;">
+					<input type="number" class="form-control" id="non-chromium-year" value="{{Max[:4]}}" min="{{Min[:4]}}" max="{{Max[:4]}}" />
+					<select id="non-chromium-month" class="form-control"></select>
 				</div>
 			</form>
 		</div>

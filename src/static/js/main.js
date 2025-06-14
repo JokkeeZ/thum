@@ -39,6 +39,15 @@ function getStringValue(key, ...values) {
 }
 
 /**
+ * Checks if the browser is Chromium-based.
+ * @returns {boolean} true if browser is Chromium-based (Chrome, Edge, Brave, Opera).
+ */
+function isChromiumBased() {
+	const ua = navigator.userAgent;
+	return /Chrome/.test(ua) && /Edg|OPR|Brave/.test(ua) === false;
+}
+
+/**
  * Initialize chart.js if page contains canvas.
  */
 function initializeChart() {
