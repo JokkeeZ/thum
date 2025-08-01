@@ -44,7 +44,7 @@ class DatabaseSensorData:
 		temps = []
 		hums = []
 
-		for i in range(1, days):
+		for i in range(1, days + 1):
 			day_str = str(i).zfill(2)
 			row = next((row for row in result if row[0] == day_str), None)
 
