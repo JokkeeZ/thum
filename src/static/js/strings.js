@@ -18,11 +18,14 @@ strings = {
 	nav_daily: "Daily",
 	nav_weekly: "Weekly",
 	nav_monthly: "Monthly",
+	nav_range: "Range",
 	nav_tools: "Tools",
 	nav_logs: "Logs",
 	nav_api: "Api",
 
 	daily_select: "Select date",
+	range1_select: "Select starting date",
+	range2_select: "Select ending date",
 	weekly_select: "Select week",
 	monthly_select: "Select month",
 

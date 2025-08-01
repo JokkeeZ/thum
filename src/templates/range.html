@@ -1,0 +1,39 @@
+{%extends "index.html" %}
+
+{% block content %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		getRangeDataFromSensor('{{Max}}', '{{Max}}');
+
+		const dateStartSelector = document.getElementById('date-start');
+		dateStartSelector.addEventListener('change', (e) => getRangeDataFromSensor());
+
+		const dateEndSelector = document.getElementById('date-end');
+		dateEndSelector.addEventListener('change', (e) => getRangeDataFromSensor());
+	});
+</script>
+
+<div class="container-fluid mt-3">
+	<div id="notification-container"></div>
+	<div class="row justify-content-center">
+		<div class="col-md-4">
+			<form>
+				<div class="form-group">
+					<label for="date" data-str="range1_select"></label>
+					<input class="form-control" type="date" id="date-start" min="{{Min}}" max="{{Max}}" value="{{Max}}"/>
+					<label for="date" data-str="range2_select"></label>
+					<input class="form-control" type="date" id="date-end" min="{{Min}}" max="{{Max}}" value="{{Max}}"/>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-md-12 mt-3">
+			<div class="loader big" id="spinner"></div>
+			<div class="chart-container">
+				<canvas id="chart"></canvas>
+			</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}

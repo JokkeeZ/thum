@@ -13,7 +13,7 @@ class DatabaseSensorData:
 		self.mformat = '%Y-%m'
 		self.iso_w_format = '%G-W%V-%u'
 
-	async def get_all_async(self) -> dict[any, dict[str, any]]:
+	async def get_all_async(self) -> dict[str, dict[str, float]]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
 				SELECT timestamp_date, AVG(temperature) AS avg_temp, AVG(humidity) AS avg_hum
@@ -24,7 +24,7 @@ class DatabaseSensorData:
 			result = await cursor.fetchall()
 		return {row[0]: {'temperature': row[1], 'humidity': row[2]} for row in result}
 
-	async def get_year_month_async(self, year: int, month: int) -> dict[str, list[any]]:
+	async def get_year_month_async(self, year: int, month: int) -> dict[str, list[str | float]]:
 		(_, days) = calendar.monthrange(year, month)
 
 		start_date = datetime(year, month, 1).strftime(CONFIG['db.dateformat'])
@@ -61,7 +61,7 @@ class DatabaseSensorData:
 			'humidities': hums
 		}
 
-	async def get_week_async(self, week: str) -> dict[str, any]:
+	async def get_week_async(self, week: str) -> dict[str, str | list]:
 		first = datetime.strptime(f'{week}-1', self.iso_w_format)
 		dates = [(first + timedelta(days=i)).strftime(CONFIG['db.dateformat']) for i in range(7)]
 
@@ -82,7 +82,7 @@ class DatabaseSensorData:
 			'humidities': [results.get(date, (None, None))[1] for date in dates]
 		}
 
-	async def get_date_async(self, date: str) -> list[dict[str, any]]:
+	async def get_date_async(self, date: str) -> list[dict[str, str | float]]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
 			SELECT temperature, humidity, timestamp_time
@@ -93,6 +93,20 @@ class DatabaseSensorData:
 			rows = await cursor.fetchall()
 
 		return [{'temperature': row[0], 'humidity': row[1], 'timestamp': row[2]} for row in rows]
+
+	async def get_data_range_async(self, start_date: str, end_date) -> list[dict[str, str | float]]:
+		async with connect(self.dbfile) as db:
+			cursor = await db.execute(f"""
+			SELECT timestamp_date, AVG(temperature), AVG(humidity)
+			FROM sensor_data
+			WHERE timestamp_date BETWEEN ? AND ?
+			GROUP BY timestamp_date
+			ORDER BY timestamp_date;
+			""", [start_date, end_date])
+
+			rows = await cursor.fetchall()
+
+		return [{'humidity': row[2], 'temperature': row[1], 'timestamp': row[0]} for row in rows]
 
 	async def get_date_range_async(self) -> tuple[str, str]:
 		async with connect(self.dbfile) as db:
@@ -137,7 +151,7 @@ class DatabaseSensorData:
 
 			await db.commit()
 
-	async def get_statistics_async(self) -> tuple[Row, Row, Row]:
+	async def get_statistics_async(self) -> dict[str, any]:
 		async with connect(self.dbfile) as db:
 			cursor = await db.execute("""
 			SELECT

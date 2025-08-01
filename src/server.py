@@ -48,6 +48,14 @@ async def delete_logs_all():
 	result_count = await db.log.delete_all_async()
 	return jsonify({'count': result_count})
 
+@app.route('/api/sensor/range/<string:start_date>/<string:end_date>')
+async def get_sensor_data_range(start_date, end_date):
+	try:
+		range_data = await db.sensor.get_data_range_async(start_date, end_date)
+		return jsonify(range_data)
+	except Exception as e:
+		return jsonify({'success': False, 'message': str(e)})
+
 @app.route('/api/tools/database/backup')
 async def thum_backup_db():
 	file_path = await db.thum_make_db_backup_async()
@@ -100,6 +108,11 @@ async def index():
 async def daily():
 	(min_date, max_date) = await db.sensor.get_date_range_async()
 	return await render_template('daily.html', Min=min_date, Max=max_date)
+
+@app.route('/range')
+async def range():
+	(min_date, max_date) = await db.sensor.get_date_range_async()
+	return await render_template('range.html', Min=min_date, Max=max_date)
 
 @app.route('/weekly')
 async def weekly():

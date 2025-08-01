@@ -221,6 +221,28 @@ function getDailyDataFromSensor(date) {
 }
 
 /**
+ * Gets all the data for specific date range between starting and ending dates.
+ * 
+ * @param {String} startingDate Format: `2024-04-18`
+ * @param {String} endingDate Format: `2024-04-20`
+ */
+function getRangeDataFromSensor(startingDate, endingDate) {
+	startingDate ??= document.getElementById('date-start').value;
+	endingDate ??= document.getElementById('date-end').value;
+
+	fetch(`/api/sensor/range/${startingDate}/${endingDate}`)
+	.then(r => r.json())
+	.then(result => {
+		updateChartData(
+			result.map(x => x.timestamp),
+			result.map(x => x.humidity),
+			result.map(x => x.temperature));
+
+			spinner.remove();
+	});
+}
+
+/**
  * Gets all the data for specific month by monthstring.
  * 
  * @param {String} month Format: `2024-05`
