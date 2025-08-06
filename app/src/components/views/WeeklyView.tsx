@@ -83,24 +83,8 @@ function WeeklyView(props: {
           </div>
         ) : (
           <div className="row mb-3 mt-3">
-            <div className="col-md-6">
-              <label htmlFor="year" className="form-label">
-                Year
-              </label>
-              <input
-                className="form-control"
-                id="year"
-                type="number"
-                min={2024} // @TODO: query min year from API before requesting data points
-                max={year}
-                value={year}
-                onChange={(e) => setYear(e.currentTarget.valueAsNumber)}
-              />
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="week" className="form-label">
-                Week
-              </label>
+            <label htmlFor="year-week">Select week and year</label>
+            <div className="input-group mb-3 mt-1">
               <input
                 className="form-control"
                 id="week"
@@ -109,6 +93,15 @@ function WeeklyView(props: {
                 max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
                 onChange={(e) => setWeek(e.currentTarget.valueAsNumber)}
                 value={week}
+                />
+              <input
+                className="form-control"
+                id="year"
+                type="number"
+                min={2024} // @TODO: query min year from API before requesting data points
+                max={year}
+                value={year}
+                onChange={(e) => setYear(e.currentTarget.valueAsNumber)}
               />
             </div>
           </div>
