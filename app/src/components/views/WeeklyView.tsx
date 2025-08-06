@@ -72,7 +72,8 @@ function WeeklyView(props: {
               <input
                 className="form-control"
                 type="week"
-                max={moment().format("GGGG-[W]WW")}
+                min={1}
+                max={moment().isoWeekYear(year).format("GGGG-[W]WW")}
                 value={moment()
                   .isoWeekYear(year)
                   .isoWeek(week)
