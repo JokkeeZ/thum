@@ -98,7 +98,7 @@ function WeeklyView(props: {
               />
             </div>
             <div className="col-md-6">
-              <label htmlFor="firstName" className="form-label">
+              <label htmlFor="week" className="form-label">
                 Week
               </label>
               <input
