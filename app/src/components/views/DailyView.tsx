@@ -13,7 +13,7 @@ function DailyView(props: {
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
   const today = new Date();
-  const [dateToday, setDateToday] = useState<ISelectedDate>(dateToSelectedDate(today));
+  const dateToday = dateToSelectedDate(today);
   const [date, setDate] = useState<ISelectedDate>(dateToday);
 
   const { addNotification } = useNotification();
