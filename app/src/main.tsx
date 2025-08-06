@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import './styles/bootstrap.min.css';
+import 'bootswatch/dist/cerulean/bootstrap.min.css';
 import './styles/style_new.css';
 import App from './App.tsx';
 

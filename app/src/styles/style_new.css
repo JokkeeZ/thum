@@ -23,17 +23,17 @@
 	color: var(--bs-info-text-emphasis) !important;
 }
 
-.navbar-brand,
+/* .navbar-brand,
 .navbar-text,
 .nav-link {
 	color: var(--bs-black) !important;
-}
+} */
 
-.nav-link.active {
+/* .nav-link.active {
 	text-decoration: underline;
 	text-underline-offset: 8px;
 	text-decoration-thickness: 1px;
-}
+} */
 
 @keyframes spin {
 	0% {

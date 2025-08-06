@@ -9,6 +9,8 @@ function HomeView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
+    setChartReady(false);
+    
     fetch('http://127.0.0.1:8000/api/sensor/all')
       .then(resp => resp.json())
       .then(resp  => {

@@ -44,11 +44,14 @@ export const useNotification = () => {
   return context;
 };
 
-export function selectedDateToString(d: ISelectedDate) {
-  return `${d.year}-${String(d.month).padStart(2, "0")}-${String(
-    d.date
-  ).padStart(2, "0")}`;
-};
+/**
+ * Checks if the browser is Chromium-based.
+ * @returns {boolean} true if browser is Chromium-based (Chrome, Edge, Brave, Opera).
+ */
+export function isChromiumBased(): boolean {
+	const ua = navigator.userAgent;
+	return /Chrome/.test(ua) && /Edg|OPR|Brave/.test(ua) === false;
+}
 
 export function dateToSelectedDate(d: Date): ISelectedDate {
   return {

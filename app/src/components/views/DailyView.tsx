@@ -1,12 +1,12 @@
 import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import {
   dateToSelectedDate,
-  selectedDateToString,
   useNotification,
   type IDataChart,
   type IResponseDataPoint,
   type ISelectedDate,
 } from "../../types";
+import moment from "moment";
 
 function DailyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -19,16 +19,28 @@ function DailyView(props: {
   const { addNotification } = useNotification();
   const { setChartData, setChartReady } = props;
 
-  const onDateChanged = (value: ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(value.currentTarget.value);
+  const onDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = event.currentTarget.valueAsDate;
+
+    if (!selectedDate) {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Invalid date selected.",
+      });
+      return;
+    }
+
     setDate({
       year: selectedDate.getFullYear(),
       month: selectedDate.getMonth() + 1,
       date: selectedDate.getDate()
-    })
+    });
   }
 
   useEffect(() => {
+    setChartReady(false);
+
     fetch(`http://127.0.0.1:8000/api/sensor/daily/${date.date}/${date.month}/${date.year}`)
       .then((resp) => resp.json())
       .then((resp) => {
@@ -60,8 +72,8 @@ function DailyView(props: {
             type="date"
             min="2024-05-26" // @TODO: Query min date from API before querying any data points.
             onChange={onDateChanged}
-            max={selectedDateToString(dateToday)}
-            value={selectedDateToString(date)}
+            max={moment().toNow()}
+            value={moment().toNow()}
           />
         </div>
       </form>

@@ -6,10 +6,8 @@ import DataChart from "./components/DataChart";
 import HomeView from "./components/views/HomeView";
 import NotificationContainer from "./components/NotificationContainer";
 import DailyView from "./components/views/DailyView";
+import WeeklyView from "./components/views/WeeklyView";
 
-function WeeklyView() {
-  return <></>;
-}
 function MonthlyView() {
   return <></>;
 }
@@ -42,7 +40,7 @@ export default function App() {
         ),
       },
       { name: "Daily", comp: <DailyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Weekly", comp: <WeeklyView /> },
+      { name: "Weekly", comp: <WeeklyView setChartData={setChartData} setChartReady={setChartReady}/> },
       { name: "Monthly", comp: <MonthlyView /> },
       { name: "Range", comp: <RangeView /> },
       { name: "Api", comp: <ApiView /> },
