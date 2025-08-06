@@ -58,10 +58,9 @@
 
 #notification-container {
 	position: fixed;
-	top: 20px;
-	left: 50%;
+  bottom: 1%;
+	right: 1%;
 	z-index: 9999 !important;
-	gap: 10px;
 }
 
 #notification {
