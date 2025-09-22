@@ -99,61 +99,13 @@ async def remove_log_by_timestamp(timestamp: str):
   except Exception as e:
     return error_template(e)
 
+@app.delete('/api/logs')
+async def remove_all_logs():
+  try:
+    return await db.log_delete_all_async()
+  except Exception as e:
+    return error_template(e)
+
 @app.get('/')
 async def get_all_urls_from_request(request: Request):
   return [route.path for route in request.app.routes]
-
-	# async def get_date_range_async(self) -> tuple[str, str]:
-	# 	async with connect(self.dbfile) as db:
-	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-	# 		(min, max) = await cursor.fetchone()
-
-	# 	now = datetime.now()
-	# 	min_date = (now.strftime(self.dateformat) if min is None else min)
-	# 	max_date = (now.strftime(self.dateformat) if max is None else max)
-	# 	return (min_date, max_date)
-
-	# async def get_week_range_async(self) -> tuple[str, str]:
-	# 	async with connect(self.dbfile) as db:
-	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-	# 		(min, max) = await cursor.fetchone()
-
-	# 	now = datetime.now()
-	# 	min_week = (now.strftime(self.wformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.wformat))
-	# 	max_week = (now.strftime(self.wformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.wformat))
-	# 	return (min_week, max_week)
-
-	# async def get_month_range_async(self) -> tuple[str, str]:
-	# 	async with connect(self.dbfile) as db:
-	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-	# 		(min, max) = await cursor.fetchone()
-
-	# 	now = datetime.now()
-	# 	min_month = (now.strftime(self.mformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.mformat))
-	# 	max_month = (now.strftime(self.mformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.mformat))
-	# 	return (min_month, max_month)
-
-# @app.route('/api/logs/delete-entry/<string:timestamp>', methods=['DELETE'])
-# async def delete_log_by_timestamp(timestamp):
-# 	try:
-# 		result_count = await db.log.delete_by_timestamp_async(timestamp)
-# 		return jsonify({'count': result_count})
-# 	except Exception as e:
-# 		return jsonify({'success': False, 'message': str(e)})
-
-# @app.route('/api/logs/purge', methods=['DELETE'])
-# async def delete_logs_all():
-# 	result_count = await db.log.delete_all_async()
-# 	return jsonify({'count': result_count})
-
-# @app.route('/api/tools/database/backup/download')
-# async def download_backup():
-# 	file_path = await db.thum_make_db_backup_async()
-
-# 	if not file_path:
-# 		return jsonify({'success': False, 'path': None})
-
-# 	return await send_file(file_path,
-# 		'application/vnd.sqlite3',
-# 		as_attachment=True,
-# 		attachment_filename=file_path.split('/')[1])

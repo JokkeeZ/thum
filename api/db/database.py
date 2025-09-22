@@ -141,7 +141,7 @@ class Database:
       [timestamp])
       await db.commit()
 
-    return { 'success': cursor.rowcount > 0 }
+    return { 'count': cursor.rowcount }
 
   async def log_get_all_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
@@ -163,7 +163,7 @@ class Database:
       cursor = await db.execute('DELETE FROM logs;')
       await db.commit()
 
-      return cursor.rowcount
+      return { 'count': cursor.rowcount }
 
   async def log_insert_entry_async(self, entry):
     async with aiosqlite.connect(self.dbfile) as db:
