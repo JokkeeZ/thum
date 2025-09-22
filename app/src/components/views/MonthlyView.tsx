@@ -5,39 +5,52 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { isChromiumBased, useNotification, type IDataChart, type IResponseDataPoint } from "../../types";
+import {
+  fetchMinMaxValues,
+  isChromiumBased,
+  useNotification,
+  type IDataChart,
+  type IMinMaxValuesLoaded,
+  type IResponseDataPoint,
+} from "../../types";
 import moment from "moment";
-
-function ChromiumMonthPicker(props: { year: number, month: number, onMonthChangedOnChromium: (event: ChangeEvent<HTMLInputElement>) => void }) {
-  return (
-    <div className="row mb-3 mt-3">
-      <div className="form-group">
-        <label htmlFor="date">Select month (Chromium)</label>
-        <input
-          className="form-control"
-          type="month"
-          max={moment().format('YYYY-MM')}
-          value={moment()
-            .year(props.year)
-            .month(props.month)
-            .format('YYYY-MM')}
-          onChange={props.onMonthChangedOnChromium}
-        />
-      </div>
-    </div>
-  );
-}
 
 export default function MonthlyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
-  const minYear = 2024; // @TODO: Query min year before doin' anything else maby
-  const [year, setYear] = useState(moment().year());
-  const [month, setMonth] = useState(moment().month());
+  const [year, setYear] = useState(0);
+  const [month, setMonth] = useState(0);
+  const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
+    first: undefined,
+    last: undefined,
+    loaded: false,
+  });
 
   const { addNotification } = useNotification();
   const { setChartData, setChartReady } = props;
+
+  useEffect(() => {
+    console.log('Year changed to: ' + year);
+  }, [year]);
+
+  useEffect(() => {
+    fetchMinMaxValues("http://127.0.0.1:8000/api/range/months")
+      .then((val) => {
+        setMinMax(val);
+
+        const last = moment(val.last);
+        setYear(last.year());
+        setMonth(last.month() + 1);
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: error.toString(),
+        });
+      });
+  }, [setMinMax, setYear, setMonth, addNotification]);
 
   const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
@@ -53,22 +66,24 @@ export default function MonthlyView(props: {
     }
 
     setYear(selection.year());
-    setMonth(selection.month());
+    setMonth(selection.month() + 1);
   };
 
   useEffect(() => {
-    setChartReady(false);
+    if (!minMax.loaded) {
+      return;
+    }
 
     fetch(`http://127.0.0.1:8000/api/sensor/monthly/${year}/${month}`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];
         setChartData({
-          labels: data.map(p => p.ts),
-          temperatures: data.map(p => p.temperature),
-          humidities: data.map(p => p.humidity)
-        })
-        
+          labels: data.map((p) => p.ts),
+          temperatures: data.map((p) => p.temperature),
+          humidities: data.map((p) => p.humidity),
+        });
+
         setChartReady(true);
       })
       .catch((error) => {
@@ -78,42 +93,80 @@ export default function MonthlyView(props: {
           text: error.toString(),
         });
       });
-  }, [setChartData, year, month, setChartReady, addNotification]);
+  }, [setChartData, minMax, year, month, setChartReady, addNotification]);
 
   const onYearChanged = (event: ChangeEvent<HTMLSelectElement>) => {
     setYear(parseInt(event.currentTarget.value));
-  }
+  };
 
   const onMonthChanged = (event: ChangeEvent<HTMLSelectElement>) => {
     setMonth(parseInt(event.currentTarget.value));
-  }
+  };
 
   return (
     <div className="col-md-6 mx-auto">
-      <form>
-        {isChromiumBased() ? (<ChromiumMonthPicker year={year} month={month} onMonthChangedOnChromium={onMonthChangedOnChromium}/>) : (
-          <div className="row mb-3 mt-3">
-            <label htmlFor="year-month">Select month and year</label>
-            <div className="input-group mb-3 mt-1" id="year-month">
-              <select className="form-select" onChange={onMonthChanged}>
-                {
-                  moment.months().map((m, i) => {
-                    return <option key={i} value={i + 1} defaultValue={month}>{m}</option>
-                  })
-                }
-              </select>
-              <select className="form-select" onChange={onYearChanged}>
-                {
-                  Array.from({ length: moment().year() - minYear + 1 }, (_, i) => {
-                    return <option key={(i + minYear)} value={(i + minYear)} defaultValue={year}>{i + minYear}</option>
-                  })
-                }
-              </select>
+      {minMax.loaded ? (
+        <form>
+          {isChromiumBased() ? (
+            <div className="row mb-3 mt-3">
+              <div className="form-group">
+                <label htmlFor="date">Select month (Chromium)</label>
+                <input
+                  className="form-control"
+                  type="month"
+                  min={minMax.first}
+                  max={minMax.last}
+                  value={moment().year(year).month(month).format("YYYY-MM")}
+                  onChange={onMonthChangedOnChromium}
+                />
+              </div>
             </div>
-          
-          </div>
-        )}
-      </form>
+          ) : (
+            <div className="row mb-3 mt-3">
+              <label htmlFor="year-month">Select month and year</label>
+              <div className="input-group mb-3 mt-1" id="year-month">
+                <select
+                  className="form-select"
+                  onChange={onMonthChanged}
+                  defaultValue={month}
+                >
+                  {moment.months().map((m, i) => {
+                    return (
+                      <option key={i} value={i + 1}>
+                        {m}
+                      </option>
+                    );
+                  })}
+                </select>
+                <select
+                  className="form-select"
+                  onChange={onYearChanged}
+                  defaultValue={year}
+                >
+                  {Array.from(
+                    {
+                      length:
+                        moment(minMax.last).year() -
+                        moment(minMax.first).year() +
+                        1,
+                    },
+                    (_, i) => {
+                      const yearVal = moment(minMax.first).year() + i;
+                      return (
+                        <option key={yearVal} value={yearVal}>
+                          {yearVal}
+                        </option>
+                      );
+                    }
+                  )}
+                </select>
+              </div>
+            </div>
+          )}
+        </form>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

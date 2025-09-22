@@ -2,6 +2,7 @@ import { createContext, useContext, type JSX } from "react";
 
 export interface IPage {
   name: string;
+  chart: boolean;
   comp: JSX.Element;
 }
 
@@ -22,6 +23,12 @@ export interface IDataChart {
   labels: string[];
   temperatures: number[];
   humidities: number[];
+}
+
+export interface IMinMaxValuesLoaded {
+  first?: string;
+  last?: string;
+  loaded: boolean;
 }
 
 type NotificationContextType = {
@@ -49,14 +56,12 @@ export const useNotification = () => {
  * @returns {boolean} true if browser is Chromium-based (Chrome, Edge, Brave, Opera).
  */
 export function isChromiumBased(): boolean {
-	const ua = navigator.userAgent;
-	return /Chrome/.test(ua) && /Edg|OPR|Brave/.test(ua) === false;
+  const ua = navigator.userAgent;
+  return /Chrome/.test(ua) && /Edg|OPR|Brave/.test(ua) === false;
 }
 
-export function dateToSelectedDate(d: Date): ISelectedDate {
-  return {
-    year: d.getFullYear(),
-    month: d.getMonth() + 1,
-    date: d.getDate()
-  }
+export async function fetchMinMaxValues(url: string): Promise<IMinMaxValuesLoaded> {
+  const resp = await fetch(url);
+  const json: IMinMaxValuesLoaded = await resp.json();
+  return { first: json.first, last: json.last, loaded: true };
 }

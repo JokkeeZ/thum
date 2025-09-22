@@ -5,18 +5,48 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { isChromiumBased, useNotification, type IDataChart } from "../../types";
+import {
+  fetchMinMaxValues,
+  isChromiumBased,
+  useNotification,
+  type IDataChart,
+  type IMinMaxValuesLoaded,
+} from "../../types";
 import moment from "moment";
 
 function WeeklyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [year, setYear] = useState(moment().year());
-  const [week, setWeek] = useState(moment().week());
+  const [year, setYear] = useState(0);
+  const [week, setWeek] = useState(0);
+
+  const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
+    first: undefined,
+    last: undefined,
+    loaded: false,
+  });
 
   const { addNotification } = useNotification();
   const { setChartData, setChartReady } = props;
+
+  useEffect(() => {
+    fetchMinMaxValues("http://127.0.0.1:8000/api/range/weeks")
+      .then((val) => {
+        setMinMax(val);
+
+        const last = moment(val.last);
+        setYear(last.year());
+        setWeek(last.week());
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: error.toString(),
+        });
+      });
+  }, [setMinMax, setYear, setWeek, addNotification]);
 
   const onWeekChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
@@ -36,7 +66,10 @@ function WeeklyView(props: {
   };
 
   useEffect(() => {
-    setChartReady(false);
+    if (!minMax.loaded) {
+      return;
+    }
+
     const weekString = moment()
       .isoWeekYear(year)
       .isoWeek(week)
@@ -59,55 +92,59 @@ function WeeklyView(props: {
           text: error.toString(),
         });
       });
-  }, [setChartData, year, week, setChartReady, addNotification]);
+  }, [setChartData, minMax, year, week, setChartReady, addNotification]);
 
   return (
     <div className="col-md-6 mx-auto">
-      <form>
-        {isChromiumBased() ? (
-          // Chrome etc
-          <div className="row mb-3 mt-3">
-            <div className="form-group">
-              <label htmlFor="date">Select week (Chromium)</label>
-              <input
-                className="form-control"
-                type="week"
-                min={1}
-                max={moment().isoWeekYear(year).format("GGGG-[W]WW")}
-                value={moment()
-                  .isoWeekYear(year)
-                  .isoWeek(week)
-                  .format("GGGG-[W]WW")}
-                onChange={onWeekChangedOnChromium}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="row mb-3 mt-3">
-            <label htmlFor="year-week">Select week and year</label>
-            <div className="input-group mb-3 mt-1">
-              <input
-                className="form-control"
-                id="week"
-                type="number"
-                min={1}
-                max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
-                onChange={(e) => setWeek(e.currentTarget.valueAsNumber)}
-                value={week}
+      {minMax.loaded ? (
+        <form>
+          {isChromiumBased() ? (
+            // Chrome etc
+            <div className="row mb-3 mt-3">
+              <div className="form-group">
+                <label htmlFor="date">Select week (Chromium)</label>
+                <input
+                  className="form-control"
+                  type="week"
+                  min={minMax.first}
+                  max={minMax.last}
+                  value={moment()
+                    .isoWeekYear(year)
+                    .isoWeek(week)
+                    .format("GGGG-[W]WW")}
+                  onChange={onWeekChangedOnChromium}
                 />
-              <input
-                className="form-control"
-                id="year"
-                type="number"
-                min={2024} // @TODO: query min year from API before requesting data points
-                max={year}
-                value={year}
-                onChange={(e) => setYear(e.currentTarget.valueAsNumber)}
-              />
+              </div>
             </div>
-          </div>
-        )}
-      </form>
+          ) : (
+            <div className="row mb-3 mt-3">
+              <label htmlFor="year-week">Select week and year</label>
+              <div className="input-group mb-3 mt-1">
+                <input
+                  className="form-control"
+                  id="week"
+                  type="number"
+                  min={1}
+                  max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
+                  value={week}
+                  onChange={(e) => setWeek(e.currentTarget.valueAsNumber)}
+                />
+                <input
+                  className="form-control"
+                  id="year"
+                  type="number"
+                  min={moment(minMax.first).year()} // @TODO: query min year from API before requesting data points
+                  max={moment(minMax.last).year()}
+                  value={year}
+                  onChange={(e) => setYear(e.currentTarget.valueAsNumber)}
+                />
+              </div>
+            </div>
+          )}
+        </form>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

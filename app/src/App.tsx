@@ -8,13 +8,8 @@ import NotificationContainer from "./components/NotificationContainer";
 import DailyView from "./components/views/DailyView";
 import WeeklyView from "./components/views/WeeklyView";
 import MonthlyView from "./components/views/MonthlyView";
+import RangeView from "./components/views/RangeView";
 
-function RangeView() {
-  return <></>;
-}
-function ApiView() {
-  return <></>;
-}
 function LogsView() {
   return <></>;
 }
@@ -33,22 +28,22 @@ export default function App() {
     () => [
       {
         name: "Home",
+        chart: true,
         comp: (
           <HomeView setChartData={setChartData} setChartReady={setChartReady} />
         ),
       },
-      { name: "Daily", comp: <DailyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Weekly", comp: <WeeklyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Monthly", comp: <MonthlyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Range", comp: <RangeView /> },
-      { name: "Api", comp: <ApiView /> },
-      { name: "Logs", comp: <LogsView /> },
+      { name: "Daily", chart: true,comp: <DailyView setChartData={setChartData} setChartReady={setChartReady}/> },
+      { name: "Weekly", chart: true,comp: <WeeklyView setChartData={setChartData} setChartReady={setChartReady}/> },
+      { name: "Monthly", chart: true,comp: <MonthlyView setChartData={setChartData} setChartReady={setChartReady}/> },
+      { name: "Range",chart: true, comp: <RangeView setChartData={setChartData} setChartReady={setChartReady} /> },
+      { name: "Logs", chart: false,comp: <LogsView /> },
     ],
     []
   );
 
   const currentPage = useMemo(() => {
-    return pages[pageIndex]?.comp;
+    return pages[pageIndex];
   }, [pageIndex, pages]);
 
   return (
@@ -61,30 +56,37 @@ export default function App() {
 
       <main>
         <NotificationContainer>
+
           <div className="container">
-            {currentPage}
+            {currentPage?.comp}
           </div>
 
-          <div className="container-fluid mt-3">
-            <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
-              {chartReady ? (
-                <DataChart chartData={chartData} />
-              ) : (
-                <SpinnyLoader width={50} height={50} />
-              )}
+            <div className="container-fluid mt-3">
+              <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
+                {
+                  currentPage.chart ?
+                  (
+                    chartReady ? (
+                      <DataChart chartData={chartData} />
+                    ) : (
+                      <SpinnyLoader width={50} height={50} />
+                    )
+                  )
+                  : <></>
+                }
+              </div>
             </div>
-          </div>
         </NotificationContainer>
       </main>
 
       <footer className="text-center text-lg-start footer">
         <div className="text-center p-3">
-          Crafted with ♥️ and ☕ — open-source on
+          <span>Open-source on </span>
           <a
-            className="text-info gh-link"
+            className="text-info"
             href="https://github.com/jokkeez/thum"
           >
-            Github
+          <span>Github</span>
           </a>
         </div>
       </footer>

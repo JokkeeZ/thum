@@ -1,8 +1,12 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-import { useNotification, type IDataChart, type IResponseDataPoint } from "../../types";
+import {
+  useNotification,
+  type IDataChart,
+  type IResponseDataPoint,
+} from "../../types";
 
 function HomeView(props: {
-  setChartData: Dispatch<SetStateAction<IDataChart>>,
+  setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
   const { addNotification } = useNotification();
@@ -10,29 +14,33 @@ function HomeView(props: {
 
   useEffect(() => {
     setChartReady(false);
-    
-    fetch('http://127.0.0.1:8000/api/sensor/all')
-      .then(resp => resp.json())
-      .then(resp  => {
+
+    fetch("http://127.0.0.1:8000/api/sensor/all")
+      .then((resp) => resp.json())
+      .then((resp) => {
         const data = resp as IResponseDataPoint[];
         setChartData({
-          labels: data.map(p => p.ts),
-          temperatures: data.map(p => p.temperature),
-          humidities: data.map(p => p.humidity)
+          labels: data.map((p) => p.ts),
+          temperatures: data.map((p) => p.temperature),
+          humidities: data.map((p) => p.humidity),
         });
 
         setChartReady(true);
       })
-      .catch(error => {
+      .catch((error) => {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString()
+          text: error.toString(),
         });
-      })
+      });
   }, [setChartData, setChartReady, addNotification]);
 
-  return <></>;
+  return (
+    <div className="col-md-6 mx-auto">
+      <h3 className="text-primary-emphasis text-center mb-3 mt-3">All time averages</h3>
+    </div>
+  );
 }
 
 export default HomeView;

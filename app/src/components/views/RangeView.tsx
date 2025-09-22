@@ -14,12 +14,13 @@ import {
 } from "../../types";
 import moment from "moment";
 
-function DailyView(props: {
+function RangeView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
-  const now = moment();
-  const [date, setDate] = useState(now.toDate());
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+
   const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
     first: undefined,
     last: undefined,
@@ -31,7 +32,17 @@ function DailyView(props: {
 
   useEffect(() => {
     fetchMinMaxValues("http://127.0.0.1:8000/api/range/dates")
-      .then((val) => setMinMax(val))
+      .then((val) => {
+        setMinMax(val);
+
+        if (val.first) {
+          setStartDate(moment(val.first).toDate());
+        }
+
+        if (val.last) {
+          setEndDate(moment(val.last).toDate());
+        }
+      })
       .catch((error) => {
         addNotification({
           error: true,
@@ -41,7 +52,7 @@ function DailyView(props: {
       });
   }, [setMinMax, addNotification]);
 
-  const onDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+  const onStartDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedDate = event.currentTarget.valueAsDate;
 
     if (!selectedDate) {
@@ -53,7 +64,22 @@ function DailyView(props: {
       return;
     }
 
-    setDate(selectedDate);
+    setStartDate(selectedDate);
+  };
+
+  const onEndDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = event.currentTarget.valueAsDate;
+
+    if (!selectedDate) {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Invalid date selected.",
+      });
+      return;
+    }
+
+    setEndDate(selectedDate);
   };
 
   useEffect(() => {
@@ -61,12 +87,10 @@ function DailyView(props: {
       return;
     }
 
-    const dd = moment(date);
-    const day = dd.date();
-    const month = dd.month() + 1;
-    const year = dd.year();
+    const start = moment(startDate).format('YYYY-MM-DD');
+    const end = moment(endDate).format('YYYY-MM-DD');
 
-    fetch(`http://127.0.0.1:8000/api/sensor/daily/${day}/${month}/${year}`)
+    fetch(`http://127.0.0.1:8000/api/sensor/range/${start}/${end}`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];
@@ -85,24 +109,30 @@ function DailyView(props: {
           text: error.toString(),
         });
       });
-  }, [setChartData, minMax, date, setChartReady, addNotification]);
+  }, [setChartData, minMax, startDate, endDate, setChartReady, addNotification]);
 
   return (
     <div className="col-md-6 mx-auto">
       {minMax.loaded ? (
         <form>
           <div className="row mb-3 mt-3">
-            <div className="form-group">
-              <label htmlFor="date-select">Select date</label>
+            <label htmlFor="date-select">Select start & end dates</label>
+            <div className="input-group" id="date-select">
               <input
                 className="form-control"
                 type="date"
-                id="date-select"
-                name="date-select"
+                min={minMax.first}
+                max={minMax.last}
+                defaultValue={minMax.first}
+                onChange={onStartDateChanged}
+              />
+              <input
+                className="form-control"
+                type="date"
                 min={minMax.first}
                 max={minMax.last}
                 defaultValue={minMax.last}
-                onChange={onDateChanged}
+                onChange={onEndDateChanged}
               />
             </div>
           </div>
@@ -114,4 +144,4 @@ function DailyView(props: {
   );
 }
 
-export default DailyView;
+export default RangeView;
