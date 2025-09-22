@@ -11,7 +11,11 @@ git clone https://github.com/JokkeeZ/thum.git
 cd thum
 ```
 
-### Backend
+### Configure backend
+> [!IMPORTANT]
+> In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE`
+> points to the database file path.
+
 Create venv and install requirements:
 
 ```sh
@@ -20,16 +24,24 @@ python -m venv .venv
 python -m pip install -r ./requirements.txt
 ```
 
-Start FastAPI backend
+Start backend:
 ```sh
-uvicorn api.main:app --reload
+fastapi dev api/main.py
 ```
 
-### Frontend
-Install npm packages and run frontend:
+### Configure frontend
+> [!IMPORTANT]
+> In `app/` folder, rename `.env.template` file to `.env` and make sure VITE_API_BASE_URL
+> has the correct FastAPI url and port.
+
+Install npm packages for the frontend:
 ```sh
 cd app
 npm install
+```
+
+Start frontend:
+```sh
 npm run dev
 ```
 
