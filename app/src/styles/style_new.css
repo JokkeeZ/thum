@@ -23,17 +23,17 @@
 	color: var(--bs-info-text-emphasis) !important;
 }
 
-/* .navbar-brand,
+.navbar-brand,
 .navbar-text,
 .nav-link {
 	color: var(--bs-black) !important;
-} */
+}
 
-/* .nav-link.active {
+.nav-link.active {
 	text-decoration: underline;
 	text-underline-offset: 8px;
 	text-decoration-thickness: 1px;
-} */
+}
 
 @keyframes spin {
 	0% {
@@ -51,32 +51,31 @@
 	height: 70vh;
 }
 
-/* #chart {
-	width: 100% !important;
-	height: 100% !important;
-} */
-
 #notification-container {
 	position: fixed;
-  bottom: 1%;
+	bottom: 1%;
 	right: 1%;
 	z-index: 9999 !important;
 }
 
-#notification {
-	position: relative;
-	transform: translateX(-50%);
-	padding: 16px;
-	border-radius: 4px;
-	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-	opacity: 0;
-	z-index: 9999 !important;
-	transform: translateX(-50%) translateY(-20px);
+.notification {
+  position: relative;
+  padding: 16px;
+  border-radius: 4px;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  opacity: 0;
+  transform: translateX(120%);
+  z-index: 9999 !important;
 }
 
-#notification.show {
-	opacity: 1;
-	transform: translateX(-50%) translateY(0);
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateX(120%);
 }
 
 @media screen and (max-width: 600px) {
