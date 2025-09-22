@@ -9,10 +9,7 @@ import DailyView from "./components/views/DailyView";
 import WeeklyView from "./components/views/WeeklyView";
 import MonthlyView from "./components/views/MonthlyView";
 import RangeView from "./components/views/RangeView";
-
-function LogsView() {
-  return <></>;
-}
+import LogView from "./components/views/LogView";
 
 export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -37,7 +34,7 @@ export default function App() {
       { name: "Weekly", chart: true,comp: <WeeklyView setChartData={setChartData} setChartReady={setChartReady}/> },
       { name: "Monthly", chart: true,comp: <MonthlyView setChartData={setChartData} setChartReady={setChartReady}/> },
       { name: "Range",chart: true, comp: <RangeView setChartData={setChartData} setChartReady={setChartReady} /> },
-      { name: "Logs", chart: false,comp: <LogsView /> },
+      { name: "Logs", chart: false, comp: <LogView /> },
     ],
     []
   );

@@ -31,10 +31,6 @@ export default function MonthlyView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
-    console.log('Year changed to: ' + year);
-  }, [year]);
-
-  useEffect(() => {
     fetchMinMaxValues("http://127.0.0.1:8000/api/range/months")
       .then((val) => {
         setMinMax(val);

@@ -12,6 +12,11 @@ export interface IResponseDataPoint {
   humidity: number;
 }
 
+export interface ILogResponseDataPoint {
+  message: string;
+  timestamp: string;
+}
+
 export interface IThumNotification {
   id?: string;
   title: string;

@@ -1,6 +1,7 @@
 import calendar
 import aiosqlite
 from datetime import datetime, timedelta
+from api.log_data import LogData
 from api.sensor_data import SensorData
 
 class Database:
@@ -140,9 +141,19 @@ class Database:
       [timestamp])
       await db.commit()
 
-    return cursor.rowcount
+    return { 'success': cursor.rowcount > 0 }
 
   async def log_get_all_async(self):
+    async with aiosqlite.connect(self.dbfile) as db:
+      cursor = await db.execute("""
+        SELECT message as msg, timestamp as ts
+        FROM logs
+        GROUP BY ts
+        ORDER BY ts;
+      """)
+
+      return [LogData.from_row(row) for row in await cursor.fetchall()]
+
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('SELECT * FROM logs;')
       return await cursor.fetchall()

@@ -6,6 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+  # Polling tasks for the DHT11 sensor are commented out.
+  # Without them, the app still runs, but no new sensor data
+  # will be stored in the database.
+
   # asyncio.create_task(start_sensor_polling())
   # asyncio.create_task(start_sensor_updater())
   yield
@@ -78,6 +82,20 @@ async def get_range_weeks():
 async def get_range_months():
   try:
     return await db.get_min_max_months_async()
+  except Exception as e:
+    return error_template(e)
+
+@app.get('/api/logs')
+async def get_logs_all():
+  try:
+    return await db.log_get_all_async()
+  except Exception as e:
+    return error_template(e)
+
+@app.delete('/api/logs/{timestamp}')
+async def remove_log_by_timestamp(timestamp: str):
+  try:
+    return await db.log_delete_by_timestamp_async(timestamp)
   except Exception as e:
     return error_template(e)
 
