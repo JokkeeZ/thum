@@ -5,9 +5,9 @@ from api.sensor_data import SensorData
 
 class Database:
   def __init__(self, db_file: str):
-    self.dbfile:str = db_file
-    self.dateformat:str = '%Y-%m-%d'
-    self.timeformat:str = '%H:%M:%S'
+    self.dbfile = db_file
+    self.dateformat = '%Y-%m-%d'
+    self.timeformat = '%H:%M:%S'
 
     self.wformat = '%G-W%V'
     self.mformat = '%Y-%m'
