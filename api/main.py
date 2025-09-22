@@ -1,30 +1,26 @@
-import asyncio
-from contextlib import asynccontextmanager
+import os
 from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
-@asynccontextmanager
-async def lifespan(_app: FastAPI):
-  # Polling tasks for the DHT11 sensor are commented out.
-  # Without them, the app still runs, but no new sensor data
-  # will be stored in the database.
+load_dotenv()
 
-  # asyncio.create_task(start_sensor_polling())
-  # asyncio.create_task(start_sensor_updater())
-  yield
+DB_FILE = os.getenv('DB_FILE')
+if not DB_FILE:
+  exit('Could not load environment variables.')
 
-app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None, lifespan=lifespan)
+db = Database(DB_FILE)
+
+app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None)
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+  allow_origin_regex=r"http://localhost(:\d+)?",
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"],
 )
-
-db = Database('test_db.db')
 
 def error_template(e: Exception):
 	return { 'success': False, 'message': str(e) }

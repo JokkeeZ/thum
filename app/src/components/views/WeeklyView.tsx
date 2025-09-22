@@ -13,6 +13,7 @@ import {
   type IMinMaxValuesLoaded,
 } from "../../types";
 import moment from "moment";
+import { ApiUrl } from "../../config";
 
 function WeeklyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -31,7 +32,7 @@ function WeeklyView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
-    fetchMinMaxValues("http://127.0.0.1:8000/api/range/weeks")
+    fetchMinMaxValues(`${ApiUrl}/range/weeks`)
       .then((val) => {
         setMinMax(val);
 
@@ -75,7 +76,7 @@ function WeeklyView(props: {
       .isoWeek(week)
       .format("GGGG-[W]WW");
 
-    fetch(`http://127.0.0.1:8000/api/sensor/weekly/${weekString}`)
+    fetch(`${ApiUrl}/sensor/weekly/${weekString}`)
       .then((resp) => resp.json())
       .then((resp) => {
         setChartData({

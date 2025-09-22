@@ -13,6 +13,7 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 import moment from "moment";
+import { ApiUrl } from '../../config';
 
 function DailyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -30,7 +31,7 @@ function DailyView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
-    fetchMinMaxValues("http://127.0.0.1:8000/api/range/dates")
+    fetchMinMaxValues(`${ApiUrl}/range/dates`)
       .then((val) => setMinMax(val))
       .catch((error) => {
         addNotification({
@@ -66,7 +67,7 @@ function DailyView(props: {
     const month = dd.month() + 1;
     const year = dd.year();
 
-    fetch(`http://127.0.0.1:8000/api/sensor/daily/${day}/${month}/${year}`)
+    fetch(`${ApiUrl}/sensor/daily/${day}/${month}/${year}`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];

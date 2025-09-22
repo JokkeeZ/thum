@@ -5,6 +5,8 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 
+import { ApiUrl } from '../../config';
+
 function HomeView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
@@ -15,7 +17,7 @@ function HomeView(props: {
   useEffect(() => {
     setChartReady(false);
 
-    fetch("http://127.0.0.1:8000/api/sensor/all")
+    fetch(`${ApiUrl}/sensor/all`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];

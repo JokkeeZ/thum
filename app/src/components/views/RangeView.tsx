@@ -13,6 +13,7 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 import moment from "moment";
+import { ApiUrl } from "../../config";
 
 function RangeView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -31,7 +32,7 @@ function RangeView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
-    fetchMinMaxValues("http://127.0.0.1:8000/api/range/dates")
+    fetchMinMaxValues(`${ApiUrl}/range/dates`)
       .then((val) => {
         setMinMax(val);
 
@@ -90,7 +91,7 @@ function RangeView(props: {
     const start = moment(startDate).format('YYYY-MM-DD');
     const end = moment(endDate).format('YYYY-MM-DD');
 
-    fetch(`http://127.0.0.1:8000/api/sensor/range/${start}/${end}`)
+    fetch(`${ApiUrl}/sensor/range/${start}/${end}`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];

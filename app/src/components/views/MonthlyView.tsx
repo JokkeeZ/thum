@@ -14,6 +14,7 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 import moment from "moment";
+import { ApiUrl } from "../../config";
 
 export default function MonthlyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -31,7 +32,7 @@ export default function MonthlyView(props: {
   const { setChartData, setChartReady } = props;
 
   useEffect(() => {
-    fetchMinMaxValues("http://127.0.0.1:8000/api/range/months")
+    fetchMinMaxValues(`${ApiUrl}/range/months`)
       .then((val) => {
         setMinMax(val);
 
@@ -70,7 +71,7 @@ export default function MonthlyView(props: {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/sensor/monthly/${year}/${month}`)
+    fetch(`${ApiUrl}/sensor/monthly/${year}/${month}`)
       .then((resp) => resp.json())
       .then((resp) => {
         const data = resp as IResponseDataPoint[];
