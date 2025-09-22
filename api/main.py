@@ -1,13 +1,13 @@
 import asyncio
 from contextlib import asynccontextmanager
+from api.db.database import Database
 from fastapi import FastAPI, Request
-from api.db.db_sensor import DatabaseSensor
-from api.sensor import sensor_poll
 from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-  # asyncio.create_task(sensor_poll())
+  # asyncio.create_task(start_sensor_polling())
+  # asyncio.create_task(start_sensor_updater())
   yield
 
 app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None, lifespan=lifespan)
@@ -20,7 +20,7 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-db = DatabaseSensor('test_db.db')
+db = Database('test_db.db')
 
 def error_template(e: Exception):
 	return { 'success': False, 'message': str(e) }
@@ -60,9 +60,60 @@ async def get_sensor_data_range(start_date: str, end_date: str):
   except Exception as e:
     return error_template(e)
 
+@app.get('/api/range/dates')
+async def get_range_dates():
+  try:
+    return await db.get_min_max_dates_async()
+  except Exception as e:
+    return error_template(e)
+
+@app.get('/api/range/weeks')
+async def get_range_weeks():
+  try:
+    return await db.get_min_max_weeks_async()
+  except Exception as e:
+    return error_template(e)
+
+@app.get('/api/range/months')
+async def get_range_months():
+  try:
+    return await db.get_min_max_months_async()
+  except Exception as e:
+    return error_template(e)
+
 @app.get('/')
-def get_all_urls_from_request(request: Request):
+async def get_all_urls_from_request(request: Request):
   return [route.path for route in request.app.routes]
+
+	# async def get_date_range_async(self) -> tuple[str, str]:
+	# 	async with connect(self.dbfile) as db:
+	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+	# 		(min, max) = await cursor.fetchone()
+
+	# 	now = datetime.now()
+	# 	min_date = (now.strftime(self.dateformat) if min is None else min)
+	# 	max_date = (now.strftime(self.dateformat) if max is None else max)
+	# 	return (min_date, max_date)
+
+	# async def get_week_range_async(self) -> tuple[str, str]:
+	# 	async with connect(self.dbfile) as db:
+	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+	# 		(min, max) = await cursor.fetchone()
+
+	# 	now = datetime.now()
+	# 	min_week = (now.strftime(self.wformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.wformat))
+	# 	max_week = (now.strftime(self.wformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.wformat))
+	# 	return (min_week, max_week)
+
+	# async def get_month_range_async(self) -> tuple[str, str]:
+	# 	async with connect(self.dbfile) as db:
+	# 		cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
+	# 		(min, max) = await cursor.fetchone()
+
+	# 	now = datetime.now()
+	# 	min_month = (now.strftime(self.mformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.mformat))
+	# 	max_month = (now.strftime(self.mformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.mformat))
+	# 	return (min_month, max_month)
 
 # @app.route('/api/logs/delete-entry/<string:timestamp>', methods=['DELETE'])
 # async def delete_log_by_timestamp(timestamp):
