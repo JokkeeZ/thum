@@ -135,7 +135,7 @@ class Database:
         entry['timestamp_time'])
       )
 
-  async def log_delete_by_timestamp_async(self, timestamp: str) -> int:
+  async def log_delete_by_timestamp_async(self, timestamp: str) -> dict[str, int]:
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('DELETE FROM logs WHERE timestamp = ?;',
       [timestamp])
@@ -158,7 +158,7 @@ class Database:
       cursor = await db.execute('SELECT * FROM logs;')
       return await cursor.fetchall()
 
-  async def log_delete_all_async(self) -> int:
+  async def log_delete_all_async(self) -> dict[str, int]:
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('DELETE FROM logs;')
       await db.commit()
