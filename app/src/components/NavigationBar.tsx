@@ -20,7 +20,7 @@ function NavigationBarItem(props: {
 }
 
 function NavigationBar(props: {
-  pages: IPage[]
+  pages: IPage[];
   routeIndex: number;
   routeChange: (index: number) => void;
 }) {
@@ -34,7 +34,7 @@ function NavigationBar(props: {
 
           <div className="d-flex align-items-center">
             <span className="navbar-text me-3 d-md-none current-temperature">
-              <SpinnyLoader width={20} height={20}/>
+              <SpinnyLoader width={20} height={20} />
             </span>
 
             <button
@@ -68,7 +68,7 @@ function NavigationBar(props: {
 
         <div className="d-flex align-items-center">
           <span className="navbar-text me-3 d-none d-md-block current-temperature">
-            <SpinnyLoader width={20} height={20}/>
+            <SpinnyLoader width={20} height={20} />
           </span>
         </div>
       </nav>

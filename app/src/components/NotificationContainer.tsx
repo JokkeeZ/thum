@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react';
-import { NotificationContext, type IThumNotification } from '../types';
-import ThumNotification from './ThumNotification';
+import { useCallback, useState } from "react";
+import { NotificationContext, type IThumNotification } from "../types";
+import ThumNotification from "./ThumNotification";
 
 const NotificationContainer = (props: { children: React.ReactNode }) => {
   const [notifications, setNotifications] = useState<IThumNotification[]>([]);

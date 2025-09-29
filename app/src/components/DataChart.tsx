@@ -11,9 +11,7 @@ import {
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types";
 
-function DataChart(props: {
-  chartData: IDataChart
-}) {
+function DataChart(props: { chartData: IDataChart }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,

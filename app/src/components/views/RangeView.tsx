@@ -88,8 +88,8 @@ function RangeView(props: {
       return;
     }
 
-    const start = moment(startDate).format('YYYY-MM-DD');
-    const end = moment(endDate).format('YYYY-MM-DD');
+    const start = moment(startDate).format("YYYY-MM-DD");
+    const end = moment(endDate).format("YYYY-MM-DD");
 
     fetch(`${ApiUrl}/sensor/range/${start}/${end}`)
       .then((resp) => resp.json())
@@ -110,7 +110,14 @@ function RangeView(props: {
           text: error.toString(),
         });
       });
-  }, [setChartData, minMax, startDate, endDate, setChartReady, addNotification]);
+  }, [
+    setChartData,
+    minMax,
+    startDate,
+    endDate,
+    setChartReady,
+    addNotification,
+  ]);
 
   return (
     <div className="col-md-6 mx-auto">

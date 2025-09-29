@@ -13,7 +13,7 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 import moment from "moment";
-import { ApiUrl } from '../../config';
+import { ApiUrl } from "../../config";
 
 function DailyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;

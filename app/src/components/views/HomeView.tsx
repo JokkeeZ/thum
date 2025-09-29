@@ -5,7 +5,7 @@ import {
   type IResponseDataPoint,
 } from "../../types";
 
-import { ApiUrl } from '../../config';
+import { ApiUrl } from "../../config";
 
 function HomeView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
@@ -40,7 +40,9 @@ function HomeView(props: {
 
   return (
     <div className="col-md-6 mx-auto">
-      <h3 className="text-primary-emphasis text-center mb-3 mt-3">All time averages</h3>
+      <h3 className="text-primary-emphasis text-center mb-3 mt-3">
+        All time averages
+      </h3>
     </div>
   );
 }
