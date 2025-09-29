@@ -66,6 +66,24 @@ function WeeklyView(props: {
     setWeek(selection.week());
   };
 
+  const setWeekFromUserInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const w = e.currentTarget.valueAsNumber;
+    if (isNaN(w)) {
+      return;
+    }
+
+    setWeek(w);
+  };
+
+  const setYearFromUserInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const y = e.currentTarget.valueAsNumber;
+    if (isNaN(y)) {
+      return;
+    }
+
+    setWeek(y);
+  };
+
   useEffect(() => {
     if (!minMax.loaded) {
       return;
@@ -128,16 +146,16 @@ function WeeklyView(props: {
                   min={1}
                   max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
                   value={week}
-                  onChange={(e) => setWeek(e.currentTarget.valueAsNumber)}
+                  onChange={setWeekFromUserInput}
                 />
                 <input
                   className="form-control"
                   id="year"
                   type="number"
-                  min={moment(minMax.first).year()} // @TODO: query min year from API before requesting data points
+                  min={moment(minMax.first).year()}
                   max={moment(minMax.last).year()}
                   value={year}
-                  onChange={(e) => setYear(e.currentTarget.valueAsNumber)}
+                  onChange={setYearFromUserInput}
                 />
               </div>
             </div>
