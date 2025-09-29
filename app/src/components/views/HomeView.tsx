@@ -2,7 +2,7 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import {
   useNotification,
   type IDataChart,
-  type IResponseDataPoint,
+  type ISensorReadingEntry,
 } from "../../types";
 
 import { ApiUrl } from "../../config";
@@ -20,7 +20,7 @@ function HomeView(props: {
     fetch(`${ApiUrl}/sensor/all`)
       .then((resp) => resp.json())
       .then((resp) => {
-        const data = resp as IResponseDataPoint[];
+        const data = resp as ISensorReadingEntry[];
         setChartData({
           labels: data.map((p) => p.ts),
           temperatures: data.map((p) => p.temperature),

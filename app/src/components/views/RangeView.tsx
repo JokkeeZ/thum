@@ -10,7 +10,7 @@ import {
   useNotification,
   type IDataChart,
   type IMinMaxValuesLoaded,
-  type IResponseDataPoint,
+  type ISensorReadingEntry,
 } from "../../types";
 import moment from "moment";
 import { ApiUrl } from "../../config";
@@ -94,7 +94,7 @@ function RangeView(props: {
     fetch(`${ApiUrl}/sensor/range/${start}/${end}`)
       .then((resp) => resp.json())
       .then((resp) => {
-        const data = resp as IResponseDataPoint[];
+        const data = resp as ISensorReadingEntry[];
         setChartData({
           labels: data.map((p) => p.ts),
           temperatures: data.map((p) => p.temperature),

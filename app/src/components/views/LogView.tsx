@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNotification, type ILogResponseDataPoint } from "../../types";
+import { useNotification, type ILogEntry } from "../../types";
 import { ApiUrl } from "../../config";
 
 function LogView() {
-  const [logs, setLogs] = useState<ILogResponseDataPoint[]>([]);
+  const [logs, setLogs] = useState<ILogEntry[]>([]);
   const { addNotification } = useNotification();
 
   useEffect(() => {
     fetch(`${ApiUrl}/logs`)
       .then((resp) => resp.json())
       .then((resp) => {
-        const response = resp as ILogResponseDataPoint[];
+        const response = resp as ILogEntry[];
         setLogs(response);
       })
       .catch((error) => {
@@ -22,7 +22,7 @@ function LogView() {
       });
   }, [addNotification, setLogs]);
 
-  const removeLog = (log: ILogResponseDataPoint) => {
+  const removeLog = (log: ILogEntry) => {
     fetch(`${ApiUrl}/logs/${log.timestamp}`, {
       method: "DELETE",
     })
@@ -100,7 +100,7 @@ function LogView() {
         <tbody>
           {logs.map((log, index) => {
             return (
-              <tr>
+              <tr key={index}>
                 <th scope="row">{index}</th>
                 <td>{log.message}</td>
                 <td>{log.timestamp}</td>

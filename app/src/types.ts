@@ -6,13 +6,13 @@ export interface IPage {
   comp: JSX.Element;
 }
 
-export interface IResponseDataPoint {
+export interface ISensorReadingEntry {
   ts: string;
   temperature: number;
   humidity: number;
 }
 
-export interface ILogResponseDataPoint {
+export interface ILogEntry {
   message: string;
   timestamp: string;
 }
@@ -40,12 +40,6 @@ type NotificationContextType = {
   addNotification: (notif: IThumNotification) => void;
 };
 
-export interface ISelectedDate {
-  year: number;
-  month: number;
-  date: number;
-}
-
 export const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export const useNotification = () => {
@@ -58,7 +52,7 @@ export const useNotification = () => {
 
 /**
  * Checks if the browser is Chromium-based.
- * @returns {boolean} true if browser is Chromium-based (Chrome, Edge, Brave, Opera).
+ * @returns {boolean} true if browser is Chromium-based (Chrome, Edge, Brave, Opera)
  */
 export function isChromiumBased(): boolean {
   const ua = navigator.userAgent;
