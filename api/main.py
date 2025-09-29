@@ -8,7 +8,7 @@ load_dotenv()
 
 DB_FILE = os.getenv('DB_FILE')
 if not DB_FILE:
-  exit('Could not load environment variables.')
+  exit('Failed to launch: Could not load environment variables.')
 
 db = Database(DB_FILE)
 
