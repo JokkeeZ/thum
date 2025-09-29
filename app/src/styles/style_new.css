@@ -1,0 +1,85 @@
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+}
+
+.spinny-loader {
+	border: 4px solid transparent;
+	border-top: 4px solid var(--bs-indigo);
+	border-radius: 50%;
+  width: 20px;
+  height: 20px;
+	animation: spin 0.8s linear infinite;
+}
+
+.spinny-loader.big {
+	width: 50px;
+	height: 50px;
+}
+
+.gh-link {
+	color: var(--bs-info-text-emphasis) !important;
+}
+
+.navbar-brand,
+.navbar-text,
+.nav-link {
+	color: var(--bs-black) !important;
+}
+
+.nav-link.active {
+	text-decoration: underline;
+	text-underline-offset: 8px;
+	text-decoration-thickness: 1px;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.chart-container {
+	position: relative;
+	width: 100%;
+	height: 70vh;
+}
+
+#notification-container {
+	position: fixed;
+	bottom: 1%;
+	right: 1%;
+	z-index: 9999 !important;
+}
+
+.notification {
+  position: relative;
+  padding: 16px;
+  border-radius: 4px;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  opacity: 0;
+  transform: translateX(120%);
+  z-index: 9999 !important;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification.hide {
+  opacity: 0;
+  transform: translateX(120%);
+}
+
+@media screen and (max-width: 600px) {
+	.chart-container {
+		height: 60vh;
+	}
+}
