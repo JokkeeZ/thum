@@ -1,5 +1,5 @@
 # t h u m
-A web application that collects real-time temperature and humidity data from a DHT11/DHT21/DHT22 sensor and displays it in a simple and user-friendly interface.
+A web application that displays temperature and humidity data from a DHT11/DHT21/DHT22 sensor in clean and user-friendly interface.
 
 > [!NOTE]
 > Developed with Raspberry Pi 4B and DHT11 sensor.
