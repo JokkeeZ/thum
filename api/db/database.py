@@ -136,7 +136,6 @@ class Database:
       cursor = await db.execute('DELETE FROM logs WHERE timestamp = ?;',
       [timestamp])
       await db.commit()
-      await db.commit()
 
     return { 'count': cursor.rowcount }
 
