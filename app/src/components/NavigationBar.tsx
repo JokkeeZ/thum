@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import type { IPage } from "../types";
 import SpinnyLoader from "./SpinnyLoader";
+import { ApiUrl } from "../config";
 
 function NavigationBarItem(props: {
   current: boolean;
@@ -19,11 +21,42 @@ function NavigationBarItem(props: {
   );
 }
 
+type CurrentSensorReading = {
+  temperature: number;
+  humidity: number;
+}
+
 function NavigationBar(props: {
   pages: IPage[];
   routeIndex: number;
   routeChange: (index: number) => void;
 }) {
+
+  const [currentReading, setCurrentReading] = useState<CurrentSensorReading | null>(null);
+
+  useEffect(() => {
+    const fetchData = () => {
+      fetch(`${ApiUrl}/sensor/current`)
+      .then(resp => resp.json())
+      .then(resp => {
+        console.log(resp);
+        const data = resp as { success: boolean; temperature: number; humidity: number; message?: string };
+        if (data.success) {
+          setCurrentReading({
+            temperature: data.temperature,
+            humidity: data.humidity,
+          });
+        }
+      });
+    }
+
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 15000); // 15 sec
+
+    return () => clearInterval(intervalId);
+  }, [setCurrentReading]);
+
   return (
     <header>
       <nav className="navbar navbar-expand-md bg-primary">
@@ -33,8 +66,15 @@ function NavigationBar(props: {
           </a>
 
           <div className="d-flex align-items-center">
-            <span className="navbar-text me-3 d-md-none current-temperature">
-              <SpinnyLoader width={20} height={20} />
+            <span className="navbar-text me-3 d-md-none current-temperature"title={
+              currentReading == null ? 'Loading...' :
+              `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+              }>
+              {currentReading ? (
+                `${currentReading.temperature}°C`
+              ) : (
+                <SpinnyLoader width={20} height={20} />
+              )}
             </span>
 
             <button
@@ -67,8 +107,15 @@ function NavigationBar(props: {
         </div>
 
         <div className="d-flex align-items-center">
-          <span className="navbar-text me-3 d-none d-md-block current-temperature">
-            <SpinnyLoader width={20} height={20} />
+          <span className="navbar-text me-3 d-none d-md-block current-temperature" title={
+            currentReading == null ? 'Loading...' :
+            `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+            }>
+            {currentReading ? (
+              `${currentReading.temperature}°C`
+            ) : (
+              <SpinnyLoader width={20} height={20} />
+            )}
           </span>
         </div>
       </nav>
