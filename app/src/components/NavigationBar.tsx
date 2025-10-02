@@ -39,7 +39,6 @@ function NavigationBar(props: {
       fetch(`${ApiUrl}/sensor/current`)
       .then(resp => resp.json())
       .then(resp => {
-        console.log(resp);
         const data = resp as { success: boolean; temperature: number; humidity: number; message?: string };
         if (data.success) {
           setCurrentReading({
