@@ -128,17 +128,14 @@ class Database:
     async with aiosqlite.connect(self.dbfile) as db:
       await db.execute("""
         INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time) VALUES (?, ?, ?, ?);
-      """, (
-        entry['temperature'],
-        entry['humidity'],
-        entry['timestamp_date'],
-        entry['timestamp_time'])
-      )
+      """, [temperature, humidity, date, time])
+      await db.commit()
 
   async def log_delete_by_timestamp_async(self, timestamp: str) -> dict[str, int]:
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('DELETE FROM logs WHERE timestamp = ?;',
       [timestamp])
+      await db.commit()
       await db.commit()
 
     return { 'count': cursor.rowcount }
@@ -165,9 +162,9 @@ class Database:
 
       return { 'count': cursor.rowcount }
 
-  async def log_insert_entry_async(self, entry):
+  async def log_insert_entry_async(self, msg: str, ts: str):
     async with aiosqlite.connect(self.dbfile) as db:
-      await db.execute(f'INSERT INTO logs VALUES (?, ?);', [entry['err'], entry['timestamp']])
+      await db.execute(f'INSERT INTO logs VALUES (?, ?);', [msg, ts])
       await db.commit()
 
   async def initialize_database(self):
