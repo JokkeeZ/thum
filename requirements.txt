@@ -1,2 +1,3 @@
 fastapi[standard]
 aiosqlite==0.21.0
+adafruit-circuitpython-dht==4.0.9
