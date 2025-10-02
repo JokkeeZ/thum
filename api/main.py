@@ -5,7 +5,6 @@ from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from api.sensor_polling import get_sensor_reading, sensor_poll
 
 load_dotenv()
 
@@ -22,6 +21,7 @@ async def lifespan(_app: FastAPI):
     exit('Failed to launch: USE_SENSOR environment variable not set.')
 
   if use_sensor.lower() == 'true':
+    from api.sensor_polling import sensor_poll
     asyncio.create_task(sensor_poll())
 
   yield
@@ -81,6 +81,7 @@ async def get_sensor_current():
     return { 'success': False, 'message': 'Sensor is not available.' }
 
   try:
+    from api.sensor_polling import get_sensor_reading
     temperature, humidity = await get_sensor_reading()
     if temperature is None or humidity is None:
       return { 'success': False, 'message': 'Failed to read from sensor.' }
