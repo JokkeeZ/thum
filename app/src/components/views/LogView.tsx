@@ -17,8 +17,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [addNotification, setLogs]);
 
@@ -44,8 +45,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   };
 
@@ -69,8 +71,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   };
 

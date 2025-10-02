@@ -44,8 +44,9 @@ function WeeklyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setMinMax, setYear, setWeek, addNotification]);
 
@@ -108,8 +109,9 @@ function WeeklyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setChartData, minMax, year, week, setChartReady, addNotification]);
 

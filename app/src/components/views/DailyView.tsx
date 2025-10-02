@@ -37,8 +37,9 @@ function DailyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setMinMax, addNotification]);
 
@@ -83,8 +84,9 @@ function DailyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setChartData, minMax, date, setChartReady, addNotification]);
 
