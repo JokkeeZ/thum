@@ -83,7 +83,7 @@ function WeeklyView(props: {
       return;
     }
 
-    setWeek(y);
+    setYear(y);
   };
 
   useEffect(() => {
