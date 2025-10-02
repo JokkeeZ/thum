@@ -16,6 +16,9 @@ cd thum
 > In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE`
 > points to the database file path.
 
+> [!IMPORTANT]
+> If you do not have DHT sensor connected, keep `USE_SENSOR` env key value as false.
+
 (Windows) Create venv and install requirements:
 
 ```sh
@@ -34,7 +37,7 @@ python -m pip install -r ./requirements.txt
 
 Start backend:
 ```sh
-fastapi dev api/main.py
+fastapi run api/main.py
 ```
 
 ### Configure frontend
