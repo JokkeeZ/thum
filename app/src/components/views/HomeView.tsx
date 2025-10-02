@@ -33,8 +33,9 @@ function HomeView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setChartData, setChartReady, addNotification]);
 

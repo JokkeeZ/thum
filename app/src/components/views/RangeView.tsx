@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useState,
   type ChangeEvent,
@@ -48,8 +49,9 @@ function RangeView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setMinMax, addNotification]);
 
@@ -107,8 +109,9 @@ function RangeView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [
     setChartData,
@@ -121,7 +124,7 @@ function RangeView(props: {
 
   return (
     <div className="col-md-6 mx-auto">
-      {minMax.loaded ? (
+      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
         <form>
           <div className="row mb-3 mt-3">
             <label htmlFor="date-select">Select start & end dates</label>
@@ -145,9 +148,7 @@ function RangeView(props: {
             </div>
           </div>
         </form>
-      ) : (
-        <></>
-      )}
+      </Activity>
     </div>
   );
 }

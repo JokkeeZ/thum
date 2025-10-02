@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useState,
   type ChangeEvent,
@@ -37,8 +38,9 @@ function DailyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setMinMax, addNotification]);
 
@@ -83,14 +85,15 @@ function DailyView(props: {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [setChartData, minMax, date, setChartReady, addNotification]);
 
   return (
     <div className="col-md-6 mx-auto">
-      {minMax.loaded ? (
+      <Activity mode={minMax.loaded ? 'visible' : 'hidden'}>
         <form>
           <div className="row mb-3 mt-3">
             <div className="form-group">
@@ -108,9 +111,7 @@ function DailyView(props: {
             </div>
           </div>
         </form>
-      ) : (
-        <></>
-      )}
+      </Activity>
     </div>
   );
 }

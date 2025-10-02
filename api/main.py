@@ -1,4 +1,6 @@
+import asyncio
 import os
+from contextlib import asynccontextmanager
 from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,11 +14,23 @@ if not DB_FILE:
 
 db = Database(DB_FILE)
 
-app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None)
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+  use_sensor = os.getenv('USE_SENSOR')
+  if use_sensor is None:
+    exit('Failed to launch: USE_SENSOR environment variable not set.')
+
+  if use_sensor.lower() == 'true':
+    from api.sensor_polling import sensor_poll
+    asyncio.create_task(sensor_poll())
+
+  yield
+
+app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None, lifespan=lifespan)
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origin_regex=r"http://localhost(:\d+)?",
+  allow_origin_regex=r"http?://(localhost(:\d+)?|(192\.168|10)\.\d+\.\d+(:\d+)?)",
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"],
@@ -57,6 +71,21 @@ async def get_sensor_daily(day: int, month: int, year: int):
 async def get_sensor_data_range(start_date: str, end_date: str):
   try:
     return await db.get_data_range_async(start_date, end_date)
+  except Exception as e:
+    return error_template(e)
+
+@app.get('/api/sensor/current')
+async def get_sensor_current():
+  use_sensor = os.getenv('USE_SENSOR')
+  if use_sensor is None or use_sensor.lower() != 'true':
+    return { 'success': False, 'message': 'Sensor is not available.' }
+
+  try:
+    from api.sensor_polling import get_sensor_reading
+    temperature, humidity = await get_sensor_reading()
+    if temperature is None or humidity is None:
+      return { 'success': False, 'message': 'Failed to read from sensor.' }
+    return { 'success': True, 'temperature': temperature, 'humidity': humidity }
   except Exception as e:
     return error_template(e)
 

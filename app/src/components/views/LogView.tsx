@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Activity, useEffect, useState } from "react";
 import { useNotification, type ILogEntry } from "../../types";
 import { ApiUrl } from "../../config";
 
@@ -17,8 +17,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   }, [addNotification, setLogs]);
 
@@ -44,8 +45,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   };
 
@@ -69,8 +71,9 @@ function LogView() {
         addNotification({
           error: true,
           title: "Error",
-          text: error.toString(),
+          text: "Failed to fetch data from API.",
         });
+        console.error(error);
       });
   };
 
@@ -80,43 +83,51 @@ function LogView() {
         <h3 className="text-primary-emphasis text-center mb-3 mt-3">
           Sensor logs
         </h3>
-        <button
-          className="btn btn-outline-danger float-end"
-          onClick={removeAllLogs}
-        >
-          Remove all
-        </button>
+        <Activity mode={logs.length > 0 ? "visible" : "hidden"}>
+          <button
+            className="btn btn-outline-danger float-end"
+            onClick={removeAllLogs}
+          >
+            Remove all
+          </button>
+        </Activity>
       </div>
 
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Message</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col">Remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logs.map((log, index) => {
-            return (
-              <tr key={index}>
-                <th scope="row">{index}</th>
-                <td>{log.message}</td>
-                <td>{log.timestamp}</td>
-                <td>
-                  <button
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => removeLog(log)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <Activity mode={logs.length > 0 ? "visible" : "hidden"}>
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Message</th>
+              <th scope="col">Timestamp</th>
+              <th scope="col">Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            {logs.map((log, index) => {
+              return (
+                <tr key={index}>
+                  <th scope="row">{index}</th>
+                  <td>{log.message}</td>
+                  <td>{log.timestamp}</td>
+                  <td>
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => removeLog(log)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Activity>
+
+      <Activity mode={logs.length <= 0 ? "visible" : "hidden"}>
+        <p className="text-center">No logs :)</p>
+      </Activity>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types";
+import { Activity } from "react";
 
 function DataChart(props: { chartData: IDataChart }) {
   ChartJS.register(
@@ -49,39 +50,37 @@ function DataChart(props: { chartData: IDataChart }) {
   };
 
   return (
-    <>
-      <div className="chart-container">
-        <Line
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-              intersect: false,
-              mode: "index",
-            },
+    <div className="chart-container">
+      <Line
+        data={data}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: "index",
+          },
 
-            scales: {
-              x: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
-              y: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
-            },
+          scales: {
+            x: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
+            y: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
+          },
 
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  footer(tooltipItems: TooltipItem<"line">[]) {
-                    const dewPoint =
-                      tooltipItems[1].parsed.y -
-                      (100 - tooltipItems[0].parsed.y) / 5;
-                    return `Dew point: ${dewPoint.toFixed(2)}°C`;
-                  },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                footer(tooltipItems: TooltipItem<"line">[]) {
+                  const dewPoint =
+                    tooltipItems[1].parsed.y -
+                    (100 - tooltipItems[0].parsed.y) / 5;
+                  return `Dew point: ${dewPoint.toFixed(2)}°C`;
                 },
               },
             },
-          }}
-          data={data}
-        />
-      </div>
-    </>
+          },
+        }}
+      />
+    </div>
   );
 }
 
