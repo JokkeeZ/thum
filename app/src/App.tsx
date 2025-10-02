@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Activity, useMemo, useState } from "react";
 import NavigationBar from "./components/NavigationBar";
 import { type IDataChart, type IPage } from "./types";
 import SpinnyLoader from "./components/SpinnyLoader";
@@ -30,10 +30,46 @@ export default function App() {
           <HomeView setChartData={setChartData} setChartReady={setChartReady} />
         ),
       },
-      { name: "Daily", chart: true,comp: <DailyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Weekly", chart: true,comp: <WeeklyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Monthly", chart: true,comp: <MonthlyView setChartData={setChartData} setChartReady={setChartReady}/> },
-      { name: "Range",chart: true, comp: <RangeView setChartData={setChartData} setChartReady={setChartReady} /> },
+      {
+        name: "Daily",
+        chart: true,
+        comp: (
+          <DailyView
+            setChartData={setChartData}
+            setChartReady={setChartReady}
+          />
+        ),
+      },
+      {
+        name: "Weekly",
+        chart: true,
+        comp: (
+          <WeeklyView
+            setChartData={setChartData}
+            setChartReady={setChartReady}
+          />
+        ),
+      },
+      {
+        name: "Monthly",
+        chart: true,
+        comp: (
+          <MonthlyView
+            setChartData={setChartData}
+            setChartReady={setChartReady}
+          />
+        ),
+      },
+      {
+        name: "Range",
+        chart: true,
+        comp: (
+          <RangeView
+            setChartData={setChartData}
+            setChartReady={setChartReady}
+          />
+        ),
+      },
       { name: "Logs", chart: false, comp: <LogView /> },
     ],
     []
@@ -53,37 +89,27 @@ export default function App() {
 
       <main>
         <NotificationContainer>
+          <div className="container">{currentPage?.comp}</div>
 
-          <div className="container">
-            {currentPage?.comp}
-          </div>
-
-            <div className="container-fluid mt-3">
-              <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
-                {
-                  currentPage.chart ?
-                  (
-                    chartReady ? (
-                      <DataChart chartData={chartData} />
-                    ) : (
-                      <SpinnyLoader width={50} height={50} />
-                    )
-                  )
-                  : <></>
-                }
-              </div>
+          <div className="container-fluid mt-3">
+            <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
+              <Activity mode={currentPage.chart ? "visible" : "hidden"}>
+                {chartReady ? (
+                  <DataChart chartData={chartData} />
+                ) : (
+                  <SpinnyLoader width={50} height={50} />
+                )}
+              </Activity>
             </div>
+          </div>
         </NotificationContainer>
       </main>
 
       <footer className="text-center text-lg-start footer">
         <div className="text-center p-3">
           <span>Open-source on </span>
-          <a
-            className="text-info"
-            href="https://github.com/jokkeez/thum"
-          >
-          <span>Github</span>
+          <a className="text-info" href="https://github.com/jokkeez/thum">
+            <span>Github</span>
           </a>
         </div>
       </footer>

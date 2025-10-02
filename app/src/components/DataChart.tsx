@@ -10,6 +10,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types";
+import { Activity } from "react";
 
 function DataChart(props: { chartData: IDataChart }) {
   ChartJS.register(
@@ -49,9 +50,10 @@ function DataChart(props: { chartData: IDataChart }) {
   };
 
   return (
-    <>
-      <div className="chart-container">
+    <div className="chart-container">
+      <Activity mode={props.chartData.labels.length > 0 ? "visible" : "hidden"}>
         <Line
+          data={data}
           options={{
             responsive: true,
             maintainAspectRatio: false,
@@ -78,10 +80,13 @@ function DataChart(props: { chartData: IDataChart }) {
               },
             },
           }}
-          data={data}
         />
-      </div>
-    </>
+      </Activity>
+
+      <Activity mode={props.chartData.labels.length <= 0 ? "visible" : "hidden"}>
+        <p className="text-center">No data</p>
+      </Activity>
+    </div>
   );
 }
 

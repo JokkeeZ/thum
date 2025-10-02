@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useState,
   type ChangeEvent,
@@ -117,10 +118,9 @@ function WeeklyView(props: {
 
   return (
     <div className="col-md-6 mx-auto">
-      {minMax.loaded ? (
+      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
         <form>
-          {isChromiumBased() ? (
-            // Chrome etc
+          <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
             <div className="row mb-3 mt-3">
               <div className="form-group">
                 <label htmlFor="date">Select week (Chromium)</label>
@@ -137,7 +137,9 @@ function WeeklyView(props: {
                 />
               </div>
             </div>
-          ) : (
+          </Activity>
+
+          <Activity mode={isChromiumBased() ? "hidden" : "visible"}>
             <div className="row mb-3 mt-3">
               <label htmlFor="year-week">Select week and year</label>
               <div className="input-group mb-3 mt-1">
@@ -161,11 +163,9 @@ function WeeklyView(props: {
                 />
               </div>
             </div>
-          )}
+          </Activity>
         </form>
-      ) : (
-        <></>
-      )}
+      </Activity>
     </div>
   );
 }

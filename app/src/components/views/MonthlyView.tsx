@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useState,
   type ChangeEvent,
@@ -104,9 +105,10 @@ export default function MonthlyView(props: {
 
   return (
     <div className="col-md-6 mx-auto">
-      {minMax.loaded ? (
+      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
         <form>
-          {isChromiumBased() ? (
+
+          <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
             <div className="row mb-3 mt-3">
               <div className="form-group">
                 <label htmlFor="date">Select month (Chromium)</label>
@@ -120,7 +122,9 @@ export default function MonthlyView(props: {
                 />
               </div>
             </div>
-          ) : (
+          </Activity>
+
+          <Activity mode={isChromiumBased() ? "hidden" : "visible"}>
             <div className="row mb-3 mt-3">
               <label htmlFor="year-month">Select month and year</label>
               <div className="input-group mb-3 mt-1" id="year-month">
@@ -161,11 +165,9 @@ export default function MonthlyView(props: {
                 </select>
               </div>
             </div>
-          )}
+          </Activity>
         </form>
-      ) : (
-        <></>
-      )}
+      </Activity>
     </div>
   );
 }
