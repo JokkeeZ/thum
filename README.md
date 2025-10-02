@@ -16,11 +16,19 @@ cd thum
 > In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE`
 > points to the database file path.
 
-Create venv and install requirements:
+(Windows) Create venv and install requirements:
 
 ```sh
 python -m venv .venv
 ./.venv/Scripts/activate
+python -m pip install -r ./requirements.txt
+```
+
+(Linux) Create venv and install requirements:
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r ./requirements.txt
 ```
 
