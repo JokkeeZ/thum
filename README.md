@@ -13,11 +13,11 @@ cd thum
 
 ### Configure backend
 > [!IMPORTANT]
-> In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE`
+> In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE` env key
 > points to the database file path.
 
 > [!IMPORTANT]
-> If you do not have DHT sensor connected, keep `USE_SENSOR` env key value as false.
+> If you **do not** have DHT sensor connected, keep `USE_SENSOR` env key value as `false`.
 
 (Windows) Create venv and install requirements:
 
@@ -42,7 +42,7 @@ fastapi run api/main.py
 
 ### Configure frontend
 > [!IMPORTANT]
-> In `app/` folder, rename `.env.template` file to `.env` and make sure VITE_API_BASE_URL
+> In `app/` folder, rename `.env.template` file to `.env` and make sure `VITE_API_BASE_URL` env key
 > has the correct FastAPI url and port.
 
 Install npm packages for the frontend:
