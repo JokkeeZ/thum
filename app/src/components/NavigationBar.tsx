@@ -3,7 +3,7 @@ import type { IPage } from "../types";
 import SpinnyLoader from "./SpinnyLoader";
 import { ApiUrl } from "../config";
 
-function NavigationBarItem(props: {
+export function NavigationBarItem(props: {
   current: boolean;
   text: string;
   routeChange: () => void;
@@ -26,7 +26,7 @@ type CurrentSensorReading = {
   humidity: number;
 }
 
-function NavigationBar(props: {
+export default function NavigationBar(props: {
   pages: IPage[];
   routeIndex: number;
   routeChange: (index: number) => void;
@@ -121,5 +121,3 @@ function NavigationBar(props: {
     </header>
   );
 }
-
-export default NavigationBar;

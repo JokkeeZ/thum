@@ -51,33 +51,6 @@
 	height: 70vh;
 }
 
-#notification-container {
-	position: fixed;
-	bottom: 1%;
-	right: 1%;
-	z-index: 9999 !important;
-}
-
-.notification {
-  position: relative;
-  padding: 16px;
-  border-radius: 4px;
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-  opacity: 0;
-  transform: translateX(120%);
-  z-index: 9999 !important;
-}
-
-.notification.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.notification.hide {
-  opacity: 0;
-  transform: translateX(120%);
-}
-
 @media screen and (max-width: 600px) {
 	.chart-container {
 		height: 60vh;

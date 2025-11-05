@@ -1,4 +1,4 @@
-import { createContext, useContext, type JSX } from "react";
+import { type JSX } from "react";
 
 export interface IPage {
   name: string;
@@ -17,13 +17,6 @@ export interface ILogEntry {
   timestamp: string;
 }
 
-export interface IThumNotification {
-  id?: string;
-  title: string;
-  text: string;
-  error: boolean;
-}
-
 export interface IDataChart {
   labels: string[];
   temperatures: number[];
@@ -35,20 +28,6 @@ export interface IMinMaxValuesLoaded {
   last?: string;
   loaded: boolean;
 }
-
-type NotificationContextType = {
-  addNotification: (notif: IThumNotification) => void;
-};
-
-export const NotificationContext = createContext<NotificationContextType | null>(null);
-
-export const useNotification = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error("useNotification must be used within a NotificationProvider");
-  }
-  return context;
-};
 
 /**
  * Checks if the browser is Chromium-based.

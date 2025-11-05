@@ -10,9 +10,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types";
-import { Activity } from "react";
 
-function DataChart(props: { chartData: IDataChart }) {
+export default function DataChart(props: { chartData: IDataChart }) {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -83,5 +82,3 @@ function DataChart(props: { chartData: IDataChart }) {
     </div>
   );
 }
-
-export default DataChart;

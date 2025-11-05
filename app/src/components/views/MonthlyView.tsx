@@ -9,13 +9,13 @@ import {
 import {
   fetchMinMaxValues,
   isChromiumBased,
-  useNotification,
   type IDataChart,
   type IMinMaxValuesLoaded,
   type ISensorReadingEntry,
 } from "../../types";
 import moment from "moment";
 import { ApiUrl } from "../../config";
+import { useNotification } from "../notification/NotificationContext";
 
 export default function MonthlyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;

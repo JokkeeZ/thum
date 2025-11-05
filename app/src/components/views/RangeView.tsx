@@ -8,15 +8,15 @@ import {
 } from "react";
 import {
   fetchMinMaxValues,
-  useNotification,
   type IDataChart,
   type IMinMaxValuesLoaded,
   type ISensorReadingEntry,
 } from "../../types";
 import moment from "moment";
 import { ApiUrl } from "../../config";
+import { useNotification } from "../notification/NotificationContext";
 
-function RangeView(props: {
+export default function RangeView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -152,5 +152,3 @@ function RangeView(props: {
     </div>
   );
 }
-
-export default RangeView;

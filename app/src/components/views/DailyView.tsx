@@ -8,15 +8,15 @@ import {
 } from "react";
 import {
   fetchMinMaxValues,
-  useNotification,
   type IDataChart,
   type IMinMaxValuesLoaded,
   type ISensorReadingEntry,
 } from "../../types";
 import moment from "moment";
 import { ApiUrl } from "../../config";
+import { useNotification } from "../notification/NotificationContext";
 
-function DailyView(props: {
+export default function DailyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -115,5 +115,3 @@ function DailyView(props: {
     </div>
   );
 }
-
-export default DailyView;

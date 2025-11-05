@@ -4,12 +4,12 @@ import { type IDataChart, type IPage } from "./types";
 import SpinnyLoader from "./components/SpinnyLoader";
 import DataChart from "./components/DataChart";
 import HomeView from "./components/views/HomeView";
-import NotificationContainer from "./components/NotificationContainer";
 import DailyView from "./components/views/DailyView";
 import WeeklyView from "./components/views/WeeklyView";
 import MonthlyView from "./components/views/MonthlyView";
 import RangeView from "./components/views/RangeView";
 import LogView from "./components/views/LogView";
+import NotificationContainer from "./components/notification/NotificationContainer";
 
 export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -88,7 +88,11 @@ export default function App() {
       />
 
       <main>
-        <NotificationContainer>
+        <NotificationContainer settings={{
+          dockPosition: "top-right",
+          duration: 10000,
+          slideDirection: "right"
+        }}>
           <div className="container">{currentPage?.comp}</div>
 
           <div className="container-fluid mt-3">

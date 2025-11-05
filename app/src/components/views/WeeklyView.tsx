@@ -9,14 +9,14 @@ import {
 import {
   fetchMinMaxValues,
   isChromiumBased,
-  useNotification,
   type IDataChart,
   type IMinMaxValuesLoaded,
 } from "../../types";
 import moment from "moment";
 import { ApiUrl } from "../../config";
+import { useNotification } from "../notification/NotificationContext";
 
-function WeeklyView(props: {
+export default function WeeklyView(props: {
   setChartData: Dispatch<SetStateAction<IDataChart>>;
   setChartReady: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -169,5 +169,3 @@ function WeeklyView(props: {
     </div>
   );
 }
-
-export default WeeklyView;

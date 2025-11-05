@@ -1,8 +1,9 @@
 import { Activity, useEffect, useState } from "react";
-import { useNotification, type ILogEntry } from "../../types";
+import { type ILogEntry } from "../../types";
 import { ApiUrl } from "../../config";
+import { useNotification } from "../notification/NotificationContext";
 
-function LogView() {
+export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
   const { addNotification } = useNotification();
 
@@ -131,5 +132,3 @@ function LogView() {
     </div>
   );
 }
-
-export default LogView;
