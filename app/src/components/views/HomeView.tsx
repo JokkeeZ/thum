@@ -44,11 +44,6 @@ export default function HomeView(props: {
       <h3 className="text-primary-emphasis text-center mb-3 mt-3">
         All time averages
       </h3>
-      <button type="button" className="btn btn-primary" onClick={() => addNotification({
-      error: false,
-      text: "Moro",
-      title: "Title",
-    })}>Add notif</button>
     </div>
   );
 }
