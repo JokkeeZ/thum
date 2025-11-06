@@ -131,6 +131,13 @@ async def remove_all_logs():
   except Exception as e:
     return error_template(e)
 
+@app.get('/api/statistics')
+async def get_statistics():
+  try:
+    return await db.get_statistics_async()
+  except Exception as e:
+    return error_template(e)
+
 @app.get('/')
 async def get_all_urls_from_request(request: Request):
   return [route.path for route in request.app.routes]
