@@ -10,6 +10,7 @@ import MonthlyView from "./components/views/MonthlyView";
 import RangeView from "./components/views/RangeView";
 import LogView from "./components/views/LogView";
 import NotificationContainer from "./components/notification/NotificationContainer";
+import StatsView from "./components/views/StatsView";
 
 export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -70,6 +71,7 @@ export default function App() {
           />
         ),
       },
+      { name: "Statistics", chart: false, comp: <StatsView /> },
       { name: "Logs", chart: false, comp: <LogView /> },
     ],
     []
