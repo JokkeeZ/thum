@@ -1,8 +1,9 @@
 import calendar
 import aiosqlite
 from datetime import datetime, timedelta
-from api.log_data import LogData
-from api.sensor_data import SensorData
+from api.models.log_data import LogData
+from api.models.sensor_statistic import SensorStatistic
+from api.models.sensor_data import SensorData
 
 class Database:
   def __init__(self, db_file: str):
@@ -209,24 +210,4 @@ class Database:
       if row is None:
         return {}
 
-      return {
-        "total_entries": row[0],
-        "avg_temperature": row[1],
-        "avg_humidity": row[2],
-        "min_temperature": {
-          "value": row[3],
-          "date": row[4]
-        },
-        "max_temperature": {
-          "value": row[5],
-          "date": row[6]
-        },
-        "min_humidity": {
-          "value": row[7],
-          "date": row[8]
-        },
-        "max_humidity": {
-          "value": row[9],
-          "date": row[10]
-        }
-      }
+      return SensorStatistic.from_row(row)
