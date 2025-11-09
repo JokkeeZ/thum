@@ -1,9 +1,8 @@
-import asyncio
-from datetime import datetime
 import os
-import adafruit_dht
-from adafruit_dht import DHT11
+import asyncio
 import board
+from datetime import datetime
+from adafruit_dht import DHT11
 from api.db.database import Database
 
 dht = DHT11(board.D4)
