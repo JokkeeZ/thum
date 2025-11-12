@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { IPage } from "../types";
 import SpinnyLoader from "./SpinnyLoader";
 import { ApiUrl } from "../config";
+import { useTheme } from "./theme/ThemeContext";
 
 export function NavigationBarItem(props: {
   current: boolean;
@@ -33,6 +34,8 @@ export default function NavigationBar(props: {
 }) {
   const [currentReading, setCurrentReading] =
     useState<CurrentSensorReading | null>(null);
+
+  const { theme, updateTheme } = useTheme();
 
   useEffect(() => {
     const fetchData = () => {
@@ -103,13 +106,55 @@ export default function NavigationBar(props: {
               {props.pages.map((item, index) => {
                 return (
                   <NavigationBarItem
-                    current={index == props.routeIndex}
+                    current={index === props.routeIndex}
                     text={item.name}
                     key={index}
                     routeChange={() => props.routeChange(index)}
                   />
                 );
               })}
+            </ul>
+            <ul className="navbar-nav">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  id="themeDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Theme
+                </a>
+
+                <ul
+                  className="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="themeDropdown"
+                >
+                  <li>
+                    <button
+                      className={`dropdown-item ${
+                        theme === "light" ? "active" : ""
+                      }`}
+                      onClick={() => updateTheme("light")}
+                    >
+                      {theme === "light" ? "✓ " : ""}
+                      Light
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className={`dropdown-item ${
+                        theme === "dark" ? "active" : ""
+                      }`}
+                      onClick={() => updateTheme("dark")}
+                    >
+                      {theme === "dark" ? "✓ " : ""}
+                      Dark
+                    </button>
+                  </li>
+                </ul>
+              </li>
             </ul>
           </div>
         </div>

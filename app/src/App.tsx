@@ -11,6 +11,7 @@ import RangeView from "./components/views/RangeView";
 import LogView from "./components/views/LogView";
 import NotificationContainer from "./components/notification/NotificationContainer";
 import StatsView from "./components/views/StatsView";
+import ThemeProvider from "./components/theme/ThemeProvider";
 
 export default function App() {
   const [pageIndex, setPageIndex] = useState(0);
@@ -82,7 +83,7 @@ export default function App() {
   }, [pageIndex, pages]);
 
   return (
-    <>
+    <ThemeProvider>
       <NavigationBar
         pages={pages}
         routeIndex={pageIndex}
@@ -93,7 +94,7 @@ export default function App() {
         <NotificationContainer
           settings={{
             dockPosition: "top-right",
-            duration: 10000,
+            duration: 3000,
             slideDirection: "right",
           }}
         >
@@ -121,6 +122,6 @@ export default function App() {
           </a>
         </div>
       </footer>
-    </>
+    </ThemeProvider>
   );
 }
