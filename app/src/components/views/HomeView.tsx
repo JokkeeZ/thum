@@ -1,8 +1,5 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-import {
-  type IDataChart,
-  type ISensorReadingEntry,
-} from "../../types";
+import { type IDataChart, type ISensorReadingEntry } from "../../types";
 
 import { ApiUrl } from "../../config";
 import { useNotification } from "../notification/NotificationContext";

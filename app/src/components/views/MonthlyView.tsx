@@ -107,7 +107,6 @@ export default function MonthlyView(props: {
     <div className="col-md-6 mx-auto">
       <Activity mode={minMax.loaded ? "visible" : "hidden"}>
         <form>
-
           <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
             <div className="row mb-3 mt-3">
               <div className="form-group">

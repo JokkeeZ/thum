@@ -24,30 +24,35 @@ export function NavigationBarItem(props: {
 type CurrentSensorReading = {
   temperature: number;
   humidity: number;
-}
+};
 
 export default function NavigationBar(props: {
   pages: IPage[];
   routeIndex: number;
   routeChange: (index: number) => void;
 }) {
-
-  const [currentReading, setCurrentReading] = useState<CurrentSensorReading | null>(null);
+  const [currentReading, setCurrentReading] =
+    useState<CurrentSensorReading | null>(null);
 
   useEffect(() => {
     const fetchData = () => {
       fetch(`${ApiUrl}/sensor/current`)
-      .then(resp => resp.json())
-      .then(resp => {
-        const data = resp as { success: boolean; temperature: number; humidity: number; message?: string };
-        if (data.success) {
-          setCurrentReading({
-            temperature: data.temperature,
-            humidity: data.humidity,
-          });
-        }
-      });
-    }
+        .then((resp) => resp.json())
+        .then((resp) => {
+          const data = resp as {
+            success: boolean;
+            temperature: number;
+            humidity: number;
+            message?: string;
+          };
+          if (data.success) {
+            setCurrentReading({
+              temperature: data.temperature,
+              humidity: data.humidity,
+            });
+          }
+        });
+    };
 
     fetchData();
 
@@ -65,10 +70,14 @@ export default function NavigationBar(props: {
           </a>
 
           <div className="d-flex align-items-center">
-            <span className="navbar-text me-3 d-md-none current-temperature"title={
-              currentReading == null ? 'Loading...' :
-              `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
-              }>
+            <span
+              className="navbar-text me-3 d-md-none current-temperature"
+              title={
+                currentReading == null
+                  ? "Loading..."
+                  : `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+              }
+            >
               {currentReading ? (
                 `${currentReading.temperature}°C`
               ) : (
@@ -106,10 +115,14 @@ export default function NavigationBar(props: {
         </div>
 
         <div className="d-flex align-items-center">
-          <span className="navbar-text me-3 d-none d-md-block current-temperature" title={
-            currentReading == null ? 'Loading...' :
-            `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
-            }>
+          <span
+            className="navbar-text me-3 d-none d-md-block current-temperature"
+            title={
+              currentReading == null
+                ? "Loading..."
+                : `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+            }
+          >
             {currentReading ? (
               `${currentReading.temperature}°C`
             ) : (

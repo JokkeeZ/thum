@@ -48,13 +48,15 @@ export default function SlideNotification(props: {
         (visible ? "show" : "hide")
       }
       style={{
-        position: 'relative',
-        padding: '16px',
-        borderRadius: '4px',
-        transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
+        position: "relative",
+        padding: "16px",
+        borderRadius: "4px",
+        transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out",
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateX(0) translateY(0)' : getTransformDirection(),
-        zIndex: 9999
+        transform: visible
+          ? "translateX(0) translateY(0)"
+          : getTransformDirection(),
+        zIndex: 9999,
       }}
       onTransitionEnd={handleTransitionEnd}
     >

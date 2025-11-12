@@ -1,5 +1,8 @@
 import { useCallback, useState } from "react";
-import { NotificationContext, type INotificationDetails } from "./NotificationContext";
+import {
+  NotificationContext,
+  type INotificationDetails,
+} from "./NotificationContext";
 import SlideNotification from "./SlideNotification";
 
 export interface INotificationSettings {
@@ -8,8 +11,13 @@ export interface INotificationSettings {
   dockPosition: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
-export default function NotificationContainer(props: { children: React.ReactNode, settings: INotificationSettings }) {
-  const [notifications, setNotifications] = useState<INotificationDetails[]>([]);
+export default function NotificationContainer(props: {
+  children: React.ReactNode;
+  settings: INotificationSettings;
+}) {
+  const [notifications, setNotifications] = useState<INotificationDetails[]>(
+    []
+  );
 
   const createUUID = () => {
     if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -17,12 +25,12 @@ export default function NotificationContainer(props: { children: React.ReactNode
     }
 
     // fallback for environments without crypto.randomUUID support
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0,
         v = c === "x" ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
-  }
+  };
 
   const addNotification = useCallback((notif: INotificationDetails) => {
     notif.id = createUUID();
@@ -50,11 +58,13 @@ export default function NotificationContainer(props: { children: React.ReactNode
 
   return (
     <NotificationContext.Provider value={{ addNotification }}>
-      <div style={{
-        position: "fixed",
-        zIndex: 9999,
-        ...getDockPosition()
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          zIndex: 9999,
+          ...getDockPosition(),
+        }}
+      >
         {notifications.map((notif) => (
           <SlideNotification
             key={notif.id}
@@ -68,4 +78,4 @@ export default function NotificationContainer(props: { children: React.ReactNode
       {props.children}
     </NotificationContext.Provider>
   );
-};
+}

@@ -90,11 +90,13 @@ export default function App() {
       />
 
       <main>
-        <NotificationContainer settings={{
-          dockPosition: "top-right",
-          duration: 10000,
-          slideDirection: "right"
-        }}>
+        <NotificationContainer
+          settings={{
+            dockPosition: "top-right",
+            duration: 10000,
+            slideDirection: "right",
+          }}
+        >
           <div className="container">{currentPage?.comp}</div>
 
           <div className="container-fluid mt-3">

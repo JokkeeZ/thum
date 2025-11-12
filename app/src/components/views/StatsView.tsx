@@ -6,10 +6,10 @@ interface IStatsResponse {
   total_entries: number;
   avg_temperature: number;
   avg_humidity: number;
-  min_temperature: { value: number; date: string  };
-  max_temperature: { value: number; date: string  };
-  min_humidity: { value: number; date: string  };
-  max_humidity: { value: number; date: string  };
+  min_temperature: { value: number; date: string };
+  max_temperature: { value: number; date: string };
+  min_humidity: { value: number; date: string };
+  max_humidity: { value: number; date: string };
 }
 
 export default function StatsView() {
@@ -40,31 +40,45 @@ export default function StatsView() {
               <ul className="list-group">
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Total Entries
-                  <span className="badge bg-primary rounded-pill">{stats?.total_entries}</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.total_entries}
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Average Temperature
-                  <span className="badge bg-primary rounded-pill">{stats?.avg_temperature.toFixed(2)}°C</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.avg_temperature.toFixed(2)}°C
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Average Humidity
-                  <span className="badge bg-primary rounded-pill">{stats?.avg_humidity.toFixed(2)}%</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.avg_humidity.toFixed(2)}%
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Maximum Temperature — {stats?.max_temperature.date}
-                  <span className="badge bg-primary rounded-pill">{stats?.max_temperature.value}°C</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.max_temperature.value}°C
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Minimum Temperature — {stats?.min_temperature.date}
-                  <span className="badge bg-primary rounded-pill">{stats?.min_temperature.value}°C</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.min_temperature.value}°C
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Maximum Humidity — {stats?.max_humidity.date}
-                  <span className="badge bg-primary rounded-pill">{stats?.max_humidity.value}%</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.max_humidity.value}%
+                  </span>
                 </li>
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Minimum Humidity — {stats?.min_humidity.date}
-                  <span className="badge bg-primary rounded-pill">{stats?.min_humidity.value}%</span>
+                  <span className="badge bg-primary rounded-pill">
+                    {stats?.min_humidity.value}%
+                  </span>
                 </li>
               </ul>
             </div>

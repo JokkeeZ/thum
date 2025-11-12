@@ -93,7 +93,7 @@ export default function DailyView(props: {
 
   return (
     <div className="col-md-6 mx-auto">
-      <Activity mode={minMax.loaded ? 'visible' : 'hidden'}>
+      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
         <form>
           <div className="row mb-3 mt-3">
             <div className="form-group">

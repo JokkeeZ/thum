@@ -38,7 +38,9 @@ export function isChromiumBased(): boolean {
   return /Chrome/.test(ua) && /Edg|OPR|Brave/.test(ua) === false;
 }
 
-export async function fetchMinMaxValues(url: string): Promise<IMinMaxValuesLoaded> {
+export async function fetchMinMaxValues(
+  url: string
+): Promise<IMinMaxValuesLoaded> {
   const resp = await fetch(url);
   const json: IMinMaxValuesLoaded = await resp.json();
   return { first: json.first, last: json.last, loaded: true };
