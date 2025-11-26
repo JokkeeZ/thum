@@ -84,11 +84,13 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <NavigationBar
-        pages={pages}
-        routeIndex={pageIndex}
-        routeChange={(i) => setPageIndex(i)}
-      />
+      <header>
+        <NavigationBar
+          pages={pages}
+          routeIndex={pageIndex}
+          routeChange={(i) => setPageIndex(i)}
+        />
+      </header>
 
       <main>
         <NotificationContainer
