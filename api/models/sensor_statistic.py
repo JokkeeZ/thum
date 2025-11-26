@@ -23,7 +23,7 @@ class SensorStatistic(BaseModel):
     return cls(total_entries=row[0],
                avg_temperature=row[1],
                avg_humidity=row[2],
-               max_temperature=ValueDatePair.from_rows(row[3], row[4]),
-               min_temperature=ValueDatePair.from_rows(row[5], row[6]),
-               max_humidity=ValueDatePair.from_rows(row[7], row[8]),
-               min_humidity=ValueDatePair.from_rows(row[9], row[10]))
+               min_temperature=ValueDatePair.from_rows(row[3], row[4]),
+               max_temperature=ValueDatePair.from_rows(row[5], row[6]),
+               min_humidity=ValueDatePair.from_rows(row[7], row[8]),
+               max_humidity=ValueDatePair.from_rows(row[9], row[10]))
