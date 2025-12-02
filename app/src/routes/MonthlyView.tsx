@@ -47,7 +47,7 @@ export default function MonthlyView() {
         });
         console.error(error);
       });
-  }, [setMinMax, setYear, setMonth, addNotification]);
+  }, [addNotification]);
 
   const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
@@ -129,7 +129,7 @@ export default function MonthlyView() {
                   <select
                     className="form-select"
                     onChange={onMonthChanged}
-                    defaultValue={month}
+                    value={month}
                   >
                     {moment.months().map((m, i) => {
                       return (
@@ -142,7 +142,7 @@ export default function MonthlyView() {
                   <select
                     className="form-select"
                     onChange={onYearChanged}
-                    defaultValue={year}
+                    value={year}
                   >
                     {Array.from(
                       {
