@@ -86,7 +86,7 @@ export default function LogView() {
         </h3>
         <Activity mode={logs.length > 0 ? "visible" : "hidden"}>
           <button
-            className="btn btn-outline-danger float-end"
+            className="btn btn-outline-danger float-end mb-3"
             onClick={removeAllLogs}
           >
             Remove all
@@ -95,7 +95,7 @@ export default function LogView() {
       </div>
 
       <Activity mode={logs.length > 0 ? "visible" : "hidden"}>
-        <table className="table table table-hover">
+        <table className="table table-striped table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>
