@@ -1,25 +1,16 @@
-import {
-  Activity,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { Activity, useEffect, useState, type ChangeEvent } from "react";
 import {
   fetchMinMaxValues,
   type IDataChart,
   type IMinMaxValuesLoaded,
   type ISensorReadingEntry,
-} from "../../types";
+} from "../types";
 import moment from "moment";
-import { ApiUrl } from "../../config";
-import { useNotification } from "../notification/NotificationContext";
+import { ApiUrl } from "../config";
+import { useNotification } from "../components/notification/NotificationContext";
+import DataChart from "../components/DataChart";
 
-export default function RangeView(props: {
-  setChartData: Dispatch<SetStateAction<IDataChart>>;
-  setChartReady: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function RangeView() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
@@ -30,7 +21,12 @@ export default function RangeView(props: {
   });
 
   const { addNotification } = useNotification();
-  const { setChartData, setChartReady } = props;
+  const [chartData, setChartData] = useState<IDataChart>({
+    humidities: [],
+    labels: [],
+    temperatures: [],
+  });
+  const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
     fetchMinMaxValues(`${ApiUrl}/range/dates`)
@@ -123,32 +119,36 @@ export default function RangeView(props: {
   ]);
 
   return (
-    <div className="col-md-6 mx-auto">
-      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
-        <form>
-          <div className="row mb-3 mt-3">
-            <label htmlFor="date-select">Select start & end dates</label>
-            <div className="input-group" id="date-select">
-              <input
-                className="form-control"
-                type="date"
-                min={minMax.first}
-                max={minMax.last}
-                defaultValue={minMax.first}
-                onChange={onStartDateChanged}
-              />
-              <input
-                className="form-control"
-                type="date"
-                min={minMax.first}
-                max={minMax.last}
-                defaultValue={minMax.last}
-                onChange={onEndDateChanged}
-              />
+    <>
+      <div className="col-md-6 mx-auto">
+        <Activity mode={minMax.loaded ? "visible" : "hidden"}>
+          <form>
+            <div className="row mb-3 mt-3">
+              <label htmlFor="date-select">Select start & end dates</label>
+              <div className="input-group" id="date-select">
+                <input
+                  className="form-control"
+                  type="date"
+                  min={minMax.first}
+                  max={minMax.last}
+                  defaultValue={minMax.first}
+                  onChange={onStartDateChanged}
+                />
+                <input
+                  className="form-control"
+                  type="date"
+                  min={minMax.first}
+                  max={minMax.last}
+                  defaultValue={minMax.last}
+                  onChange={onEndDateChanged}
+                />
+              </div>
             </div>
-          </div>
-        </form>
-      </Activity>
-    </div>
+          </form>
+        </Activity>
+      </div>
+
+      <DataChart chartData={chartData} chartReady={chartReady} />
+    </>
   );
 }

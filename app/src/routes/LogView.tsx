@@ -1,7 +1,7 @@
 import { Activity, useEffect, useState } from "react";
-import { type ILogEntry } from "../../types";
-import { ApiUrl } from "../../config";
-import { useNotification } from "../notification/NotificationContext";
+import { type ILogEntry } from "../types";
+import { ApiUrl } from "../config";
+import { useNotification } from "../components/notification/NotificationContext";
 
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);

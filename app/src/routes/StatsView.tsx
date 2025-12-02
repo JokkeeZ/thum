@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNotification } from "../notification/NotificationContext";
-import { ApiUrl } from "../../config";
+import { useNotification } from "../components/notification/NotificationContext";
+import { ApiUrl } from "../config";
 
 interface IStatsResponse {
   total_entries: number;

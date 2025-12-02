@@ -1,9 +1,6 @@
-import { type JSX } from "react";
-
 export interface IPage {
-  name: string;
-  chart: boolean;
-  comp: JSX.Element;
+  title: string;
+  route: string;
 }
 
 export interface ISensorReadingEntry {

@@ -3,23 +3,19 @@ import {
   useEffect,
   useState,
   type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
 import {
   fetchMinMaxValues,
   isChromiumBased,
   type IDataChart,
   type IMinMaxValuesLoaded,
-} from "../../types";
+} from "../types";
 import moment from "moment";
-import { ApiUrl } from "../../config";
-import { useNotification } from "../notification/NotificationContext";
+import { ApiUrl } from "../config";
+import { useNotification } from "../components/notification/NotificationContext";
+import DataChart from "../components/DataChart";
 
-export default function WeeklyView(props: {
-  setChartData: Dispatch<SetStateAction<IDataChart>>;
-  setChartReady: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function WeeklyView() {
   const [year, setYear] = useState(0);
   const [week, setWeek] = useState(0);
 
@@ -30,7 +26,12 @@ export default function WeeklyView(props: {
   });
 
   const { addNotification } = useNotification();
-  const { setChartData, setChartReady } = props;
+  const [chartData, setChartData] = useState<IDataChart>({
+    humidities: [],
+    labels: [],
+    temperatures: [],
+  });
+  const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
     fetchMinMaxValues(`${ApiUrl}/range/weeks`)
@@ -117,55 +118,59 @@ export default function WeeklyView(props: {
   }, [setChartData, minMax, year, week, setChartReady, addNotification]);
 
   return (
-    <div className="col-md-6 mx-auto">
-      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
-        <form>
-          <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
-            <div className="row mb-3 mt-3">
-              <div className="form-group">
-                <label htmlFor="date">Select week (Chromium)</label>
-                <input
-                  className="form-control"
-                  type="week"
-                  min={minMax.first}
-                  max={minMax.last}
-                  value={moment()
-                    .isoWeekYear(year)
-                    .isoWeek(week)
-                    .format("GGGG-[W]WW")}
-                  onChange={onWeekChangedOnChromium}
-                />
+    <>
+      <div className="col-md-6 mx-auto">
+        <Activity mode={minMax.loaded ? "visible" : "hidden"}>
+          <form>
+            <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
+              <div className="row mb-3 mt-3">
+                <div className="form-group">
+                  <label htmlFor="date">Select week (Chromium)</label>
+                  <input
+                    className="form-control"
+                    type="week"
+                    min={minMax.first}
+                    max={minMax.last}
+                    value={moment()
+                      .isoWeekYear(year)
+                      .isoWeek(week)
+                      .format("GGGG-[W]WW")}
+                    onChange={onWeekChangedOnChromium}
+                  />
+                </div>
               </div>
-            </div>
-          </Activity>
+            </Activity>
 
-          <Activity mode={isChromiumBased() ? "hidden" : "visible"}>
-            <div className="row mb-3 mt-3">
-              <label htmlFor="year-week">Select week and year</label>
-              <div className="input-group mb-3 mt-1">
-                <input
-                  className="form-control"
-                  id="week"
-                  type="number"
-                  min={1}
-                  max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
-                  value={week}
-                  onChange={setWeekFromUserInput}
-                />
-                <input
-                  className="form-control"
-                  id="year"
-                  type="number"
-                  min={moment(minMax.first).year()}
-                  max={moment(minMax.last).year()}
-                  value={year}
-                  onChange={setYearFromUserInput}
-                />
+            <Activity mode={isChromiumBased() ? "hidden" : "visible"}>
+              <div className="row mb-3 mt-3">
+                <label htmlFor="year-week">Select week and year</label>
+                <div className="input-group mb-3 mt-1">
+                  <input
+                    className="form-control"
+                    id="week"
+                    type="number"
+                    min={1}
+                    max={moment().isoWeekYear(year).isoWeeksInISOWeekYear()}
+                    value={week}
+                    onChange={setWeekFromUserInput}
+                  />
+                  <input
+                    className="form-control"
+                    id="year"
+                    type="number"
+                    min={moment(minMax.first).year()}
+                    max={moment(minMax.last).year()}
+                    value={year}
+                    onChange={setYearFromUserInput}
+                  />
+                </div>
               </div>
-            </div>
-          </Activity>
-        </form>
-      </Activity>
-    </div>
+            </Activity>
+          </form>
+        </Activity>
+      </div>
+
+      <DataChart chartData={chartData} chartReady={chartReady} />
+    </>
   );
 }

@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
-import type { IPage } from "../types";
 import SpinnyLoader from "./SpinnyLoader";
 import { ApiUrl } from "../config";
 import { useTheme } from "./theme/ThemeContext";
+import { NavLink, useNavigate } from "react-router";
 
-export function NavigationBarItem(props: {
-  current: boolean;
-  text: string;
-  routeChange: () => void;
-}) {
+export function NavigationBarItem(props: { route: string; title: string }) {
+  const navigation = useNavigate();
   return (
     <li className="nav-item">
-      <a
-        href="#"
-        className={"nav-link " + (props.current ? "active" : "")}
-        onClick={props.routeChange}
+      <NavLink
+        to={props.route}
+        className={"nav-link " + (navigation.name === props.route ? "active" : "")}
       >
-        {props.text}
-      </a>
+        {props.title}
+      </NavLink>
     </li>
   );
 }
@@ -27,11 +23,7 @@ type CurrentSensorReading = {
   humidity: number;
 };
 
-export default function NavigationBar(props: {
-  pages: IPage[];
-  routeIndex: number;
-  routeChange: (index: number) => void;
-}) {
+export default function NavigationBar() {
   const [currentReading, setCurrentReading] =
     useState<CurrentSensorReading | null>(null);
 
@@ -67,9 +59,9 @@ export default function NavigationBar(props: {
   return (
     <nav className="navbar navbar-expand-md bg-primary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <NavLink className="navbar-brand" to="/">
           Thum
-        </a>
+        </NavLink>
 
         <div className="d-flex align-items-center">
           <span
@@ -102,16 +94,13 @@ export default function NavigationBar(props: {
 
         <div className="collapse navbar-collapse" id="topnav">
           <ul className="navbar-nav me-auto">
-            {props.pages.map((item, index) => {
-              return (
-                <NavigationBarItem
-                  current={index === props.routeIndex}
-                  text={item.name}
-                  key={index}
-                  routeChange={() => props.routeChange(index)}
-                />
-              );
-            })}
+            <NavigationBarItem route={"/"} title="Home" />
+            <NavigationBarItem route={"/daily"} title="Daily" />
+            <NavigationBarItem route={"/weekly"} title="Weekly" />
+            <NavigationBarItem route={"/monthly"} title="Monthly" />
+            <NavigationBarItem route={"/range"} title="Range" />
+            <NavigationBarItem route={"/statistics"} title="Statistics" />
+            <NavigationBarItem route={"/logs"} title="Logs" />
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item dropdown">

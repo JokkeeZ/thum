@@ -1,0 +1,53 @@
+import { useEffect, useState } from "react";
+import { type IDataChart, type ISensorReadingEntry } from "../types";
+
+import { ApiUrl } from "../config";
+import { useNotification } from "../components/notification/NotificationContext";
+import DataChart from "../components/DataChart";
+
+export default function HomeView() {
+  const { addNotification } = useNotification();
+  const [chartData, setChartData] = useState<IDataChart>({
+    humidities: [],
+    labels: [],
+    temperatures: [],
+  });
+  const [chartReady, setChartReady] = useState<boolean>(false);
+
+  useEffect(() => {
+    setChartReady(false);
+
+    fetch(`${ApiUrl}/sensor/all`)
+      .then((resp) => resp.json())
+      .then((resp) => {
+        const data = resp as ISensorReadingEntry[];
+        setChartData({
+          labels: data.map((p) => p.ts),
+          temperatures: data.map((p) => p.temperature),
+          humidities: data.map((p) => p.humidity),
+        });
+
+        setChartReady(true);
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch data from API.",
+        });
+        console.error(error);
+      });
+  }, [setChartData, setChartReady, addNotification]);
+
+  return (
+    <>
+      <div className="col-md-6 mx-auto">
+        <h3 className="text-primary-emphasis text-center mb-3 mt-3">
+          All time averages
+        </h3>
+      </div>
+
+      <DataChart chartData={chartData} chartReady={chartReady} />
+    </>
+  );
+}

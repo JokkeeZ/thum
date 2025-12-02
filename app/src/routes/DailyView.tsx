@@ -1,25 +1,16 @@
-import {
-  Activity,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { Activity, useEffect, useState, type ChangeEvent } from "react";
 import {
   fetchMinMaxValues,
   type IDataChart,
   type IMinMaxValuesLoaded,
   type ISensorReadingEntry,
-} from "../../types";
+} from "../types";
 import moment from "moment";
-import { ApiUrl } from "../../config";
-import { useNotification } from "../notification/NotificationContext";
+import { ApiUrl } from "../config";
+import { useNotification } from "../components/notification/NotificationContext";
+import DataChart from "../components/DataChart";
 
-export default function DailyView(props: {
-  setChartData: Dispatch<SetStateAction<IDataChart>>;
-  setChartReady: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function DailyView() {
   const now = moment();
   const [date, setDate] = useState(now.toDate());
   const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
@@ -28,8 +19,14 @@ export default function DailyView(props: {
     loaded: false,
   });
 
+  const [chartData, setChartData] = useState<IDataChart>({
+    humidities: [],
+    labels: [],
+    temperatures: [],
+  });
+  const [chartReady, setChartReady] = useState<boolean>(false);
+
   const { addNotification } = useNotification();
-  const { setChartData, setChartReady } = props;
 
   useEffect(() => {
     fetchMinMaxValues(`${ApiUrl}/range/dates`)
@@ -92,26 +89,30 @@ export default function DailyView(props: {
   }, [setChartData, minMax, date, setChartReady, addNotification]);
 
   return (
-    <div className="col-md-6 mx-auto">
-      <Activity mode={minMax.loaded ? "visible" : "hidden"}>
-        <form>
-          <div className="row mb-3 mt-3">
-            <div className="form-group">
-              <label htmlFor="date-select">Select date</label>
-              <input
-                className="form-control"
-                type="date"
-                id="date-select"
-                name="date-select"
-                min={minMax.first}
-                max={minMax.last}
-                defaultValue={minMax.last}
-                onChange={onDateChanged}
-              />
+    <>
+      <div className="col-md-6 mx-auto">
+        <Activity mode={minMax.loaded ? "visible" : "hidden"}>
+          <form>
+            <div className="row mb-3 mt-3">
+              <div className="form-group">
+                <label htmlFor="date-select">Select date</label>
+                <input
+                  className="form-control"
+                  type="date"
+                  id="date-select"
+                  name="date-select"
+                  min={minMax.first}
+                  max={minMax.last}
+                  defaultValue={minMax.last}
+                  onChange={onDateChanged}
+                />
+              </div>
             </div>
-          </div>
-        </form>
-      </Activity>
-    </div>
+          </form>
+        </Activity>
+      </div>
+
+      <DataChart chartData={chartData} chartReady={chartReady}/>
+    </>
   );
 }
