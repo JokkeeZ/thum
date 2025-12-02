@@ -1,14 +1,3 @@
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-}
-
-.gh-link {
-  color: var(--bs-info-text-emphasis) !important;
-}
-
 .navbar-brand,
 .navbar-text,
 .nav-link {
@@ -25,10 +14,4 @@
   position: relative;
   width: 100%;
   height: 70vh;
-}
-
-@media screen and (max-width: 600px) {
-  .chart-container {
-    height: 60vh;
-  }
 }
