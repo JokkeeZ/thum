@@ -4,16 +4,13 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-import {
-  fetchMinMaxValues,
-  isChromiumBased,
-  type IDataChart,
-  type IMinMaxValuesLoaded,
-} from "../types";
+import { type IMinMaxValuesLoaded } from "../types/IMinMaxValuesLoaded";
+import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
 import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
+import { fetchMinMaxValues, isChromiumBased } from "../utils/utils";
 
 export default function WeeklyView() {
   const [year, setYear] = useState(0);

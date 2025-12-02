@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { type IDataChart, type ISensorReadingEntry } from "../types";
-
+import { type IDataChart } from "../types/IDataChart";
 import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
+import type { ISensorReadingEntry } from "../types/ISensorReadingEntry";
 
 export default function HomeView() {
   const { addNotification } = useNotification();

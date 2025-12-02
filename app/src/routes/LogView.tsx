@@ -1,7 +1,7 @@
 import { Activity, useEffect, useState } from "react";
-import { type ILogEntry } from "../types";
 import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
+import type { ILogEntry } from "../types/ILogEntry";
 
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
@@ -95,7 +95,7 @@ export default function LogView() {
       </div>
 
       <Activity mode={logs.length > 0 ? "visible" : "hidden"}>
-        <table className="table table-hover">
+        <table className="table table table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>

@@ -9,7 +9,7 @@ import {
   type ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import type { IDataChart } from "../types";
+import type { IDataChart } from "../types/IDataChart";
 import SpinnyLoader from "./SpinnyLoader";
 
 export default function DataChart(props: {

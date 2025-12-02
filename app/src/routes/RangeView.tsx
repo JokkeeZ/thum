@@ -1,14 +1,12 @@
 import { Activity, useEffect, useState, type ChangeEvent } from "react";
-import {
-  fetchMinMaxValues,
-  type IDataChart,
-  type IMinMaxValuesLoaded,
-  type ISensorReadingEntry,
-} from "../types";
+import { type IMinMaxValuesLoaded } from "../types/IMinMaxValuesLoaded";
+import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
 import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
+import { fetchMinMaxValues } from "../utils/utils";
+import type { ISensorReadingEntry } from "../types/ISensorReadingEntry";
 
 export default function RangeView() {
   const [startDate, setStartDate] = useState<Date>();
