@@ -114,13 +114,6 @@ export default function SettingsView() {
 
   return (
     <div className="container-fluid py-5">
-      
-    <div className="row justify-content-center">
-      <div className="col-md-6 d-flex justify-content-end pb-2">
-        <a href={`${ApiUrl}/dump`} className="btn btn-warning text-dark" download>Download database</a>
-      </div>
-    </div>
-
       <div className="row justify-content-center">
         <div className="col-md-6">
           {!cfgLoaded ? (
@@ -266,6 +259,15 @@ export default function SettingsView() {
           )}
         </div>
       </div>
+
+      <div className="row justify-content-center">
+
+        <div className="col-md-6 d-grid mt-2">
+          <a href={`${ApiUrl}/dump`} role="button" className="btn btn-outline-info" download>⤓ Download database</a>
+        </div>
+
+      </div>
+
     </div>
   );
 }
