@@ -8,6 +8,10 @@ dht = DHT11(board.D4)
 
 async def sensor_poll(db: Database):
   while True:
+    # instantly skip if we don't want to use the sensor.
+    if not db.config.use_sensor:
+      continue
+
     now = datetime.now()
     date = now.strftime(db.config.dateformat)
     time = now.strftime(db.config.timeformat)
