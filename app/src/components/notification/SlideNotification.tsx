@@ -49,7 +49,6 @@ export default function SlideNotification(props: {
       }
       style={{
         position: "relative",
-        padding: "16px",
         borderRadius: "4px",
         transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out",
         opacity: visible ? 1 : 0,
