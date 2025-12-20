@@ -12,12 +12,6 @@ cd thum
 ```
 
 ### Configure backend
-> [!IMPORTANT]
-> In project root folder, rename `.env.template` file to `.env` and make sure `DB_FILE` env key
-> points to the database file path.
-
-> [!IMPORTANT]
-> If you **do not** have DHT sensor connected, keep `USE_SENSOR` env key value as `false`.
 
 (Windows) Create venv and install requirements:
 
