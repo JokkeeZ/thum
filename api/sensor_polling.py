@@ -31,7 +31,15 @@ async def sensor_poll(db: Database):
       await asyncio.sleep(2)
       continue
 
-    await asyncio.sleep(db.config.sensor_interval)
+    try:
+      await asyncio.wait_for(
+        db.config.settings_changed.wait(),
+        timeout=db.config.sensor_interval
+      )
+    except asyncio.TimeoutError:
+      pass
+    finally:
+      db.config.settings_changed.clear()
 
 async def get_sensor_reading():
   try:

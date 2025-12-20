@@ -242,6 +242,32 @@ class Database:
         else:
           self.config = DatabaseConfig.from_row(row)
 
+  def get_app_config_async(self):
+    return self.config
+
+  async def update_config_async(self, cfg: DatabaseConfig):
+    async with aiosqlite.connect(self.dbfile) as db:
+      await db.execute("""
+      UPDATE config
+      SET sensor_interval = ?,
+          dateformat = ?,
+          timeformat = ?,
+          weekformat = ?,
+          monthformat = ?,
+          iso_week_format = ?,
+          use_sensor = ?
+      WHERE id = 1;
+      """, [
+        cfg.sensor_interval,
+        cfg.dateformat,
+        cfg.timeformat,
+        cfg.weekformat,
+        cfg.monthformat,
+        cfg.iso_week_format,
+        cfg.use_sensor
+      ])
+      await db.commit()
+
   async def get_statistics_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row

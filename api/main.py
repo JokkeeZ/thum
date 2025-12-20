@@ -1,11 +1,11 @@
 import asyncio
-import os
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
 from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from api.models.database_config import DatabaseConfig
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
@@ -139,6 +139,21 @@ async def get_statistics():
 @app.get('/')
 async def get_all_urls_from_request(request: Request):
   return [route.path for route in request.app.routes]
+
+@app.get('/api/config')
+async def get_app_config():
+  return db.get_app_config_async()
+
+@app.put('/api/config')
+async def update_config(cfg: DatabaseConfig):
+  try:
+    await db.update_config_async(cfg)
+    await db.configure_async()
+    db.config.settings_changed.set()
+  except Exception as e:
+    return error_template(e)
+
+  return {'success': True, 'message': 'Configuration updated successfully!'}
 
 @app.get('/api/dump')
 async def get_database_dump():

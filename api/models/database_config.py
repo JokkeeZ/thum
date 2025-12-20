@@ -1,5 +1,7 @@
+from typing import ClassVar
 from aiosqlite import Row
 from pydantic import BaseModel
+from asyncio import Event
 
 class DatabaseConfig(BaseModel):
   id: int
@@ -10,6 +12,8 @@ class DatabaseConfig(BaseModel):
   monthformat: str
   iso_week_format: str
   use_sensor: bool
+
+  settings_changed: ClassVar[Event] = Event()
 
   @classmethod
   def from_row(cls, row: Row):
