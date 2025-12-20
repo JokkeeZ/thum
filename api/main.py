@@ -1,6 +1,8 @@
 import asyncio
 import os
+from datetime import datetime
 from contextlib import asynccontextmanager
+from fastapi.responses import FileResponse
 from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_FILE = os.getenv('DB_FILE')
+DB_FILE = os.getenv('DB_FILE', 'thum.db')
 if not DB_FILE:
   exit('Failed to launch: Could not load environment variables.')
 
@@ -141,3 +143,13 @@ async def get_statistics():
 @app.get('/')
 async def get_all_urls_from_request(request: Request):
   return [route.path for route in request.app.routes]
+
+@app.get('/api/dump')
+async def get_database_dump():
+  timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+
+  return FileResponse(
+    path=DB_FILE,
+    filename=f'thum-{timestamp}.db',
+    media_type='application/x-sqlite3'
+  )
