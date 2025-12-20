@@ -100,6 +100,7 @@ export default function NavigationBar() {
             <NavigationBarItem route={"/monthly"} title="Monthly" />
             <NavigationBarItem route={"/range"} title="Range" />
             <NavigationBarItem route={"/statistics"} title="Statistics" />
+            <NavigationBarItem route={"/settings"} title="Settings" />
             <NavigationBarItem route={"/logs"} title="Logs" />
           </ul>
           <ul className="navbar-nav">

@@ -9,6 +9,7 @@ import NotificationContainer from "./components/notification/NotificationContain
 import StatsView from "./routes/StatsView";
 import ThemeProvider from "./components/theme/ThemeProvider";
 import { BrowserRouter, Route, Routes } from "react-router";
+import SettingsView from "./routes/SettingsView";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
                   <Route path="/range" element={<RangeView />} />
                   <Route path="/statistics" element={<StatsView />} />
                   <Route path="/logs" element={<LogView />} />
+                  <Route path="/settings" element={<SettingsView/>} />
                 </Routes>
               </div>
             </NotificationContainer>
