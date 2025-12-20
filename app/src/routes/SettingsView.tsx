@@ -18,7 +18,7 @@ export default function SettingsView() {
   const { addNotification } = useNotification();
 
   const [cfgLoaded, setCfgLoaded] = useState<boolean>(false);
-  const [sensorInterval, setSensorInterval] = useState<number>();
+  const [sensorInterval, setSensorInterval] = useState<number>(600);
   const [dateformat, setDateformat] = useState<string>();
   const [timeformat, setTimeformat] = useState<string>();
   const [weekformat, setWeekformat] = useState<string>();
@@ -92,6 +92,26 @@ export default function SettingsView() {
     })
   };
 
+  const getSensorPollText = () => {
+    const SECONDS_IN_MINUTE = 60;
+    const SECONDS_IN_HOUR = 3600;
+    const SECONDS_IN_DAY = 86400;
+
+    if (sensorInterval < SECONDS_IN_MINUTE) {
+      return `${sensorInterval} seconds`;
+    } 
+    
+    if (sensorInterval < SECONDS_IN_HOUR) {
+      return `${(sensorInterval / SECONDS_IN_MINUTE).toFixed(2)} minutes`;
+    } 
+    
+    if (sensorInterval < SECONDS_IN_DAY) {
+      return `${(sensorInterval / SECONDS_IN_HOUR).toFixed(2)} hours`;
+    } 
+
+    return `${(sensorInterval / SECONDS_IN_DAY).toFixed(2)} days`;
+  };
+
   return (
     <div className="container-fluid py-5">
       <div className="row justify-content-center">
@@ -126,8 +146,8 @@ export default function SettingsView() {
                           id="intervalHelp"
                           className="form-text text-muted"
                         >
-                          Sensor will be polled every interval seconds.
-                          (Example: 600 = 10 minutes)
+                          Sensor will be polled every {sensorInterval} seconds.
+                          ({ getSensorPollText() })
                         </small>
                       </div>
 
