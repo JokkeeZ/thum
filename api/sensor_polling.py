@@ -1,7 +1,7 @@
 import asyncio
 import board
 from datetime import datetime
-from adafruit_dht import DHT11
+from adafruit_dht import DHT11 #, DHT21, DHT22, DHTBase
 from api.db.database import Database
 
 dht = DHT11(board.D4)
@@ -18,28 +18,22 @@ async def sensor_poll(db: Database):
 
     try:
       temp = dht.temperature
-      hum = dht.humidity
+      humi = dht.humidity
 
-      if temp is None or hum is None:
-        await db.log_insert_entry_async(
-          f'Temperature reading: {temp}, Humidity: {hum}',
-          f'{date} {time}'
-        )
+      # if reading fails -> retry
+      if not temp or not humi:
         await asyncio.sleep(2)
         continue
 
-      await db.sensor_insert_entry_async(temp, hum, date, time)
-      print('Inserted sensor data:', temp, hum, date, time)
-    except (RuntimeError, Exception) as e:
-      await db.log_insert_entry_async(str(e), f'{date} {time}')
-      await asyncio.sleep(2)
-      continue
-
-    try:
+      await db.sensor_insert_entry_async(temp, humi, date, time)
       await asyncio.wait_for(
         db.config.settings_changed.wait(),
         timeout=db.config.sensor_interval
       )
+    except RuntimeError as e:
+      await db.log_insert_entry_async(str(e), f'{date} {time}')
+      await asyncio.sleep(2)
+      continue
     except asyncio.TimeoutError:
       pass
     finally:
