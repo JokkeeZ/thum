@@ -8,4 +8,8 @@ class SensorData(BaseModel):
 
   @classmethod
   def from_row(cls, row: Row):
-    return cls(ts=row[0], temperature=row[1], humidity=row[2])
+    return cls(
+      ts=row["ts"],
+      temperature=row["temperature"],
+      humidity=row["humidity"]
+    )

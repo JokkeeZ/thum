@@ -6,25 +6,22 @@ from fastapi.responses import FileResponse
 from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 
-load_dotenv()
-
-DB_FILE = os.getenv('DB_FILE', 'thum.db')
-if not DB_FILE:
-  exit('Failed to launch: Could not load environment variables.')
-
+DB_FILE = './thum.db'
 db = Database(DB_FILE)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-  use_sensor = os.getenv('USE_SENSOR')
-  if use_sensor is None:
-    exit('Failed to launch: USE_SENSOR environment variable not set.')
 
-  if use_sensor.lower() == 'true':
+  print('initializing database...')
+  await db.initialize_database()
+  print('initializing database configuration...')
+  await db.configure_async()
+
+  if db.config.use_sensor:
+    print('db: use_sensor=True')
     from api.sensor_polling import sensor_poll
-    asyncio.create_task(sensor_poll())
+    asyncio.create_task(sensor_poll(db))
 
   yield
 
@@ -78,8 +75,7 @@ async def get_sensor_data_range(start_date: str, end_date: str):
 
 @app.get('/api/sensor/current')
 async def get_sensor_current():
-  use_sensor = os.getenv('USE_SENSOR')
-  if use_sensor is None or use_sensor.lower() != 'true':
+  if not db.config.use_sensor:
     return { 'success': False, 'message': 'Sensor is not available.' }
 
   try:

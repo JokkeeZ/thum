@@ -1,6 +1,7 @@
 import calendar
 import aiosqlite
 from datetime import datetime, timedelta
+from api.models.database_config import DatabaseConfig
 from api.models.log_data import LogData
 from api.models.sensor_statistic import SensorStatistic
 from api.models.sensor_data import SensorData
@@ -8,15 +9,20 @@ from api.models.sensor_data import SensorData
 class Database:
   def __init__(self, db_file: str):
     self.dbfile = db_file
-    self.dateformat = '%Y-%m-%d'
-    self.timeformat = '%H:%M:%S'
-
-    self.wformat = '%G-W%V'
-    self.mformat = '%Y-%m'
-    self.iso_w_format = '%G-W%V-%u'
+    self.config: DatabaseConfig = DatabaseConfig(
+      id=0,
+      sensor_interval=600,
+      dateformat='%Y-%m-%d',
+      timeformat='%H:%M:%S',
+      weekformat='%G-W%V',
+      monthformat='%Y-%m',
+      iso_week_format='%G-W%V-%u',
+      use_sensor=True
+    )
 
   async def get_all_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
         SELECT timestamp_date as ts, AVG(temperature) AS temperature, AVG(humidity) AS humidity
         FROM sensor_data
@@ -28,10 +34,11 @@ class Database:
 
   async def get_year_month_async(self, year: int, month: int):
     (_, days) = calendar.monthrange(year, month)
-    start_date = datetime(year, month, 1).strftime(self.dateformat)
-    end_date = datetime(year, month, days).strftime(self.dateformat)
+    start_date = datetime(year, month, 1).strftime(self.config.dateformat)
+    end_date = datetime(year, month, days).strftime(self.config.dateformat)
 
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
         SELECT timestamp_date as ts, AVG(temperature) AS temperature, AVG(humidity) AS humidity
         FROM sensor_data
@@ -43,8 +50,8 @@ class Database:
       return [SensorData.from_row(row) for row in await cursor.fetchall()]
 
   async def get_week_async(self, week: str):
-    first = datetime.strptime(f'{week}-1', self.iso_w_format)
-    dates = [(first + timedelta(days=i)).strftime(self.dateformat) for i in range(7)]
+    first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
+    dates = [(first + timedelta(days=i)).strftime(self.config.dateformat) for i in range(7)]
 
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute("""
@@ -72,8 +79,9 @@ class Database:
     }
 
   async def get_date_async(self, day, month, year):
-    date = datetime(year, month, day).strftime(self.dateformat)
+    date = datetime(year, month, day).strftime(self.config.dateformat)
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
         SELECT timestamp_time as ts, temperature, humidity
         FROM sensor_data
@@ -85,10 +93,11 @@ class Database:
       return [SensorData.from_row(row) for row in await cursor.fetchall()]
 
   async def get_data_range_async(self, start_date: str, end_date: str):
-    start = datetime.strptime(start_date, self.dateformat)
-    end = datetime.strptime(end_date, self.dateformat)
+    start = datetime.strptime(start_date, self.config.dateformat)
+    end = datetime.strptime(end_date, self.config.dateformat)
 
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute(f"""
         SELECT timestamp_date as ts, AVG(temperature) as temperature, AVG(humidity) as humidity
         FROM sensor_data
@@ -111,8 +120,7 @@ class Database:
       (min, max) = await cursor.fetchone()
 
     now = datetime.now()
-    min_week = (now.strftime(self.wformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.wformat))
-    max_week = (now.strftime(self.wformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.wformat))
+    (min_week, max_week) = self._get_min_max_with_fmt(min, max, self.config.weekformat)
     return { "first": min_week, "last": max_week }
 
   async def get_min_max_months_async(self):
@@ -121,8 +129,7 @@ class Database:
       (min, max) = await cursor.fetchone()
 
     now = datetime.now()
-    min_month = (now.strftime(self.mformat) if min is None else datetime.strptime(min, self.dateformat).strftime(self.mformat))
-    max_month = (now.strftime(self.mformat) if max is None else datetime.strptime(max, self.dateformat).strftime(self.mformat))
+    (min_month, max_month) = self._get_min_max_with_fmt(min, max, self.config.monthformat)
     return { "first": min_month, "last": max_month }
 
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
@@ -140,8 +147,15 @@ class Database:
 
     return { 'count': cursor.rowcount }
 
+  def _get_min_max_with_fmt(self, min: str, max: str, fmt: str):
+    min_result = (now.strftime(fmt) if min is None else datetime.strptime(min, self.config.dateformat).strftime(fmt))
+    max_result = (now.strftime(fmt) if max is None else datetime.strptime(max, self.config.dateformat).strftime(fmt))
+
+    return (min_result, max_result)
+
   async def log_get_all_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
         SELECT message as msg, timestamp as ts
         FROM logs
@@ -185,24 +199,69 @@ class Database:
       );
       """)
 
+      await db.execute("""
+      CREATE TABLE IF NOT EXISTS config (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        sensor_interval NUMERIC NOT NULL DEFAULT 600,
+        dateformat TEXT NOT NULL DEFAULT "%Y-%m-%d",
+        timeformat TEXT NOT NULL DEFAULT "%H:%M:%S",
+        weekformat TEXT NOT NULL DEFAULT "%G-W%V",
+        monthformat TEXT NOT NULL DEFAULT "%Y-%m",
+        iso_week_format TEXT NOT NULL DEFAULT "%G-W%V-%u",
+        use_sensor BOOLEAN NOT NULL DEFAULT 1 CHECK (use_sensor IN (0, 1))
+      )
+      """)
+
       await db.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
       await db.commit()
 
+  async def configure_async(self):
+    async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
+
+      await db.execute("""
+      INSERT OR IGNORE INTO config (
+          id, sensor_interval, dateformat, timeformat,
+          weekformat, monthformat, iso_week_format, use_sensor
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+      """, [
+        self.config.sensor_interval,
+        self.config.dateformat,
+        self.config.timeformat,
+        self.config.weekformat,
+        self.config.monthformat,
+        self.config.iso_week_format,
+        self.config.use_sensor
+      ])
+      await db.commit()
+
+      async with db.execute("SELECT * FROM config WHERE id = 1") as cursor:
+        row = await cursor.fetchone()
+        if not row:
+          raise Exception("Failed to retrieve database configuration!")
+        else:
+          self.config = DatabaseConfig.from_row(row)
+
   async def get_statistics_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
         SELECT
           COUNT(*) AS total_entries,
           AVG(temperature) AS avg_temperature,
           AVG(humidity) AS avg_humidity,
           MIN(temperature) AS min_temperature,
-          (SELECT MIN(timestamp_date) FROM sensor_data WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)) AS min_temperature_date,
+          (SELECT MIN(timestamp_date) FROM sensor_data
+            WHERE temperature = (SELECT MIN(temperature) FROM sensor_data)) AS min_temperature_date,
           MAX(temperature) AS max_temperature,
-          (SELECT MIN(timestamp_date) FROM sensor_data WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)) AS max_temperature_date,
+          (SELECT MIN(timestamp_date) FROM sensor_data
+            WHERE temperature = (SELECT MAX(temperature) FROM sensor_data)) AS max_temperature_date,
           MIN(humidity) AS min_humidity,
-          (SELECT MIN(timestamp_date) FROM sensor_data WHERE humidity = (SELECT MIN(humidity) FROM sensor_data)) AS min_humidity_date,
+          (SELECT MIN(timestamp_date) FROM sensor_data
+            WHERE humidity = (SELECT MIN(humidity) FROM sensor_data)) AS min_humidity_date,
           MAX(humidity) AS max_humidity,
-          (SELECT MIN(timestamp_date) FROM sensor_data WHERE humidity = (SELECT MAX(humidity) FROM sensor_data)) AS max_humidity_date
+          (SELECT MIN(timestamp_date) FROM sensor_data
+            WHERE humidity = (SELECT MAX(humidity) FROM sensor_data)) AS max_humidity_date
         FROM sensor_data;
       """)
 

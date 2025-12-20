@@ -1,4 +1,3 @@
-import os
 import asyncio
 import board
 from datetime import datetime
@@ -7,11 +6,11 @@ from api.db.database import Database
 
 dht = DHT11(board.D4)
 
-async def poll_loop(interval: int, db: Database):
+async def sensor_poll(db: Database):
   while True:
     now = datetime.now()
-    date = now.strftime('%Y-%m-%d')
-    time = now.strftime('%H:%M:%S')
+    date = now.strftime(db.config.dateformat)
+    time = now.strftime(db.config.timeformat)
 
     try:
       temp = dht.temperature
@@ -32,7 +31,7 @@ async def poll_loop(interval: int, db: Database):
       await asyncio.sleep(2)
       continue
 
-    await asyncio.sleep(interval)
+    await asyncio.sleep(db.config.sensor_interval)
 
 async def get_sensor_reading():
   try:
@@ -42,15 +41,3 @@ async def get_sensor_reading():
   except RuntimeError as e:
     print(f'Error reading sensor: {e}')
     return None, None
-
-async def sensor_poll():
-  db_name = os.getenv('DB_FILE')
-  if db_name is None:
-    exit('Failed to launch: DB_FILE environment variable not set.')
-
-  print('Initializing the database')
-  db = Database(db_name)
-  await db.initialize_database()
-
-  interval = int(os.getenv('SENSOR_INTERVAL_SECONDS', 600))
-  await poll_loop(interval, db)

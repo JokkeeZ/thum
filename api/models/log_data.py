@@ -7,4 +7,4 @@ class LogData(BaseModel):
 
   @classmethod
   def from_row(cls, row: Row):
-    return cls(message=row[0], timestamp=row[1])
+    return cls(message=row["msg"], timestamp=row["ts"])

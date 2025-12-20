@@ -20,10 +20,24 @@ class SensorStatistic(BaseModel):
 
   @classmethod
   def from_row(cls, row: Row):
-    return cls(total_entries=row[0],
-               avg_temperature=row[1],
-               avg_humidity=row[2],
-               min_temperature=ValueDatePair.from_rows(row[3], row[4]),
-               max_temperature=ValueDatePair.from_rows(row[5], row[6]),
-               min_humidity=ValueDatePair.from_rows(row[7], row[8]),
-               max_humidity=ValueDatePair.from_rows(row[9], row[10]))
+    return cls(
+      total_entries=row["total_entries"],
+      avg_temperature=row["avg_temperature"],
+      avg_humidity=row["avg_humidity"],
+      min_temperature=ValueDatePair.from_rows(
+        row["min_temperature"],
+        row["min_temperature_date"]
+      ),
+      max_temperature=ValueDatePair.from_rows(
+        row["max_temperature"],
+        row["max_temperature_date"]
+      ),
+      min_humidity=ValueDatePair.from_rows(
+        row["min_humidity"],
+        row["min_humidity_date"]
+      ),
+      max_humidity=ValueDatePair.from_rows(
+        row["max_humidity"],
+        row["max_humidity_date"]
+      )
+    )
