@@ -32,6 +32,7 @@ async def lifespan(_app: FastAPI):
     asyncio.create_task(sensor_poll(db))
 
   yield
+  await db.shutdown_async()
 
 app = FastAPI(lifespan=lifespan)
 
