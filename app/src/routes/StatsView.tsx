@@ -1,34 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNotification } from "../components/notification/NotificationContext";
-import { ApiUrl } from "../config";
-
-interface IStatsResponse {
-  total_entries: number;
-  avg_temperature: number;
-  avg_humidity: number;
-  min_temperature: { value: number; date: string };
-  max_temperature: { value: number; date: string };
-  min_humidity: { value: number; date: string };
-  max_humidity: { value: number; date: string };
-}
+import ApiService from "../services/ApiService";
+import type { IStatisticsResponse } from "../types/IStatisticsResponse";
+import SpinnyLoader from "../components/SpinnyLoader";
 
 export default function StatsView() {
-  const [stats, setStats] = useState<IStatsResponse | null>(null);
+  const [stats, setStats] = useState<IStatisticsResponse | null>(null);
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    fetch(`${ApiUrl}/statistics`)
-      .then((resp) => resp.json())
-      .then((resp) => setStats(resp as IStatsResponse))
-      .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch statistics from API.",
-        });
-        console.error(error);
+    ApiService.statistics().then((resp) => {
+      setStats(resp.data);
+    })
+    .catch((error) => {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Failed to fetch statistics from API.",
       });
-  }, [addNotification, setStats]);
+      console.error(error);
+    });
+  }, []);
+
+  if (!stats) {
+    return (
+      <div className="d-flex justify-content-center pt-5">
+        <SpinnyLoader width={50} height={50} />
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid py-5">

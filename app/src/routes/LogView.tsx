@@ -1,82 +1,83 @@
 import { Activity, useEffect, useState } from "react";
-import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import type { ILogEntry } from "../types/ILogEntry";
+import ApiService from "../services/ApiService";
+import SpinnyLoader from "../components/SpinnyLoader";
 
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
+  const [logsLoaded, setLogsLoaded] = useState(false);
+
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    fetch(`${ApiUrl}/logs`)
-      .then((resp) => resp.json())
-      .then((resp) => {
-        const response = resp as ILogEntry[];
-        setLogs(response);
-      })
-      .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
-        console.error(error);
+    ApiService.logs().then((resp) => {
+      setLogs(resp.data);
+      setLogsLoaded(true);
+    })
+    .catch((error) => {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Failed to fetch data from API.",
       });
-  }, [addNotification, setLogs]);
+      console.error(error);
+    });
+  }, []);
 
   const removeLog = (log: ILogEntry) => {
-    fetch(`${ApiUrl}/logs/${log.timestamp}`, {
-      method: "DELETE",
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        if (resp.count > 0) {
-          addNotification({
-            error: false,
-            title: "Log removed",
-            text: "Log was successfully removed!",
-          });
-
-          setLogs((prevLogs) =>
-            prevLogs.filter((l) => l.timestamp !== log.timestamp)
-          );
-        }
-      })
-      .catch((error) => {
+    ApiService.deleteLog(log.timestamp).then((resp) => {
+      if (resp.data.count > 0) {
         addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
+          error: false,
+          title: "Log removed",
+          text: "Log was successfully removed!",
         });
-        console.error(error);
+
+        setLogs((prevLogs) =>
+          prevLogs.filter((l) => l.timestamp !== log.timestamp)
+        );
+      }
+    })
+    .catch((error) => {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Failed to fetch data from API.",
       });
+      console.error(error);
+    });
   };
 
   const removeAllLogs = () => {
-    fetch(`${ApiUrl}/logs`, {
-      method: "DELETE",
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        if (resp.count > 0) {
-          addNotification({
-            error: false,
-            title: "Log(s) removed",
-            text: `${resp.count} log(s) was successfully removed!`,
-          });
-
-          setLogs([]);
-        }
-      })
-      .catch((error) => {
+    ApiService.deleteLogs().then((resp) => {
+      if (resp.data.count > 0) {
         addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
+          error: false,
+          title: "Log(s) removed",
+          text: `${resp.data.count} log(s) was successfully removed!`,
         });
-        console.error(error);
+
+        setLogs([]);
+      }
+    })
+    .catch((error) => {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: "Failed to fetch data from API.",
       });
+      console.error(error);
+    });
   };
+
+  if (!logsLoaded) {
+    return (
+      <div className="d-flex justify-content-center pt-5">
+        <SpinnyLoader width={50} height={50} />
+      </div>
+    );
+  }
 
   return (
     <div className="col-md-10 mx-auto">

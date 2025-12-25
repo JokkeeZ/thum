@@ -1,4 +1,4 @@
-import type { IMinMaxValuesLoaded } from "../types/IMinMaxValuesLoaded";
+import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 
 /**
  * Checks if the browser is Chromium-based.
@@ -11,8 +11,8 @@ export function isChromiumBased(): boolean {
 
 export async function fetchMinMaxValues(
   url: string
-): Promise<IMinMaxValuesLoaded> {
+): Promise<IMinMaxValues> {
   const resp = await fetch(url);
-  const json: IMinMaxValuesLoaded = await resp.json();
+  const json: IMinMaxValues = await resp.json();
   return { first: json.first, last: json.last, loaded: true };
 }

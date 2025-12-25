@@ -1,26 +1,15 @@
-import {
-  Activity,
-  useEffect,
-  useState,
-  type ChangeEvent,
-} from "react";
-import { type IMinMaxValuesLoaded } from "../types/IMinMaxValuesLoaded";
+import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
-import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
-import { fetchMinMaxValues, isChromiumBased } from "../utils/utils";
-import type { ISensorReadingEntry } from "../types/ISensorReadingEntry";
+import MonthPicker from "../components/MonthPicker";
+import ApiService from "../services/ApiService";
 
 export default function MonthlyView() {
-  const [year, setYear] = useState(0);
-  const [month, setMonth] = useState(0);
-  const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
-    first: undefined,
-    last: undefined,
-    loaded: false,
-  });
+  const now = moment();
+  const [year, setYear] = useState(now.year());
+  const [month, setMonth] = useState(now.month() + 1);
 
   const { addNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
@@ -31,54 +20,12 @@ export default function MonthlyView() {
   const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchMinMaxValues(`${ApiUrl}/range/months`)
-      .then((val) => {
-        setMinMax(val);
-
-        const last = moment(val.last);
-        setYear(last.year());
-        setMonth(last.month() + 1);
-      })
-      .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
-        console.error(error);
-      });
-  }, [addNotification]);
-
-  const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
-    const date = event.currentTarget.valueAsDate;
-    const selection = moment(date);
-
-    if (!date) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid month selected.",
-      });
-      return;
-    }
-
-    setYear(selection.year());
-    setMonth(selection.month() + 1);
-  };
-
-  useEffect(() => {
-    if (!minMax.loaded) {
-      return;
-    }
-
-    fetch(`${ApiUrl}/sensor/monthly/${year}/${month}`)
-      .then((resp) => resp.json())
+    ApiService.monthly(year, month)
       .then((resp) => {
-        const data = resp as ISensorReadingEntry[];
         setChartData({
-          labels: data.map((p) => p.ts),
-          temperatures: data.map((p) => p.temperature),
-          humidities: data.map((p) => p.humidity),
+          labels: resp.data.map((p) => p.ts),
+          temperatures: resp.data.map((p) => p.temperature),
+          humidities: resp.data.map((p) => p.humidity),
         });
 
         setChartReady(true);
@@ -91,81 +38,12 @@ export default function MonthlyView() {
         });
         console.error(error);
       });
-  }, [setChartData, minMax, year, month, setChartReady, addNotification]);
-
-  const onYearChanged = (event: ChangeEvent<HTMLSelectElement>) => {
-    setYear(parseInt(event.currentTarget.value));
-  };
-
-  const onMonthChanged = (event: ChangeEvent<HTMLSelectElement>) => {
-    setMonth(parseInt(event.currentTarget.value));
-  };
+  }, [year, month]);
 
   return (
     <>
       <div className="col-md-6 mx-auto">
-        <Activity mode={minMax.loaded ? "visible" : "hidden"}>
-          <form>
-            <Activity mode={isChromiumBased() ? "visible" : "hidden"}>
-              <div className="row mb-3 mt-3">
-                <div className="form-group">
-                  <label htmlFor="date">Select month (Chromium)</label>
-                  <input
-                    className="form-control"
-                    type="month"
-                    min={minMax.first}
-                    max={minMax.last}
-                    value={moment().year(year).month(month).format("YYYY-MM")}
-                    onChange={onMonthChangedOnChromium}
-                  />
-                </div>
-              </div>
-            </Activity>
-
-            <Activity mode={isChromiumBased() ? "hidden" : "visible"}>
-              <div className="row mb-3 mt-3">
-                <label htmlFor="year-month">Select month and year</label>
-                <div className="input-group mb-3 mt-1" id="year-month">
-                  <select
-                    className="form-select"
-                    onChange={onMonthChanged}
-                    value={month}
-                  >
-                    {moment.months().map((m, i) => {
-                      return (
-                        <option key={i} value={i + 1}>
-                          {m}
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <select
-                    className="form-select"
-                    onChange={onYearChanged}
-                    value={year}
-                  >
-                    {Array.from(
-                      {
-                        length:
-                          moment(minMax.last).year() -
-                          moment(minMax.first).year() +
-                          1,
-                      },
-                      (_, i) => {
-                        const yearVal = moment(minMax.first).year() + i;
-                        return (
-                          <option key={yearVal} value={yearVal}>
-                            {yearVal}
-                          </option>
-                        );
-                      }
-                    )}
-                  </select>
-                </div>
-              </div>
-            </Activity>
-          </form>
-        </Activity>
+        <MonthPicker setMonth={setMonth} setYear={setYear} />
       </div>
 
       <DataChart chartData={chartData} chartReady={chartReady} />

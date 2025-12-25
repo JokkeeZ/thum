@@ -1,4 +1,4 @@
-import NavigationBar from "./components/NavigationBar";
+import NavigationBar from "./components/nav/NavigationBar";
 import HomeView from "./routes/HomeView";
 import DailyView from "./routes/DailyView";
 import WeeklyView from "./routes/WeeklyView";

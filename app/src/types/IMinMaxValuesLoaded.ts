@@ -1,5 +1,4 @@
-export interface IMinMaxValuesLoaded {
-  first?: string;
-  last?: string;
-  loaded: boolean;
+export interface IMinMaxValues {
+  first: string;
+  last: string;
 }

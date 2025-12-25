@@ -1,21 +1,14 @@
-import { Activity, useEffect, useState, type ChangeEvent } from "react";
-import { type IMinMaxValuesLoaded } from "../types/IMinMaxValuesLoaded";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
-import { ApiUrl } from "../config";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
-import { fetchMinMaxValues } from "../utils/utils";
-import type { ISensorReadingEntry } from "../types/ISensorReadingEntry";
+import DatePicker from "../components/DatePicker";
+import ApiService from "../services/ApiService";
 
 export default function DailyView() {
   const now = moment();
   const [date, setDate] = useState(now.toDate());
-  const [minMax, setMinMax] = useState<IMinMaxValuesLoaded>({
-    first: undefined,
-    last: undefined,
-    loaded: false,
-  });
 
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -27,90 +20,38 @@ export default function DailyView() {
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    fetchMinMaxValues(`${ApiUrl}/range/dates`)
-      .then((val) => setMinMax(val))
-      .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
-        console.error(error);
-      });
-  }, [setMinMax, addNotification]);
-
-  const onDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = event.currentTarget.valueAsDate;
-
-    if (!selectedDate) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid date selected.",
-      });
-      return;
-    }
-
-    setDate(selectedDate);
-  };
-
-  useEffect(() => {
-    if (!minMax.loaded) {
-      return;
-    }
-
     const dd = moment(date);
     const day = dd.date();
     const month = dd.month() + 1;
     const year = dd.year();
 
-    fetch(`${ApiUrl}/sensor/daily/${day}/${month}/${year}`)
-      .then((resp) => resp.json())
+    ApiService.daily(day, month, year)
       .then((resp) => {
-        const data = resp as ISensorReadingEntry[];
         setChartData({
-          labels: data.map((p) => p.ts),
-          temperatures: data.map((p) => p.temperature),
-          humidities: data.map((p) => p.humidity),
+          labels: resp.data.map((p) => p.ts),
+          temperatures: resp.data.map((p) => p.temperature),
+          humidities: resp.data.map((p) => p.humidity),
         });
 
         setChartReady(true);
       })
-      .catch((error) => {
+      .catch((err) => {
         addNotification({
           error: true,
           title: "Error",
           text: "Failed to fetch data from API.",
         });
-        console.error(error);
+        console.error(err);
       });
-  }, [setChartData, minMax, date, setChartReady, addNotification]);
+  }, [date]);
 
   return (
     <>
       <div className="col-md-6 mx-auto">
-        <Activity mode={minMax.loaded ? "visible" : "hidden"}>
-          <form>
-            <div className="row mb-3 mt-3">
-              <div className="form-group">
-                <label htmlFor="date-select">Select date</label>
-                <input
-                  className="form-control"
-                  type="date"
-                  id="date-select"
-                  name="date-select"
-                  min={minMax.first}
-                  max={minMax.last}
-                  defaultValue={minMax.last}
-                  onChange={onDateChanged}
-                />
-              </div>
-            </div>
-          </form>
-        </Activity>
+        <DatePicker setDate={setDate} />
       </div>
 
-      <DataChart chartData={chartData} chartReady={chartReady}/>
+      <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );
 }
