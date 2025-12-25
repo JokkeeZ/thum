@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type SetStateAction } from "react";
-import { isChromiumBased } from "../utils/utils";
+import { isChromiumBrowser } from "../utils/chromium-detect";
 import ChromiumPicker from "./ChromiumPicker";
 import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 import { useNotification } from "./notification/NotificationContext";
@@ -69,7 +69,7 @@ export default function MonthPicker(props: {
 
   return (
     <form>
-      {isChromiumBased() ? (
+      {isChromiumBrowser() ? (
         <ChromiumPicker
           type="month"
           min={minMax.first}

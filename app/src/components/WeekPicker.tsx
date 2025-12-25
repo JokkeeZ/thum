@@ -4,7 +4,7 @@ import {
   type ChangeEvent,
   type SetStateAction,
 } from "react";
-import { isChromiumBased } from "../utils/utils";
+import { isChromiumBrowser } from "../utils/chromium-detect";
 import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 import ApiService from "../services/ApiService";
 import { useNotification } from "./notification/NotificationContext";
@@ -85,7 +85,7 @@ export default function WeekPicker(props: {
   return (
     <form>
       <div className="row mb-3 mt-3">
-        {isChromiumBased() ? (
+        {isChromiumBrowser() ? (
           <ChromiumPicker
             type="week"
             min={minMax.first}
