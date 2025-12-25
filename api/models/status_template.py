@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class ErrorTemplate(BaseModel):
+class StatusTemplate(BaseModel):
   success: bool
   message: str
 

@@ -2,8 +2,9 @@ import calendar
 import aiosqlite
 from datetime import datetime, timedelta
 from api.models.database_config import DatabaseConfig
-from api.models.error_template import ErrorTemplate
+from api.models.status_template import StatusTemplate
 from api.models.log_data import LogData
+from api.models.log_delete_result import LogDeleteResult
 from api.models.min_max_model import MinMax
 from api.models.sensor_statistic import SensorStatistic
 from api.models.sensor_data import SensorData
@@ -111,14 +112,14 @@ class Database:
 
       return [SensorData.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_min_max_dates_async(self) -> MinMax | ErrorTemplate:
+  async def get_min_max_dates_async(self) -> MinMax | StatusTemplate:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute('SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;')
 
       row = await cursor.fetchone()
       if row is None:
-        return ErrorTemplate(success=False, message='Could not fetch dates(min, max)')
+        return StatusTemplate(success=False, message='Could not fetch dates(min, max)')
 
       return MinMax(first=row["min"], last=row["max"])
 
@@ -129,7 +130,7 @@ class Database:
 
       row = await cursor.fetchone()
       if row is None:
-        return ErrorTemplate(success=False, message='Could not fetch weeks(min, max)')
+        return StatusTemplate(success=False, message='Could not fetch weeks(min, max)')
 
     (min_week, max_week) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
     return MinMax(first=min_week, last=max_week)
@@ -141,7 +142,7 @@ class Database:
 
       row = await cursor.fetchone()
       if row is None:
-        return ErrorTemplate(success=False, message='Could not fetch weeks(min, max)')
+        return StatusTemplate(success=False, message='Could not fetch weeks(min, max)')
 
     (min_month, max_month) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
     return MinMax(first=min_month, last=max_month)
@@ -153,13 +154,13 @@ class Database:
       """, [temperature, humidity, date, time])
       await db.commit()
 
-  async def log_delete_by_timestamp_async(self, timestamp: str) -> dict[str, int]:
+  async def log_delete_by_timestamp_async(self, timestamp: str) -> LogDeleteResult:
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('DELETE FROM logs WHERE timestamp = ?;',
       [timestamp])
       await db.commit()
 
-    return { 'count': cursor.rowcount }
+    return LogDeleteResult(count=cursor.rowcount)
 
   def _get_min_max_with_fmt(self, min: str, max: str, fmt: str):
     min_result = (now.strftime(fmt) if min is None else datetime.strptime(min, self.config.dateformat).strftime(fmt))
@@ -183,12 +184,12 @@ class Database:
       cursor = await db.execute('SELECT * FROM logs;')
       return await cursor.fetchall()
 
-  async def log_delete_all_async(self) -> dict[str, int]:
+  async def log_delete_all_async(self) -> LogDeleteResult:
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('DELETE FROM logs;')
       await db.commit()
 
-      return { 'count': cursor.rowcount }
+      return LogDeleteResult(count=cursor.rowcount)
 
   async def log_insert_entry_async(self, msg: str, ts: str):
     async with aiosqlite.connect(self.dbfile) as db:
@@ -307,6 +308,6 @@ class Database:
 
       row = await cursor.fetchone()
       if row is None:
-        return {}
+        raise Exception("Failed to fetch statistics!")
 
       return SensorStatistic.from_row(row)

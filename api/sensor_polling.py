@@ -39,12 +39,15 @@ async def sensor_poll(db: Database):
     finally:
       db.config.settings_changed.clear()
 
-def get_sensor_reading():
+def get_sensor_reading() -> tuple[float, float] | tuple[None, None]:
   try:
     temperature = dht.temperature
     humidity = dht.humidity
 
-    return temperature, humidity
+    if temperature is not None and humidity is not None:
+      return float(temperature), float(humidity)
+
+    return None, None
   except RuntimeError as e:
     print(f'Error reading sensor: {e}')
     return None, None
