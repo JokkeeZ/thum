@@ -6,6 +6,8 @@ from api.db.database import Database
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from api.models.database_config import DatabaseConfig
+from api.models.error_template import ErrorTemplate
+from api.models.sensor_data import SensorData
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
@@ -25,7 +27,7 @@ async def lifespan(_app: FastAPI):
 
   yield
 
-app = FastAPI(redoc_url=None, docs_url=None, openapi_url=None, lifespan=lifespan)
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
   CORSMiddleware,
@@ -35,46 +37,46 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-def error_template(e: Exception):
-	return { 'success': False, 'message': str(e) }
+def error_template(e: Exception) -> ErrorTemplate:
+	return ErrorTemplate(success=False, message=str(e))
 
 @app.get('/api/sensor/all')
-async def get_sensor_all():
+async def all() -> list[SensorData] | ErrorTemplate:
   try:
     return await db.get_all_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/monthly/{year}/{month}')
-async def get_sensor_monthly(year: int, month: int):
+async def monthly(year: int, month: int) -> list[SensorData] | ErrorTemplate:
   try:
     return await db.get_year_month_async(year, month)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/weekly/{week}')
-async def get_sensor_weekly(week: str):
+async def weekly(week: str):
   try:
     return await db.get_week_async(week)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/daily/{day}/{month}/{year}')
-async def get_sensor_daily(day: int, month: int, year: int):
+async def daily(day: int, month: int, year: int) -> list[SensorData] | ErrorTemplate:
   try:
     return await db.get_date_async(day, month, year)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/range/{start_date}/{end_date}')
-async def get_sensor_data_range(start_date: str, end_date: str):
+async def range(start_date: str, end_date: str) -> list[SensorData] | ErrorTemplate:
   try:
     return await db.get_data_range_async(start_date, end_date)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/current')
-async def get_sensor_current():
+async def current():
   if not db.config.use_sensor:
     return { 'success': False, 'message': 'Sensor is not available.' }
 
@@ -88,7 +90,7 @@ async def get_sensor_current():
     return error_template(e)
 
 @app.get('/api/range/dates')
-async def get_range_dates():
+async def range_dates():
   try:
     return await db.get_min_max_dates_async()
   except Exception as e:
