@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.models.database_config import DatabaseConfig
 from api.models.error_template import ErrorTemplate
 from api.models.sensor_data import SensorData
+from api.models.live_sensor import LiveSensor
+from api.models.week_model import Week
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
@@ -55,7 +57,7 @@ async def monthly(year: int, month: int) -> list[SensorData] | ErrorTemplate:
     return error_template(e)
 
 @app.get('/api/sensor/weekly/{week}')
-async def weekly(week: str):
+async def weekly(week: str) -> Week | ErrorTemplate:
   try:
     return await db.get_week_async(week)
   except Exception as e:
@@ -78,14 +80,15 @@ async def range(start_date: str, end_date: str) -> list[SensorData] | ErrorTempl
 @app.get('/api/sensor/current')
 async def current():
   if not db.config.use_sensor:
-    return { 'success': False, 'message': 'Sensor is not available.' }
+    return ErrorTemplate(success=False, message='Sensor is not available.')
 
   try:
     from api.sensor_polling import get_sensor_reading
-    temperature, humidity = await get_sensor_reading()
+    temperature, humidity = get_sensor_reading()
     if temperature is None or humidity is None:
-      return { 'success': False, 'message': 'Failed to read from sensor.' }
-    return { 'success': True, 'temperature': temperature, 'humidity': humidity }
+      return ErrorTemplate(success=False, message='Invalid temperature or humidity reading.')
+
+    return LiveSensor(success=True, temperature=temperature, humidity=humidity)
   except Exception as e:
     return error_template(e)
 

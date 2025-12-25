@@ -2,9 +2,12 @@ import calendar
 import aiosqlite
 from datetime import datetime, timedelta
 from api.models.database_config import DatabaseConfig
+from api.models.error_template import ErrorTemplate
 from api.models.log_data import LogData
+from api.models.min_max_model import MinMax
 from api.models.sensor_statistic import SensorStatistic
 from api.models.sensor_data import SensorData
+from api.models.week_model import Week
 
 class Database:
   def __init__(self, db_file: str):
@@ -72,11 +75,11 @@ class Database:
         temperatures.append(temp)
         humidities.append(hum)
 
-    return {
-      'labels': list(calendar.day_name),
-      'temperatures': temperatures,
-      'humidities': humidities
-    }
+    return Week(
+      labels=list(calendar.day_name),
+      temperatures=temperatures,
+      humidities=humidities
+    )
 
   async def get_date_async(self, day, month, year):
     date = datetime(year, month, day).strftime(self.config.dateformat)
@@ -108,29 +111,40 @@ class Database:
 
       return [SensorData.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_min_max_dates_async(self):
+  async def get_min_max_dates_async(self) -> MinMax | ErrorTemplate:
     async with aiosqlite.connect(self.dbfile) as db:
-      cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-      (min, max) = await cursor.fetchone()
-      return { "first": min, "last": max }
+      db.row_factory = aiosqlite.Row
+      cursor = await db.execute('SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;')
+
+      row = await cursor.fetchone()
+      if row is None:
+        return ErrorTemplate(success=False, message='Could not fetch dates(min, max)')
+
+      return MinMax(first=row["min"], last=row["max"])
 
   async def get_min_max_weeks_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
-      cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-      (min, max) = await cursor.fetchone()
+      db.row_factory = aiosqlite.Row
+      cursor = await db.execute('SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;')
 
-    now = datetime.now()
-    (min_week, max_week) = self._get_min_max_with_fmt(min, max, self.config.weekformat)
-    return { "first": min_week, "last": max_week }
+      row = await cursor.fetchone()
+      if row is None:
+        return ErrorTemplate(success=False, message='Could not fetch weeks(min, max)')
+
+    (min_week, max_week) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
+    return MinMax(first=min_week, last=max_week)
 
   async def get_min_max_months_async(self):
     async with aiosqlite.connect(self.dbfile) as db:
+      db.row_factory = aiosqlite.Row
       cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
-      (min, max) = await cursor.fetchone()
 
-    now = datetime.now()
-    (min_month, max_month) = self._get_min_max_with_fmt(min, max, self.config.monthformat)
-    return { "first": min_month, "last": max_month }
+      row = await cursor.fetchone()
+      if row is None:
+        return ErrorTemplate(success=False, message='Could not fetch weeks(min, max)')
+
+    (min_month, max_month) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
+    return MinMax(first=min_month, last=max_month)
 
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
     async with aiosqlite.connect(self.dbfile) as db:

@@ -39,10 +39,11 @@ async def sensor_poll(db: Database):
     finally:
       db.config.settings_changed.clear()
 
-async def get_sensor_reading():
+def get_sensor_reading():
   try:
     temperature = dht.temperature
     humidity = dht.humidity
+
     return temperature, humidity
   except RuntimeError as e:
     print(f'Error reading sensor: {e}')
