@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class Week(BaseModel):
+class WeekResponse(BaseModel):
   labels: list[str]
   temperatures: list[float]
   humidities: list[float]

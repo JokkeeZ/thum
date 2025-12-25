@@ -1,19 +1,19 @@
 import calendar
 import aiosqlite
 from datetime import datetime, timedelta
-from api.models.database_config import DatabaseConfig
-from api.models.status_template import StatusTemplate
-from api.models.log_data import LogData
+from api.models.app_config import AppConfig
+from api.models.status_response import StatusResponse
+from api.models.entries.log_entry import LogEntry
 from api.models.log_delete_result import LogDeleteResult
-from api.models.min_max_model import MinMax
-from api.models.sensor_statistic import SensorStatistic
-from api.models.sensor_data import SensorData
-from api.models.week_model import Week
+from api.models.min_max import MinMax
+from api.models.entries.statistic_entry import StatisticEntry
+from api.models.entries.sensor_entry import SensorEntry
+from api.models.week_response import WeekResponse
 
 class Database:
   def __init__(self, db_file: str):
     self.dbfile = db_file
-    self.config: DatabaseConfig = DatabaseConfig(
+    self.config: AppConfig = AppConfig(
       id=0,
       sensor_interval=600,
       dateformat='%Y-%m-%d',
@@ -24,7 +24,7 @@ class Database:
       use_sensor=True
     )
 
-  async def get_all_async(self):
+  async def get_all_async(self) -> list[SensorEntry]:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
@@ -34,9 +34,9 @@ class Database:
         ORDER BY ts;
       """)
 
-      return [SensorData.from_row(row) for row in await cursor.fetchall()]
+      return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_year_month_async(self, year: int, month: int):
+  async def get_year_month_async(self, year: int, month: int) -> list[SensorEntry]:
     (_, days) = calendar.monthrange(year, month)
     start_date = datetime(year, month, 1).strftime(self.config.dateformat)
     end_date = datetime(year, month, days).strftime(self.config.dateformat)
@@ -51,9 +51,9 @@ class Database:
         ORDER BY ts;
       """, [start_date, end_date])
 
-      return [SensorData.from_row(row) for row in await cursor.fetchall()]
+      return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_week_async(self, week: str):
+  async def get_week_async(self, week: str) -> WeekResponse:
     first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
     dates = [(first + timedelta(days=i)).strftime(self.config.dateformat) for i in range(7)]
 
@@ -76,13 +76,13 @@ class Database:
         temperatures.append(temp)
         humidities.append(hum)
 
-    return Week(
+    return WeekResponse(
       labels=list(calendar.day_name),
       temperatures=temperatures,
       humidities=humidities
     )
 
-  async def get_date_async(self, day, month, year):
+  async def get_date_async(self, day, month, year) -> list[SensorEntry]:
     date = datetime(year, month, day).strftime(self.config.dateformat)
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
@@ -94,9 +94,9 @@ class Database:
         ORDER BY ts;
       """, [date])
 
-      return [SensorData.from_row(row) for row in await cursor.fetchall()]
+      return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_data_range_async(self, start_date: str, end_date: str):
+  async def get_data_range_async(self, start_date: str, end_date: str) -> list[SensorEntry]:
     start = datetime.strptime(start_date, self.config.dateformat)
     end = datetime.strptime(end_date, self.config.dateformat)
 
@@ -110,42 +110,40 @@ class Database:
         ORDER BY ts;
       """, [start, end])
 
-      return [SensorData.from_row(row) for row in await cursor.fetchall()]
+      return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_min_max_dates_async(self) -> MinMax | StatusTemplate:
+  async def get_min_max_dates_async(self) -> MinMax | StatusResponse:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute('SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;')
 
       row = await cursor.fetchone()
       if row is None:
-        return StatusTemplate(success=False, message='Could not fetch dates(min, max)')
+        return StatusResponse(success=False, message='Could not fetch dates(min, max)')
 
       return MinMax(first=row["min"], last=row["max"])
 
-  async def get_min_max_weeks_async(self):
+  async def get_min_max_weeks_async(self) -> MinMax | StatusResponse:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute('SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;')
 
       row = await cursor.fetchone()
       if row is None:
-        return StatusTemplate(success=False, message='Could not fetch weeks(min, max)')
+        return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    (min_week, max_week) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
-    return MinMax(first=min_week, last=max_week)
+    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
 
-  async def get_min_max_months_async(self):
+  async def get_min_max_months_async(self) -> MinMax | StatusResponse:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute('SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;')
 
       row = await cursor.fetchone()
       if row is None:
-        return StatusTemplate(success=False, message='Could not fetch weeks(min, max)')
+        return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    (min_month, max_month) = self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
-    return MinMax(first=min_month, last=max_month)
+    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
 
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
     async with aiosqlite.connect(self.dbfile) as db:
@@ -162,13 +160,17 @@ class Database:
 
     return LogDeleteResult(count=cursor.rowcount)
 
-  def _get_min_max_with_fmt(self, min: str, max: str, fmt: str):
-    min_result = (now.strftime(fmt) if min is None else datetime.strptime(min, self.config.dateformat).strftime(fmt))
-    max_result = (now.strftime(fmt) if max is None else datetime.strptime(max, self.config.dateformat).strftime(fmt))
+  def _get_min_max_with_fmt(self, min: str, max: str | None, fmt: str) -> MinMax:
+    now_str = datetime.now().strftime(fmt)
 
-    return (min_result, max_result)
+    def _fmt_internal(val: str | None) -> str:
+      if val is None:
+        return now_str
+      return datetime.strptime(val, self.config.dateformat).strftime(fmt)
 
-  async def log_get_all_async(self):
+    return MinMax(first=_fmt_internal(min), last=_fmt_internal(max))
+
+  async def log_get_all_async(self) -> list[LogEntry]:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
@@ -178,7 +180,7 @@ class Database:
         ORDER BY ts;
       """)
 
-      return [LogData.from_row(row) for row in await cursor.fetchall()]
+      return [LogEntry.from_row(row) for row in await cursor.fetchall()]
 
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute('SELECT * FROM logs;')
@@ -255,12 +257,12 @@ class Database:
         if not row:
           raise Exception("Failed to retrieve database configuration!")
         else:
-          self.config = DatabaseConfig.from_row(row)
+          self.config = AppConfig.from_row(row)
 
-  def get_app_config_async(self):
+  def get_app_config_async(self) -> AppConfig:
     return self.config
 
-  async def update_config_async(self, cfg: DatabaseConfig):
+  async def update_config_async(self, cfg: AppConfig):
     async with aiosqlite.connect(self.dbfile) as db:
       await db.execute("""
       UPDATE config
@@ -283,7 +285,7 @@ class Database:
       ])
       await db.commit()
 
-  async def get_statistics_async(self):
+  async def get_statistics_async(self) -> StatisticEntry:
     async with aiosqlite.connect(self.dbfile) as db:
       db.row_factory = aiosqlite.Row
       cursor = await db.execute("""
@@ -310,4 +312,4 @@ class Database:
       if row is None:
         raise Exception("Failed to fetch statistics!")
 
-      return SensorStatistic.from_row(row)
+      return StatisticEntry.from_row(row)

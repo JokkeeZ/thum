@@ -9,7 +9,7 @@ class ValueDatePair(BaseModel):
   def from_rows(cls, v: float, d: str):
     return cls(value=v, date=d)
 
-class SensorStatistic(BaseModel):
+class StatisticEntry(BaseModel):
   total_entries: int
   avg_temperature: float
   avg_humidity: float

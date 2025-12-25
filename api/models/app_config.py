@@ -3,7 +3,7 @@ from aiosqlite import Row
 from pydantic import BaseModel
 from asyncio import Event
 
-class DatabaseConfig(BaseModel):
+class AppConfig(BaseModel):
   id: int
   sensor_interval: int
   dateformat: str

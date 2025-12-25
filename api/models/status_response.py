@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class StatusTemplate(BaseModel):
+class StatusResponse(BaseModel):
   success: bool
   message: str
 

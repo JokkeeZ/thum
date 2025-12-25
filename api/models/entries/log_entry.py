@@ -1,7 +1,7 @@
 from aiosqlite import Row
 from pydantic import BaseModel
 
-class LogData(BaseModel):
+class LogEntry(BaseModel):
   message: str
   timestamp: str
 

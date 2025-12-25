@@ -1,7 +1,7 @@
 from aiosqlite import Row
 from pydantic import BaseModel
 
-class SensorData(BaseModel):
+class SensorEntry(BaseModel):
   temperature: float
   humidity: float
   ts: str
