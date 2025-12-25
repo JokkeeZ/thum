@@ -61,7 +61,7 @@ async def monthly(year: int, month: int) -> list[SensorEntry] | StatusResponse:
     return error_template(e)
 
 @app.get('/api/sensor/weekly/{week}')
-async def weekly(week: str) -> WeekResponse | StatusResponse:
+async def weekly(week: str):
   try:
     return await db.get_week_async(week)
   except Exception as e:

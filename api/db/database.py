@@ -53,34 +53,29 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_week_async(self, week: str) -> WeekResponse:
+  async def get_week_async(self, week: str) -> dict[str, list[str] | list[float]]:
     first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
     dates = [(first + timedelta(days=i)).strftime(self.config.dateformat) for i in range(7)]
 
     async with aiosqlite.connect(self.dbfile) as db:
       cursor = await db.execute("""
-        SELECT timestamp_date as ts, AVG(temperature) AS temperature, AVG(humidity) AS humidity
+        SELECT timestamp_date, AVG(temperature), AVG(humidity)
         FROM sensor_data
-        WHERE ts BETWEEN ? AND ?
-        GROUP BY ts
-        ORDER BY ts;
+        WHERE timestamp_date BETWEEN ? AND ?
+        GROUP BY timestamp_date
+        ORDER BY timestamp_date ASC;
       """, [dates[0], dates[-1]])
+      rows = await cursor.fetchall()
+      data_map = {row[0]: (row[1], row[2]) for row in rows}
 
-      result = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
+    stats = [data_map.get(date, (None, None)) for date in dates]
+    temperatures, humidities = zip(*stats) if stats else ([], [])
 
-      temperatures = []
-      humidities = []
-
-      for date in dates:
-        temp, hum = result.get(date, (None, None))
-        temperatures.append(temp)
-        humidities.append(hum)
-
-    return WeekResponse(
-      labels=list(calendar.day_name),
-      temperatures=temperatures,
-      humidities=humidities
-    )
+    return {
+      'labels': list(calendar.day_name),
+      'temperatures': list(temperatures),
+      'humidities': list(humidities)
+    }
 
   async def get_date_async(self, day, month, year) -> list[SensorEntry]:
     date = datetime(year, month, day).strftime(self.config.dateformat)
