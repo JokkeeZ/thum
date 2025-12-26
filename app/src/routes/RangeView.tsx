@@ -8,12 +8,13 @@ import SpinnyLoader from "../components/SpinnyLoader";
 import { useDateRange } from "../components/daterange/DateRangeContext";
 
 export default function RangeView() {
+  const { addNotification } = useNotification();
+  const { dates } = useDateRange();
+  
+  const [chartReady, setChartReady] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const { addNotification } = useNotification();
-  const [chartReady, setChartReady] = useState<boolean>(false);
-  const { dates } = useDateRange();
-
+  
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
@@ -51,10 +52,13 @@ export default function RangeView() {
   };
 
   useEffect(() => {
-    const start = moment(startDate).format("YYYY-MM-DD");
-    const end = moment(endDate).format("YYYY-MM-DD");
+    const start = startDate ?? dates?.first;
+    const end = endDate ?? dates?.last;
 
-    ApiService.range(start, end)
+    const rangeStart = moment(start).format("YYYY-MM-DD");
+    const rangeEnd = moment(end).format("YYYY-MM-DD");
+
+    ApiService.range(rangeStart, rangeEnd)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
@@ -72,7 +76,7 @@ export default function RangeView() {
         });
         console.error(error);
       });
-  }, [startDate, endDate, addNotification]);
+  }, [dates?.first, dates?.last, startDate, endDate, addNotification]);
 
   if (!dates) {
     return (
