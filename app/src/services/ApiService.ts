@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from "axios";
 import type { IConfig } from "../types/IConfig";
 import type { IWeeklyResponse } from "../types/IWeeklyResponse";
 import type { ISensorResponse } from "../types/SensorResponse";
-import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
+import type { IMinMaxValues } from "../types/IMinMaxValues";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 
 export default class ApiService {

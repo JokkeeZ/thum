@@ -1,47 +1,24 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { type IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 import SpinnyLoader from "../components/SpinnyLoader";
+import { useDateRange } from "../components/daterange/DateRangeContext";
 
 export default function RangeView() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-
-  const [minMax, setMinMax] = useState<IMinMaxValues>({
-    first: "",
-    last: "",
-  });
-  const [minMaxLoaded, setMinMaxLoaded] = useState(false);
-
   const { addNotification } = useNotification();
+  const [chartReady, setChartReady] = useState<boolean>(false);
+  const { dates } = useDateRange();
+
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
     temperatures: [],
   });
-  const [chartReady, setChartReady] = useState<boolean>(false);
-
-  useEffect(() => {
-    ApiService.dates()
-      .then((resp) => {
-        setMinMax(resp.data);
-        setStartDate(moment(resp.data.first).toDate());
-        setEndDate(moment(resp.data.last).toDate());
-        setMinMaxLoaded(true);
-      })
-      .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
-        console.error(error);
-      });
-  }, []);
 
   const onStartDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedDate = event.currentTarget.valueAsDate;
@@ -95,9 +72,9 @@ export default function RangeView() {
         });
         console.error(error);
       });
-  }, [minMax, startDate, endDate]);
+  }, [startDate, endDate, addNotification]);
 
-  if (!minMaxLoaded) {
+  if (!dates) {
     return (
       <div className="d-flex justify-content-center pt-5">
         <SpinnyLoader width={50} height={50} />
@@ -115,17 +92,17 @@ export default function RangeView() {
               <input
                 className="form-control"
                 type="date"
-                min={minMax.first}
-                max={minMax.last}
-                defaultValue={minMax.first}
+                min={dates.first}
+                max={dates.last}
+                defaultValue={dates.first}
                 onChange={onStartDateChanged}
               />
               <input
                 className="form-control"
                 type="date"
-                min={minMax.first}
-                max={minMax.last}
-                defaultValue={minMax.last}
+                min={dates.first}
+                max={dates.last}
+                defaultValue={dates.last}
                 onChange={onEndDateChanged}
               />
             </div>

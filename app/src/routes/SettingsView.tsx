@@ -36,7 +36,7 @@ export default function SettingsView() {
         });
         console.error(error);
       });
-  }, []);
+  }, [addNotification]);
 
   const updateSettings = () => {
     if (sensorInterval && sensorInterval < 2) {

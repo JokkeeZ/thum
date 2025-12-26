@@ -6,12 +6,12 @@ import ApiService from "../services/ApiService";
 
 export default function HomeView() {
   const { addNotification } = useNotification();
+  const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
     temperatures: [],
   });
-  const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
     ApiService.all().then((resp) => {
@@ -31,7 +31,7 @@ export default function HomeView() {
       });
       console.error(error);
     });
-  }, []);
+  }, [addNotification]);
 
   return (
     <>

@@ -10,14 +10,13 @@ export default function MonthlyView() {
   const now = moment();
   const [year, setYear] = useState(now.year());
   const [month, setMonth] = useState(now.month() + 1);
-
   const { addNotification } = useNotification();
+  const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
     temperatures: [],
   });
-  const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
     ApiService.monthly(year, month)
@@ -38,7 +37,7 @@ export default function MonthlyView() {
         });
         console.error(error);
       });
-  }, [year, month]);
+  }, [year, month, addNotification]);
 
   return (
     <>

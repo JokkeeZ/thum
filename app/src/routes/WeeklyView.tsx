@@ -42,7 +42,7 @@ export default function WeeklyView() {
         });
         console.error(err);
       });
-  }, [year, week]);
+  }, [year, week, addNotification]);
 
   return (
     <>

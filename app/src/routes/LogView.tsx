@@ -7,7 +7,6 @@ import SpinnyLoader from "../components/SpinnyLoader";
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
   const [logsLoaded, setLogsLoaded] = useState(false);
-
   const { addNotification } = useNotification();
 
   useEffect(() => {
@@ -23,7 +22,7 @@ export default function LogView() {
       });
       console.error(error);
     });
-  }, []);
+  }, [addNotification]);
 
   const removeLog = (log: ILogEntry) => {
     ApiService.deleteLog(log.timestamp).then((resp) => {

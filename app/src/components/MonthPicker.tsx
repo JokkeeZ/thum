@@ -1,38 +1,17 @@
-import { useEffect, useState, type ChangeEvent, type SetStateAction } from "react";
+import { type ChangeEvent, type SetStateAction } from "react";
 import { isChromiumBrowser } from "../utils/chromium-detect";
 import ChromiumPicker from "./ChromiumPicker";
-import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 import { useNotification } from "./notification/NotificationContext";
 import moment from "moment";
-import ApiService from "../services/ApiService";
 import SpinnyLoader from "./SpinnyLoader";
+import { useDateRange } from "./daterange/DateRangeContext";
 
 export default function MonthPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
   setMonth: (value: SetStateAction<number>) => void;
 }) {
-  const [minMax, setMinMax] = useState<IMinMaxValues>({
-    first: "",
-    last: "",
-  });
-  const [minMaxLoaded, setMinMaxLoaded] = useState(false);
+  const { months } = useDateRange();
   const { addNotification } = useNotification();
-
-  useEffect(() => {
-    ApiService.months()
-      .then((resp) => {
-        setMinMax(resp.data);
-        setMinMaxLoaded(true);
-      })
-      .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
-        console.error(err);
-      });
-  }, []);
 
   const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
@@ -59,7 +38,7 @@ export default function MonthPicker(props: {
     props.setMonth(parseInt(event.currentTarget.value));
   };
 
-  if (!minMaxLoaded) {
+  if (!months) {
     return (
       <div className="d-flex justify-content-center pt-5">
         <SpinnyLoader width={50} height={50} />
@@ -72,9 +51,9 @@ export default function MonthPicker(props: {
       {isChromiumBrowser() ? (
         <ChromiumPicker
           type="month"
-          min={minMax.first}
-          max={minMax.last}
-          defaultValue={moment(minMax.last).format("YYYY-MM")}
+          min={months.first}
+          max={months.last}
+          defaultValue={moment(months.last).format("YYYY-MM")}
           onChange={onMonthChangedOnChromium}
         />
       ) : (
@@ -84,7 +63,7 @@ export default function MonthPicker(props: {
             <select
               className="form-select"
               onChange={onMonthChanged}
-              defaultValue={moment(minMax.last).month() + 1}
+              defaultValue={moment(months.last).month() + 1}
             >
               {moment.months().map((m, i) => {
                 return (
@@ -97,17 +76,17 @@ export default function MonthPicker(props: {
             <select
               className="form-select"
               onChange={onYearChanged}
-              value={moment(minMax.last).year()}
+              value={moment(months.last).year()}
             >
               {Array.from(
                 {
                   length:
-                    moment(minMax.last).year() -
-                    moment(minMax.first).year() +
+                    moment(months.last).year() -
+                    moment(months.first).year() +
                     1,
                 },
                 (_, i) => {
-                  const yearVal = moment(minMax.first).year() + i;
+                  const yearVal = moment(months.first).year() + i;
                   return (
                     <option key={yearVal} value={yearVal}>
                       {yearVal}

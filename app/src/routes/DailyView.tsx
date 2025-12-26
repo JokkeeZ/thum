@@ -9,15 +9,13 @@ import ApiService from "../services/ApiService";
 export default function DailyView() {
   const now = moment();
   const [date, setDate] = useState(now.toDate());
-
+  const [chartReady, setChartReady] = useState<boolean>(false);
+  const { addNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
     temperatures: [],
   });
-  const [chartReady, setChartReady] = useState<boolean>(false);
-
-  const { addNotification } = useNotification();
 
   useEffect(() => {
     const dd = moment(date);
@@ -43,7 +41,7 @@ export default function DailyView() {
         });
         console.error(err);
       });
-  }, [date]);
+  }, [date, addNotification]);
 
   return (
     <>

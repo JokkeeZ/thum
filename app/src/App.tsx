@@ -11,6 +11,7 @@ import ThemeProvider from "./components/theme/ThemeProvider";
 import { BrowserRouter, Route, Routes } from "react-router";
 import SettingsView from "./routes/SettingsView";
 import Footer from "./components/Footer";
+import DateRangeProvider from "./components/daterange/DateRangeProvider";
 
 export default function App() {
   return (
@@ -28,19 +29,21 @@ export default function App() {
                 duration: 3000,
                 slideDirection: "right",
               }}
-            >
-              <div className="container">
-                <Routes>
-                  <Route path="/" element={<HomeView />} />
-                  <Route path="/daily" element={<DailyView />} />
-                  <Route path="/weekly" element={<WeeklyView />} />
-                  <Route path="/monthly" element={<MonthlyView />} />
-                  <Route path="/range" element={<RangeView />} />
-                  <Route path="/statistics" element={<StatsView />} />
-                  <Route path="/logs" element={<LogView />} />
-                  <Route path="/settings" element={<SettingsView/>} />
-                </Routes>
-              </div>
+              >
+              <DateRangeProvider>
+                <div className="container">
+                  <Routes>
+                    <Route path="/" element={<HomeView />} />
+                    <Route path="/daily" element={<DailyView />} />
+                    <Route path="/weekly" element={<WeeklyView />} />
+                    <Route path="/monthly" element={<MonthlyView />} />
+                    <Route path="/range" element={<RangeView />} />
+                    <Route path="/statistics" element={<StatsView />} />
+                    <Route path="/logs" element={<LogView />} />
+                    <Route path="/settings" element={<SettingsView/>} />
+                  </Routes>
+                </div>
+              </DateRangeProvider>
             </NotificationContainer>
           </main>
 

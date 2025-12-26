@@ -20,7 +20,7 @@ export default function StatsView() {
       });
       console.error(error);
     });
-  }, []);
+  }, [addNotification]);
 
   if (!stats) {
     return (
