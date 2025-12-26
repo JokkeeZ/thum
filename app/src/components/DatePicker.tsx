@@ -37,7 +37,7 @@ export default function DatePicker(props: {
   return (
     <form>
       <div className="row mb-3 mt-3">
-        <ChromiumPicker 
+        <ChromiumPicker
           type="date"
           min={dates.first}
           max={dates.last}

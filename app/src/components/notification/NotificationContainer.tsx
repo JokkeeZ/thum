@@ -16,7 +16,7 @@ export default function NotificationContainer(props: {
   settings: INotificationSettings;
 }) {
   const [notifications, setNotifications] = useState<INotificationDetails[]>(
-    []
+    [],
   );
 
   const createUUID = () => {

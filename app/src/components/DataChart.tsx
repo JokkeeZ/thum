@@ -21,7 +21,7 @@ export default function DataChart(props: {
     LinearScale,
     PointElement,
     LineElement,
-    Tooltip
+    Tooltip,
   );
 
   const chartFontSize = 14;
@@ -76,13 +76,22 @@ export default function DataChart(props: {
                   tooltip: {
                     callbacks: {
                       footer(tooltipItems: TooltipItem<"line">[]) {
-                        const tempItem = tooltipItems.find(i => i.dataset.label === "Temperature");
-                        const humItem = tooltipItems.find(i => i.dataset.label === "Humidity");
+                        const tempItem = tooltipItems.find(
+                          (i) => i.dataset.label === "Temperature",
+                        );
+                        const humItem = tooltipItems.find(
+                          (i) => i.dataset.label === "Humidity",
+                        );
 
                         const temperature = tempItem?.parsed.y;
                         const humidity = humItem?.parsed.y;
 
-                        if (Number.isFinite(temperature) && temperature && Number.isFinite(humidity) && humidity) {
+                        if (
+                          Number.isFinite(temperature) &&
+                          temperature &&
+                          Number.isFinite(humidity) &&
+                          humidity
+                        ) {
                           const dewPoint = temperature - (100 - humidity) / 5;
                           return `Dew point: ${dewPoint.toFixed(2)}°C`;
                         }

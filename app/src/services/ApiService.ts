@@ -7,7 +7,7 @@ import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 
 export default class ApiService {
   static api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL as string
+    baseURL: import.meta.env.VITE_API_BASE_URL as string,
   });
 
   static all() {
@@ -19,7 +19,9 @@ export default class ApiService {
   }
 
   static daily(day: number, month: number, year: number) {
-    return this.api.get<ISensorResponse[]>(`/sensor/daily/${day}/${month}/${year}`);
+    return this.api.get<ISensorResponse[]>(
+      `/sensor/daily/${day}/${month}/${year}`,
+    );
   }
 
   static monthly(year: number, month: number) {

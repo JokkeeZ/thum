@@ -1,7 +1,4 @@
-import {
-  type ChangeEvent,
-  type SetStateAction,
-} from "react";
+import { type ChangeEvent, type SetStateAction } from "react";
 import { isChromiumBrowser } from "../utils/chromium-detect";
 import { useNotification } from "./notification/NotificationContext";
 import moment from "moment";

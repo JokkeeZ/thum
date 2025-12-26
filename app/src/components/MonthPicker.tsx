@@ -92,7 +92,7 @@ export default function MonthPicker(props: {
                       {yearVal}
                     </option>
                   );
-                }
+                },
               )}
             </select>
           </div>

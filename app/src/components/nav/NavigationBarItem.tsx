@@ -1,6 +1,9 @@
 import { NavLink, useNavigate } from "react-router";
 
-export default function NavigationBarItem(props: { route: string; title: string }) {
+export default function NavigationBarItem(props: {
+  route: string;
+  title: string;
+}) {
   const navigation = useNavigate();
   return (
     <li className="nav-item">

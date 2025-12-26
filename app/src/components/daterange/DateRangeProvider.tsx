@@ -4,7 +4,11 @@ import { type IDateRange } from "../../types/IDateRange";
 import ApiService from "../../services/ApiService";
 import { useNotification } from "../notification/NotificationContext";
 
-export default function DateRangeProvider({ children }: { children: ReactNode }) {
+export default function DateRangeProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [dates, setDates] = useState<IDateRange>();
   const [weeks, setWeeks] = useState<IDateRange>();
   const [months, setMonths] = useState<IDateRange>();
@@ -18,8 +22,8 @@ export default function DateRangeProvider({ children }: { children: ReactNode })
         addNotification({
           error: true,
           title: "Error",
-          text: "Failed to fetch dates range."
-        })
+          text: "Failed to fetch dates range.",
+        });
         console.error(err);
       });
 
@@ -29,8 +33,8 @@ export default function DateRangeProvider({ children }: { children: ReactNode })
         addNotification({
           error: true,
           title: "Error",
-          text: "Failed to fetch weeks range."
-        })
+          text: "Failed to fetch weeks range.",
+        });
         console.error(err);
       });
 
@@ -40,8 +44,8 @@ export default function DateRangeProvider({ children }: { children: ReactNode })
         addNotification({
           error: true,
           title: "Error",
-          text: "Failed to fetch months range."
-        })
+          text: "Failed to fetch months range.",
+        });
         console.error(err);
       });
   }, [addNotification]);

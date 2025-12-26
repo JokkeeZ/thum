@@ -10,64 +10,67 @@ export default function LogView() {
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    ApiService.logs().then((resp) => {
-      setLogs(resp.data);
-      setLogsLoaded(true);
-    })
-    .catch((error) => {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Failed to fetch data from API.",
+    ApiService.logs()
+      .then((resp) => {
+        setLogs(resp.data);
+        setLogsLoaded(true);
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch data from API.",
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   }, [addNotification]);
 
   const removeLog = (log: ILogEntry) => {
-    ApiService.deleteLog(log.timestamp).then((resp) => {
-      if (resp.data.count > 0) {
-        addNotification({
-          error: false,
-          title: "Log removed",
-          text: "Log was successfully removed!",
-        });
+    ApiService.deleteLog(log.timestamp)
+      .then((resp) => {
+        if (resp.data.count > 0) {
+          addNotification({
+            error: false,
+            title: "Log removed",
+            text: "Log was successfully removed!",
+          });
 
-        setLogs((prevLogs) =>
-          prevLogs.filter((l) => l.timestamp !== log.timestamp)
-        );
-      }
-    })
-    .catch((error) => {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Failed to fetch data from API.",
+          setLogs((prevLogs) =>
+            prevLogs.filter((l) => l.timestamp !== log.timestamp),
+          );
+        }
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch data from API.",
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   };
 
   const removeAllLogs = () => {
-    ApiService.deleteLogs().then((resp) => {
-      if (resp.data.count > 0) {
-        addNotification({
-          error: false,
-          title: "Log(s) removed",
-          text: `${resp.data.count} log(s) was successfully removed!`,
-        });
+    ApiService.deleteLogs()
+      .then((resp) => {
+        if (resp.data.count > 0) {
+          addNotification({
+            error: false,
+            title: "Log(s) removed",
+            text: `${resp.data.count} log(s) was successfully removed!`,
+          });
 
-        setLogs([]);
-      }
-    })
-    .catch((error) => {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Failed to fetch data from API.",
+          setLogs([]);
+        }
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch data from API.",
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   };
 
   if (!logsLoaded) {

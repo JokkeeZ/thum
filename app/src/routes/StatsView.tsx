@@ -9,17 +9,18 @@ export default function StatsView() {
   const { addNotification } = useNotification();
 
   useEffect(() => {
-    ApiService.statistics().then((resp) => {
-      setStats(resp.data);
-    })
-    .catch((error) => {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Failed to fetch statistics from API.",
+    ApiService.statistics()
+      .then((resp) => {
+        setStats(resp.data);
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch statistics from API.",
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   }, [addNotification]);
 
   if (!stats) {

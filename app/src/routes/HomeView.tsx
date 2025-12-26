@@ -14,23 +14,24 @@ export default function HomeView() {
   });
 
   useEffect(() => {
-    ApiService.all().then((resp) => {
-      setChartData({
-        labels: resp.data.map((p) => p.ts),
-        temperatures: resp.data.map((p) => p.temperature),
-        humidities: resp.data.map((p) => p.humidity),
-      });
+    ApiService.all()
+      .then((resp) => {
+        setChartData({
+          labels: resp.data.map((p) => p.ts),
+          temperatures: resp.data.map((p) => p.temperature),
+          humidities: resp.data.map((p) => p.humidity),
+        });
 
-      setChartReady(true);
-    })
-    .catch((error) => {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Failed to fetch data from API.",
+        setChartReady(true);
+      })
+      .catch((error) => {
+        addNotification({
+          error: true,
+          title: "Error",
+          text: "Failed to fetch data from API.",
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
   }, [addNotification]);
 
   return (

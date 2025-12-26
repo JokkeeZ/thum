@@ -143,7 +143,7 @@ export default function NavigationBar() {
         </div>
       </nav>
 
-      { /* TODO: gotta think about this one. looks nice tho. */}
+      {/* TODO: gotta think about this one. looks nice tho. */}
       {/* <div className="progress" style={{height: "5px", width: "100%", borderRadius: 0}}>
         <div
           className="progress-bar bg-secondary progress-bar-animated"

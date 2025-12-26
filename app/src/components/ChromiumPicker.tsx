@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 
 export default function ChromiumPicker(props: {
-  type: "date" | "week" | "month",
+  type: "date" | "week" | "month";
   min: string;
   max: string;
   defaultValue: string;

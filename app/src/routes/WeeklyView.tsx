@@ -47,10 +47,7 @@ export default function WeeklyView() {
   return (
     <>
       <div className="col-md-6 mx-auto">
-        <WeekPicker
-          setWeek={setWeek}
-          setYear={setYear}
-        />
+        <WeekPicker setWeek={setWeek} setYear={setYear} />
       </div>
 
       <DataChart chartData={chartData} chartReady={chartReady} />
