@@ -1,9 +1,11 @@
 import axios, { type AxiosInstance } from "axios";
 import type { IConfig } from "../types/IConfig";
 import type { IWeeklyResponse } from "../types/IWeeklyResponse";
-import type { ISensorResponse } from "../types/ISensorResponse";
+import type { ILiveSensorResponse, ISensorResponse } from "../types/ISensorResponse";
 import type { IDateRange } from "../types/IDateRange";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
+import type { ILogEntry } from "../types/ILogEntry";
+import type { IApiResponse } from "../types/IApiResponse";
 
 export default class ApiService {
   static api: AxiosInstance = axios.create({
@@ -33,11 +35,7 @@ export default class ApiService {
   }
 
   static current() {
-    return this.api.get<{
-      success: boolean;
-      temperature: number;
-      humidity: number;
-    }>("/sensor/current");
+    return this.api.get<ILiveSensorResponse>("/sensor/current");
   }
 
   static dates() {
@@ -53,7 +51,7 @@ export default class ApiService {
   }
 
   static logs() {
-    return this.api.get<{ message: string; timestamp: string }[]>("/logs");
+    return this.api.get<ILogEntry[]>("/logs");
   }
 
   static deleteLogs() {
@@ -73,10 +71,7 @@ export default class ApiService {
   }
 
   static updateConfig(cfg: IConfig) {
-    return this.api.put<{
-      error: boolean;
-      message: string;
-    }>("/config", cfg);
+    return this.api.put<IApiResponse>("/config", cfg);
   }
 
   static dumpUrl() {
