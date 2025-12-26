@@ -38,7 +38,7 @@ export default function StatsView() {
           <div className="card shadow-sm text-center">
             <div className="card-body">
               <h5 className="card-title mb-3">Statistics</h5>
-              <ul className="list-group">
+              <ul className="list-group list-group-flush">
                 <li className="list-group-item d-flex justify-content-between align-items-center">
                   Total Entries
                   <span className="badge bg-primary rounded-pill">
