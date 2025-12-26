@@ -10,6 +10,7 @@ import StatsView from "./routes/StatsView";
 import ThemeProvider from "./components/theme/ThemeProvider";
 import { BrowserRouter, Route, Routes } from "react-router";
 import SettingsView from "./routes/SettingsView";
+import Footer from "./components/Footer";
 
 export default function App() {
   return (
@@ -43,16 +44,7 @@ export default function App() {
             </NotificationContainer>
           </main>
 
-          <footer className="py-4">
-            <div className="container d-flex flex-column flex-md-row justify-content-center align-items-center">
-              <div className="mb-1 mb-md-0">
-                <span>Open-source on </span>
-                <a className="text-info" href="https://github.com/jokkeez/thum">
-                  <span>Github</span>
-                </a>
-              </div>
-            </div>
-          </footer>
+          <Footer/>
         </div>
       </BrowserRouter>
     </ThemeProvider>
