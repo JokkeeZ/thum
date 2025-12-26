@@ -1,4 +1,4 @@
-import { Activity, useEffect, useState, type ChangeEvent, type SetStateAction } from "react";
+import { useEffect, useState, type ChangeEvent, type SetStateAction } from "react";
 import type { IMinMaxValues } from "../types/IMinMaxValuesLoaded";
 import ApiService from "../services/ApiService";
 import { useNotification } from "./notification/NotificationContext";

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import moment from "moment";
 import { useNotification } from "../components/notification/NotificationContext";
