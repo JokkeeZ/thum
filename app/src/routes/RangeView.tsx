@@ -10,11 +10,11 @@ import { useDateRange } from "../components/daterange/DateRangeContext";
 export default function RangeView() {
   const { addNotification } = useNotification();
   const { dates } = useDateRange();
-  
+
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  
+
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],

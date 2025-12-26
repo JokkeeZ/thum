@@ -1,7 +1,10 @@
 import axios, { type AxiosInstance } from "axios";
 import type { IConfig } from "../types/IConfig";
 import type { IWeeklyResponse } from "../types/IWeeklyResponse";
-import type { ILiveSensorResponse, ISensorResponse } from "../types/ISensorResponse";
+import type {
+  ILiveSensorResponse,
+  ISensorResponse,
+} from "../types/ISensorResponse";
 import type { IDateRange } from "../types/IDateRange";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 import type { ILogEntry } from "../types/ILogEntry";
