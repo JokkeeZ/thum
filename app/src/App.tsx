@@ -12,11 +12,13 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import SettingsView from "./routes/SettingsView";
 import Footer from "./components/Footer";
 import DateRangeProvider from "./components/daterange/DateRangeProvider";
+import TitleManager from "./components/TitleManager";
 
 export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
+        <TitleManager />
         <div className="d-flex flex-column min-vh-100">
           <header>
             <NavigationBar />
@@ -29,7 +31,7 @@ export default function App() {
                 duration: 3000,
                 slideDirection: "right",
               }}
-              >
+            >
               <DateRangeProvider>
                 <div className="container">
                   <Routes>
@@ -40,7 +42,7 @@ export default function App() {
                     <Route path="/range" element={<RangeView />} />
                     <Route path="/statistics" element={<StatsView />} />
                     <Route path="/logs" element={<LogView />} />
-                    <Route path="/settings" element={<SettingsView/>} />
+                    <Route path="/settings" element={<SettingsView />} />
                   </Routes>
                 </div>
               </DateRangeProvider>
@@ -48,7 +50,7 @@ export default function App() {
           </main>
 
           <footer className="py-4">
-            <Footer/>
+            <Footer />
           </footer>
         </div>
       </BrowserRouter>
