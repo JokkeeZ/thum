@@ -1,3 +1,18 @@
+:root {
+  --temperature: rgba(255, 99, 132, 1);
+  --temperature-bg: rgba(255, 99, 132, 0.5);
+  --temperature-hover-radius: 8;
+
+  --humidity: rgba(53, 162, 235, 1);
+  --humidity-bg: rgba(53, 162, 235, 0.5);
+  --humidity-hover-radius: 8;
+
+  --chart-font-size: 14;
+  --chart-foreground: rgba(141, 141, 141, 1);
+
+  --chart-grid: rgba(141, 141, 141, 0.2);
+}
+
 .navbar-brand,
 .navbar-text,
 .nav-link {

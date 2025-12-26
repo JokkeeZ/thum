@@ -11,6 +11,8 @@ import {
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types/IDataChart";
 import SpinnyLoader from "./SpinnyLoader";
+import { useMemo } from "react";
+import { getChartTheme } from "../utils/chart-theme";
 
 export default function DataChart(props: {
   chartData: IDataChart;
@@ -24,11 +26,10 @@ export default function DataChart(props: {
     Tooltip,
   );
 
-  const chartFontSize = 14;
-  const chartColor = "rgba(141, 141, 141, 1)";
+  const chartTheme = useMemo(() => getChartTheme(), []);
 
-  ChartJS.defaults.color = chartColor;
-  ChartJS.defaults.font.size = chartFontSize;
+  ChartJS.defaults.color = chartTheme.foreground;
+  ChartJS.defaults.font.size = chartTheme.fontSize;
 
   const data: ChartData<"line", number[], string> = {
     labels: props.chartData.labels,
@@ -36,77 +37,76 @@ export default function DataChart(props: {
       {
         label: "Temperature",
         data: props.chartData.temperatures,
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: chartTheme.temperature,
+        backgroundColor: chartTheme.temperatureBg,
         tension: 0.25,
-        pointHoverRadius: 8,
+        pointHoverRadius: chartTheme.temperatureHoverRadius,
       },
       {
         label: "Humidity",
         data: props.chartData.humidities,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        borderColor: chartTheme.humidity,
+        backgroundColor: chartTheme.humidityBg,
         tension: 0.25,
-        pointHoverRadius: 8,
+        pointHoverRadius: chartTheme.humidityHoverRadius,
       },
     ],
   };
 
+  if (!props.chartReady) {
+    return (
+      <div className="d-flex justify-content-center">
+        <SpinnyLoader width={50} height={50} />
+      </div>
+    );
+  }
+
   return (
-    <div className="container-fluid mt-3">
-      <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
-        {props.chartReady ? (
-          <div className="chart-container">
-            <Line
-              data={data}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                  intersect: false,
-                  mode: "index",
-                },
+    <div className="d-flex justify-content-center align-items-center col-md-12 min-vh-90">
+      <div className="chart-container">
+        <Line
+          data={data}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              intersect: false,
+              mode: "index",
+            },
 
-                scales: {
-                  x: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
-                  y: { grid: { color: "rgba(141, 141, 141, 0.2)" } },
-                },
+            scales: {
+              x: { grid: { color: chartTheme.grid } },
+              y: { grid: { color: chartTheme.grid } },
+            },
 
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      footer(tooltipItems: TooltipItem<"line">[]) {
-                        const tempItem = tooltipItems.find(
-                          (i) => i.dataset.label === "Temperature",
-                        );
-                        const humItem = tooltipItems.find(
-                          (i) => i.dataset.label === "Humidity",
-                        );
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  footer(tooltipItems: TooltipItem<"line">[]) {
+                    const temperature = tooltipItems.find(
+                      (i) => i.dataset.label === "Temperature",
+                    )?.parsed.y;
+                    const humidity = tooltipItems.find(
+                      (i) => i.dataset.label === "Humidity",
+                    )?.parsed.y;
 
-                        const temperature = tempItem?.parsed.y;
-                        const humidity = humItem?.parsed.y;
+                    if (
+                      Number.isFinite(temperature) &&
+                      temperature &&
+                      Number.isFinite(humidity) &&
+                      humidity
+                    ) {
+                      const dewPoint = temperature - (100 - humidity) / 5;
+                      return `Dew point: ${dewPoint.toFixed(2)}°C`;
+                    }
 
-                        if (
-                          Number.isFinite(temperature) &&
-                          temperature &&
-                          Number.isFinite(humidity) &&
-                          humidity
-                        ) {
-                          const dewPoint = temperature - (100 - humidity) / 5;
-                          return `Dew point: ${dewPoint.toFixed(2)}°C`;
-                        }
-
-                        return `Dew point: ?`;
-                      },
-                    },
+                    return `Dew point: ?`;
                   },
                 },
-              }}
-            />
-          </div>
-        ) : (
-          <SpinnyLoader width={50} height={50} />
-        )}
+              },
+            },
+          }}
+        />
       </div>
     </div>
   );
