@@ -1,13 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { DateRangeContext } from "./DateRangeContext";
-import { type IMinMaxValues } from "../../types/IMinMaxValues";
+import { type IDateRange } from "../../types/IDateRange";
 import ApiService from "../../services/ApiService";
 import { useNotification } from "../notification/NotificationContext";
 
 export default function DateRangeProvider({ children }: { children: ReactNode }) {
-  const [dates, setDates] = useState<IMinMaxValues>();
-  const [weeks, setWeeks] = useState<IMinMaxValues>();
-  const [months, setMonths] = useState<IMinMaxValues>();
+  const [dates, setDates] = useState<IDateRange>();
+  const [weeks, setWeeks] = useState<IDateRange>();
+  const [months, setMonths] = useState<IDateRange>();
 
   const { addNotification } = useNotification();
 

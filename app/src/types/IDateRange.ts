@@ -1,4 +1,4 @@
-export interface IMinMaxValues {
+export interface IDateRange {
   first: string;
   last: string;
 }

@@ -1,8 +1,8 @@
 import axios, { type AxiosInstance } from "axios";
 import type { IConfig } from "../types/IConfig";
 import type { IWeeklyResponse } from "../types/IWeeklyResponse";
-import type { ISensorResponse } from "../types/SensorResponse";
-import type { IMinMaxValues } from "../types/IMinMaxValues";
+import type { ISensorResponse } from "../types/ISensorResponse";
+import type { IDateRange } from "../types/IDateRange";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 
 export default class ApiService {
@@ -39,15 +39,15 @@ export default class ApiService {
   }
 
   static dates() {
-    return this.api.get<IMinMaxValues>("/range/dates");
+    return this.api.get<IDateRange>("/range/dates");
   }
 
   static weeks() {
-    return this.api.get<IMinMaxValues>("/range/weeks");
+    return this.api.get<IDateRange>("/range/weeks");
   }
 
   static months() {
-    return this.api.get<IMinMaxValues>("/range/months");
+    return this.api.get<IDateRange>("/range/months");
   }
 
   static logs() {

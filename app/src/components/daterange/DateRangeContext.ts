@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
-import type { IMinMaxValues } from "../../types/IMinMaxValues";
+import type { IDateRange } from "../../types/IDateRange";
 
 export interface IDateRangeContext {
-  dates?: IMinMaxValues;
-  weeks?: IMinMaxValues;
-  months?: IMinMaxValues;
+  dates?: IDateRange;
+  weeks?: IDateRange;
+  months?: IDateRange;
 };
 
 export const DateRangeContext = createContext<IDateRangeContext>({
