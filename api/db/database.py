@@ -123,7 +123,7 @@ class Database:
 
   async def get_min_max_months_async(self) -> MinMax | StatusResponse:
     async with self.ctx.execute("""
-      SELECT MIN(timestamp_date), MAX(timestamp_date) FROM sensor_data;
+      SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
 
       row = await cursor.fetchone()
