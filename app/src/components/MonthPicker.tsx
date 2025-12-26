@@ -45,36 +45,38 @@ export default function MonthPicker(props: {
 
   return (
     <form>
-      {isChromiumBrowser() ? (
-        <ChromiumPicker
-          type="month"
-          min={months.first}
-          max={months.last}
-          defaultValue={moment(months.last).format("YYYY-MM")}
-          onChange={onMonthChangedOnChromium}
-        />
-      ) : (
-        <div className="row mb-3 mt-3">
-          <label htmlFor="year-month">Select month and year</label>
-          <div className="input-group mb-3 mt-1" id="year-month">
-            <select
-              className="form-select"
-              onChange={onMonthChanged}
-              defaultValue={moment(months.last).month() + 1}
-            >
-              {moment.months().map((m, i) => {
-                return (
-                  <option key={i} value={i + 1}>
-                    {m}
-                  </option>
-                );
-              })}
-            </select>
+      <div className="row mb-3 mt-3">
+        {isChromiumBrowser() ? (
+          <ChromiumPicker
+            type="month"
+            min={months.first}
+            max={months.last}
+            defaultValue={moment(months.last).format("YYYY-MM")}
+            onChange={onMonthChangedOnChromium}
+          />
+        ) : (
+          <>
+            <label htmlFor="year-month">Select month and year</label>
+            <div className="input-group mb-3 mt-1" id="year-month">
+              <select
+                className="form-select"
+                onChange={onMonthChanged}
+                defaultValue={moment(months.last).month() + 1}
+              >
+                {moment.months().map((m, i) => {
+                  return (
+                    <option key={i} value={i + 1}>
+                      {m}
+                    </option>
+                  );
+                })}
+              </select>
 
-            <YearSelector daterange={months} onYearChanged={onYearChanged} />
-          </div>
-        </div>
-      )}
+              <YearSelector daterange={months} onYearChanged={onYearChanged} />
+            </div>
+          </>
+        )}
+      </div>
     </form>
   );
 }
