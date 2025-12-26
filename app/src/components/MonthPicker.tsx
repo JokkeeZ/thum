@@ -5,6 +5,7 @@ import { useNotification } from "./notification/NotificationContext";
 import moment from "moment";
 import SpinnyLoader from "./SpinnyLoader";
 import { useDateRange } from "./daterange/DateRangeContext";
+import YearSelector from "./YearSelector";
 
 export default function MonthPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
@@ -30,8 +31,8 @@ export default function MonthPicker(props: {
     props.setMonth(selection.month() + 1);
   };
 
-  const onYearChanged = (event: ChangeEvent<HTMLSelectElement>) => {
-    props.setYear(parseInt(event.currentTarget.value));
+  const onYearChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    props.setYear(e.currentTarget.valueAsNumber);
   };
 
   const onMonthChanged = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -73,28 +74,8 @@ export default function MonthPicker(props: {
                 );
               })}
             </select>
-            <select
-              className="form-select"
-              onChange={onYearChanged}
-              value={moment(months.last).year()}
-            >
-              {Array.from(
-                {
-                  length:
-                    moment(months.last).year() -
-                    moment(months.first).year() +
-                    1,
-                },
-                (_, i) => {
-                  const yearVal = moment(months.first).year() + i;
-                  return (
-                    <option key={yearVal} value={yearVal}>
-                      {yearVal}
-                    </option>
-                  );
-                },
-              )}
-            </select>
+
+            <YearSelector daterange={months} onYearChanged={onYearChanged} />
           </div>
         </div>
       )}

@@ -5,6 +5,7 @@ import moment from "moment";
 import SpinnyLoader from "./SpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "./daterange/DateRangeContext";
+import YearSelector from "./YearSelector";
 
 export default function WeekPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
@@ -22,7 +23,7 @@ export default function WeekPicker(props: {
     props.setWeek(w);
   };
 
-  const setYearFromUserInput = (e: ChangeEvent<HTMLInputElement>) => {
+  const onYearChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const y = e.currentTarget.valueAsNumber;
     if (isNaN(y)) {
       return;
@@ -80,15 +81,8 @@ export default function WeekPicker(props: {
                 defaultValue={moment(weeks.last).isoWeeksInISOWeekYear()}
                 onChange={setWeekFromUserInput}
               />
-              <input
-                className="form-control"
-                id="year"
-                type="number"
-                min={moment(weeks.first).year()}
-                max={moment(weeks.last).year()}
-                defaultValue={moment(weeks.last).year()}
-                onChange={setYearFromUserInput}
-              />
+
+              <YearSelector daterange={weeks} onYearChanged={onYearChanged} />
             </div>
           </>
         )}
