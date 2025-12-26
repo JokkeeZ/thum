@@ -8,7 +8,7 @@ export default function TitleManager() {
     const pathname = location.pathname;
 
     if (pathname === "/") {
-      document.title = "App: Home";
+      document.title = "Thum: Home";
       return;
     }
 
@@ -19,7 +19,7 @@ export default function TitleManager() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-    document.title = `App: ${title}`;
+    document.title = `Thum: ${title}`;
   }, [location.pathname]);
 
   return null;
