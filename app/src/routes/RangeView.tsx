@@ -8,7 +8,7 @@ import SpinnyLoader from "../components/SpinnyLoader";
 import { useDateRange } from "../components/daterange/DateRangeContext";
 
 export default function RangeView() {
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
   const { dates } = useDateRange();
 
   const [chartReady, setChartReady] = useState<boolean>(false);
@@ -25,11 +25,7 @@ export default function RangeView() {
     const selectedDate = event.currentTarget.valueAsDate;
 
     if (!selectedDate) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid date selected.",
-      });
+      errorNotification("Invalid date selected.");
       return;
     }
 
@@ -40,11 +36,7 @@ export default function RangeView() {
     const selectedDate = event.currentTarget.valueAsDate;
 
     if (!selectedDate) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid date selected.",
-      });
+      errorNotification("Invalid date selected.");
       return;
     }
 
@@ -69,14 +61,10 @@ export default function RangeView() {
         setChartReady(true);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [dates?.first, dates?.last, startDate, endDate, addNotification]);
+  }, [dates?.first, dates?.last, startDate, endDate, errorNotification]);
 
   if (!dates) {
     return (

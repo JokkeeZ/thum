@@ -7,7 +7,7 @@ import SpinnyLoader from "../components/SpinnyLoader";
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
   const [logsLoaded, setLogsLoaded] = useState(false);
-  const { addNotification } = useNotification();
+  const { successNotification, errorNotification } = useNotification();
 
   useEffect(() => {
     ApiService.logs()
@@ -16,36 +16,22 @@ export default function LogView() {
         setLogsLoaded(true);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [addNotification]);
+  }, [errorNotification]);
 
   const removeLog = (log: ILogEntry) => {
     ApiService.deleteLog(log.timestamp)
       .then((resp) => {
         if (resp.data.count > 0) {
-          addNotification({
-            error: false,
-            title: "Log removed",
-            text: "Log was successfully removed!",
-          });
+          successNotification("Log removed", "Log was successfully removed!");
 
-          setLogs((prevLogs) =>
-            prevLogs.filter((l) => l.timestamp !== log.timestamp),
-          );
+          setLogs((prev) => prev.filter((l) => l.timestamp !== log.timestamp));
         }
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
   };
@@ -54,21 +40,15 @@ export default function LogView() {
     ApiService.deleteLogs()
       .then((resp) => {
         if (resp.data.count > 0) {
-          addNotification({
-            error: false,
-            title: "Log(s) removed",
-            text: `${resp.data.count} log(s) was successfully removed!`,
-          });
-
+          successNotification(
+            "Log(s) removed",
+            `${resp.data.count} log(s) was successfully removed!`,
+          );
           setLogs([]);
         }
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
   };

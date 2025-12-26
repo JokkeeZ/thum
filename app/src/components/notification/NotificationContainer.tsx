@@ -37,6 +37,22 @@ export default function NotificationContainer(props: {
     setNotifications((prev) => [...prev, notif]);
   }, []);
 
+  const success = (title: string, message: string) => {
+    addNotification({
+      error: false,
+      title: title,
+      text: message,
+    });
+  };
+
+  const error = (message: string) => {
+    addNotification({
+      error: false,
+      title: "Error",
+      text: message,
+    });
+  };
+
   const removeNotification = (id?: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
@@ -57,7 +73,13 @@ export default function NotificationContainer(props: {
   };
 
   return (
-    <NotificationContext.Provider value={{ addNotification }}>
+    <NotificationContext.Provider
+      value={{
+        addNotification,
+        successNotification: success,
+        errorNotification: error,
+      }}
+    >
       <div
         style={{
           position: "fixed",

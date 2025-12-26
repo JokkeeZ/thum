@@ -13,42 +13,30 @@ export default function DateRangeProvider({
   const [weeks, setWeeks] = useState<IDateRange>();
   const [months, setMonths] = useState<IDateRange>();
 
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
 
   useEffect(() => {
     ApiService.dates()
       .then((resp) => setDates(resp.data))
       .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch dates range.",
-        });
+        errorNotification("Failed to fetch dates range.");
         console.error(err);
       });
 
     ApiService.weeks()
       .then((resp) => setWeeks(resp.data))
       .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch weeks range.",
-        });
+        errorNotification("Failed to fetch weeks range.");
         console.error(err);
       });
 
     ApiService.months()
       .then((resp) => setMonths(resp.data))
       .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch months range.",
-        });
+        errorNotification("Failed to fetch months range.");
         console.error(err);
       });
-  }, [addNotification]);
+  }, [errorNotification]);
 
   return (
     <DateRangeContext.Provider value={{ dates, weeks, months }}>

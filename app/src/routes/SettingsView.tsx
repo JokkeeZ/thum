@@ -4,7 +4,7 @@ import SpinnyLoader from "../components/SpinnyLoader";
 import ApiService from "../services/ApiService";
 
 export default function SettingsView() {
-  const { addNotification } = useNotification();
+  const { addNotification, errorNotification } = useNotification();
   const [cfgLoaded, setCfgLoaded] = useState<boolean>(false);
 
   const [sensorInterval, setSensorInterval] = useState<number>(600);
@@ -29,22 +29,14 @@ export default function SettingsView() {
         setCfgLoaded(true);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [addNotification]);
+  }, [errorNotification]);
 
   const updateSettings = () => {
     if (sensorInterval && sensorInterval < 2) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Sensor interval <= 2 seconds.",
-      });
+      errorNotification("Sensor interval <= 2 seconds.");
       return;
     }
 
@@ -66,11 +58,7 @@ export default function SettingsView() {
         });
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to update configuration.",
-        });
+        errorNotification("Failed to update configuration.");
         console.error(error);
       });
   };

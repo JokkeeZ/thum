@@ -12,39 +12,33 @@ export default function WeekPicker(props: {
   setWeek: (value: SetStateAction<number>) => void;
 }) {
   const { weeks } = useDateRange();
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
 
-  const setWeekFromUserInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const w = e.currentTarget.valueAsNumber;
-    if (isNaN(w)) {
-      return;
+  const onWeekChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const week = e.currentTarget.valueAsNumber;
+    if (isNaN(week) || !Number.isInteger(week)) {
+      return errorNotification("Invalid week selected.");
     }
 
-    props.setWeek(w);
+    props.setWeek(week);
   };
 
   const onYearChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    const y = e.currentTarget.valueAsNumber;
-    if (isNaN(y)) {
-      return;
+    const year = e.currentTarget.valueAsNumber;
+    if (isNaN(year) || !Number.isInteger(year)) {
+      return errorNotification("Invalid year selected.");
     }
 
-    props.setYear(y);
+    props.setYear(year);
   };
 
   const onWeekChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
-    const selection = moment(date);
-
     if (!date) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid week selected.",
-      });
-      return;
+      return errorNotification("Invalid week selected.");
     }
 
+    const selection = moment(date);
     props.setYear(selection.year());
     props.setWeek(selection.week());
   };
@@ -79,7 +73,7 @@ export default function WeekPicker(props: {
                 min={1}
                 max={moment(weeks.last).isoWeeksInISOWeekYear()}
                 defaultValue={moment(weeks.last).isoWeeksInISOWeekYear()}
-                onChange={setWeekFromUserInput}
+                onChange={onWeekChanged}
               />
 
               <YearSelector daterange={weeks} onYearChanged={onYearChanged} />

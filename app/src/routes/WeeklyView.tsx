@@ -11,7 +11,7 @@ export default function WeeklyView() {
   const [year, setYear] = useState(now.year());
   const [week, setWeek] = useState(now.week());
 
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
@@ -35,14 +35,10 @@ export default function WeeklyView() {
         setChartReady(true);
       })
       .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(err);
       });
-  }, [year, week, addNotification]);
+  }, [year, week, errorNotification]);
 
   return (
     <>

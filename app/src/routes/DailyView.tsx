@@ -10,7 +10,7 @@ export default function DailyView() {
   const now = moment();
   const [date, setDate] = useState(now.toDate());
   const [chartReady, setChartReady] = useState<boolean>(false);
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
@@ -34,14 +34,10 @@ export default function DailyView() {
         setChartReady(true);
       })
       .catch((err) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(err);
       });
-  }, [date, addNotification]);
+  }, [date, errorNotification]);
 
   return (
     <>

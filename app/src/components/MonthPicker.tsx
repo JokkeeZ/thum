@@ -12,18 +12,14 @@ export default function MonthPicker(props: {
   setMonth: (value: SetStateAction<number>) => void;
 }) {
   const { months } = useDateRange();
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
 
   const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
     const selection = moment(date);
 
     if (!date) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid month selected.",
-      });
+      errorNotification("Invalid month selected.");
       return;
     }
 

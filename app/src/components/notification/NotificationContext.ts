@@ -9,6 +9,8 @@ export interface INotificationDetails {
 
 type NotificationContextType = {
   addNotification: (notif: INotificationDetails) => void;
+  errorNotification: (message: string) => void;
+  successNotification: (title: string, message: string) => void;
 };
 
 export const NotificationContext =

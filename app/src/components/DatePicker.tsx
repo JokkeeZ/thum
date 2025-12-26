@@ -9,17 +9,13 @@ export default function DatePicker(props: {
 }) {
   const { dates } = useDateRange();
 
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
 
   const onDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedDate = event.currentTarget.valueAsDate;
 
     if (!selectedDate) {
-      addNotification({
-        error: true,
-        title: "Error",
-        text: "Invalid date selected.",
-      });
+      errorNotification("Invalid date selected.");
       return;
     }
 

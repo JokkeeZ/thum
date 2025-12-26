@@ -6,7 +6,7 @@ import SpinnyLoader from "../components/SpinnyLoader";
 
 export default function StatsView() {
   const [stats, setStats] = useState<IStatisticsResponse | null>(null);
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
 
   useEffect(() => {
     ApiService.statistics()
@@ -14,14 +14,10 @@ export default function StatsView() {
         setStats(resp.data);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch statistics from API.",
-        });
+        errorNotification("Failed to fetch statistics from API.");
         console.error(error);
       });
-  }, [addNotification]);
+  }, [errorNotification]);
 
   if (!stats) {
     return (

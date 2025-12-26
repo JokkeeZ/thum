@@ -10,7 +10,7 @@ export default function MonthlyView() {
   const now = moment();
   const [year, setYear] = useState(now.year());
   const [month, setMonth] = useState(now.month() + 1);
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -30,14 +30,10 @@ export default function MonthlyView() {
         setChartReady(true);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [year, month, addNotification]);
+  }, [year, month, errorNotification]);
 
   return (
     <>

@@ -5,7 +5,7 @@ import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 
 export default function HomeView() {
-  const { addNotification } = useNotification();
+  const { errorNotification } = useNotification();
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -25,14 +25,10 @@ export default function HomeView() {
         setChartReady(true);
       })
       .catch((error) => {
-        addNotification({
-          error: true,
-          title: "Error",
-          text: "Failed to fetch data from API.",
-        });
+        errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [addNotification]);
+  }, [errorNotification]);
 
   return (
     <>
