@@ -44,7 +44,9 @@ export default function App() {
             </NotificationContainer>
           </main>
 
-          <Footer/>
+          <footer className="py-4">
+            <Footer/>
+          </footer>
         </div>
       </BrowserRouter>
     </ThemeProvider>
