@@ -5,7 +5,7 @@ from api.models.app_config import AppConfig
 from api.models.status_response import StatusResponse
 from api.models.entries.log_entry import LogEntry
 from api.models.log_delete_result import LogDeleteResult
-from api.models.min_max import MinMax
+from api.models.daterange import DateRange
 from api.models.entries.statistic_entry import StatisticEntry
 from api.models.entries.sensor_entry import SensorEntry
 
@@ -99,7 +99,7 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_min_max_dates_async(self) -> MinMax | StatusResponse:
+  async def get_dates_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -108,9 +108,9 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch dates(min, max)')
 
-      return MinMax(first=row["min"], last=row["max"])
+      return DateRange(first=row["min"], last=row["max"])
 
-  async def get_min_max_weeks_async(self) -> MinMax | StatusResponse:
+  async def get_weeks_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -119,9 +119,9 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
+    return self._get_range_with_fmt(row["min"], row["max"], self.config.weekformat)
 
-  async def get_min_max_months_async(self) -> MinMax | StatusResponse:
+  async def get_months_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -130,7 +130,7 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
+    return self._get_range_with_fmt(row["min"], row["max"], self.config.monthformat)
 
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
     async with self.ctx.execute("""
@@ -144,7 +144,7 @@ class Database:
       await self.ctx.commit()
       return LogDeleteResult(count=cursor.rowcount)
 
-  def _get_min_max_with_fmt(self, min: str, max: str | None, fmt: str) -> MinMax:
+  def _get_range_with_fmt(self, min: str, max: str | None, fmt: str) -> DateRange:
     now_str = datetime.now().strftime(fmt)
 
     def _fmt_internal(val: str | None) -> str:
@@ -152,7 +152,7 @@ class Database:
         return now_str
       return datetime.strptime(val, self.config.dateformat).strftime(fmt)
 
-    return MinMax(first=_fmt_internal(min), last=_fmt_internal(max))
+    return DateRange(first=_fmt_internal(min), last=_fmt_internal(max))
 
   async def log_get_all_async(self) -> list[LogEntry]:
     async with self.ctx.execute("""
