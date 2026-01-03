@@ -50,28 +50,51 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_week_async(self, week: str) -> dict[str, list[str] | list[float]]:
+  async def get_week_async(self, week: str) -> list[SensorEntry]:
     first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
-    dates = [(first + timedelta(days=i)).strftime(self.config.dateformat) for i in range(7)]
+
+    data_by_weekday: dict[str, SensorEntry] = {}
+
+    start_date = first.strftime(self.config.dateformat)
+    end_date = (first + timedelta(days=6)).strftime(self.config.dateformat)
 
     async with self.ctx.execute("""
-      SELECT timestamp_date, AVG(temperature), AVG(humidity)
+      SELECT
+        timestamp_date AS ts,
+        AVG(temperature) AS temperature,
+        AVG(humidity) AS humidity
       FROM sensor_data
       WHERE timestamp_date BETWEEN ? AND ?
-      GROUP BY timestamp_date
-      ORDER BY timestamp_date ASC;
-    """, [dates[0], dates[-1]]) as cursor:
+      GROUP BY ts
+      ORDER BY ts ASC;
+    """, [start_date, end_date]) as cursor:
       rows = await cursor.fetchall()
-      data_map = {row[0]: (row[1], row[2]) for row in rows}
 
-    stats = [data_map.get(date, (None, None)) for date in dates]
-    temperatures, humidities = zip(*stats) if stats else ([], [])
+      for row in rows:
+        dt = datetime.strptime(row["ts"], self.config.dateformat)
+        weekday = calendar.day_name[dt.weekday()]
 
-    return {
-      'labels': list(calendar.day_name),
-      'temperatures': list(temperatures),
-      'humidities': list(humidities)
-    }
+        data_by_weekday[weekday] = SensorEntry(
+          ts=weekday,
+          temperature=row["temperature"],
+          humidity=row["humidity"],
+        )
+
+    entries: list[SensorEntry] = []
+
+    for weekday in calendar.day_name:
+      entries.append(
+        data_by_weekday.get(
+          weekday,
+          SensorEntry(
+            ts=weekday,
+            temperature=None,
+            humidity=None,
+          ),
+        )
+      )
+
+    return entries
 
   async def get_date_async(self, day, month, year) -> list[SensorEntry]:
     date = datetime(year, month, day).strftime(self.config.dateformat)

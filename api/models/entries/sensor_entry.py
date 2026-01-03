@@ -2,8 +2,8 @@ from aiosqlite import Row
 from pydantic import BaseModel
 
 class SensorEntry(BaseModel):
-  temperature: float
-  humidity: float
+  temperature: float | None
+  humidity: float | None
   ts: str
 
   @classmethod
