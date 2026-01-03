@@ -20,17 +20,16 @@ export default function WeeklyView() {
   const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
-    const weekString = moment()
-      .isoWeekYear(year)
-      .isoWeek(week)
-      .format("GGGG-[W]WW");
+    const weekString = moment().isoWeekYear(year).format("GGGG-[W]WW");
+
+    console.log(weekString);
 
     ApiService.weekly(weekString)
       .then((resp) => {
         setChartData({
-          labels: resp.data.labels,
-          temperatures: resp.data.temperatures,
-          humidities: resp.data.humidities,
+          labels: resp.data.map((p) => p.ts),
+          temperatures: resp.data.map((p) => p.temperature),
+          humidities: resp.data.map((p) => p.humidity),
         });
         setChartReady(true);
       })

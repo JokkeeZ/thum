@@ -12,6 +12,7 @@ export default function WeekPicker(props: {
   setWeek: (value: SetStateAction<number>) => void;
 }) {
   const { weeks } = useDateRange();
+
   const { errorNotification } = useNotification();
 
   const onWeekChanged = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +73,7 @@ export default function WeekPicker(props: {
                 type="number"
                 min={1}
                 max={moment(weeks.last).isoWeeksInISOWeekYear()}
-                defaultValue={moment(weeks.last).isoWeeksInISOWeekYear()}
+                defaultValue={moment(weeks.last).week()}
                 onChange={onWeekChanged}
               />
 

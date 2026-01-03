@@ -1,6 +1,5 @@
 import axios, { type AxiosInstance } from "axios";
 import type { IConfig } from "../types/IConfig";
-import type { IWeeklyResponse } from "../types/IWeeklyResponse";
 import type {
   ILiveSensorResponse,
   ISensorResponse,
@@ -20,7 +19,7 @@ export default class ApiService {
   }
 
   static weekly(week: string) {
-    return this.api.get<IWeeklyResponse>(`/sensor/weekly/${week}`);
+    return this.api.get<ISensorResponse[]>(`/sensor/weekly/${week}`);
   }
 
   static daily(day: number, month: number, year: number) {
