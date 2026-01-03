@@ -13,7 +13,6 @@ from api.models.daterange import DateRange
 from api.models.entries.sensor_entry import SensorEntry
 from api.models.live_sensor import LiveSensor
 from api.models.entries.statistic_entry import StatisticEntry
-from api.models.week_response import WeekResponse
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
