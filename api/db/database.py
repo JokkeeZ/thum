@@ -216,9 +216,9 @@ class Database:
   async def configure_async(self):
     await self.ctx.execute("""
       INSERT OR IGNORE INTO config (
-          id, sensor_interval, dateformat, timeformat,
-          weekformat, monthformat, iso_week_format, use_sensor
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+        id, sensor_interval, dateformat, timeformat,
+        weekformat, monthformat, iso_week_format, use_sensor
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?);
     """, [
         self.config.sensor_interval,
         self.config.dateformat,
@@ -231,7 +231,7 @@ class Database:
     await self.ctx.commit()
 
     async with self.ctx.execute("""
-      SELECT * FROM config WHERE id = 1
+      SELECT * FROM config WHERE id = 1;
     """) as cursor:
       row = await cursor.fetchone()
       if not row:
