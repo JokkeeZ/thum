@@ -96,27 +96,6 @@ async def current() -> LiveSensor | StatusResponse:
   except Exception as e:
     return error_template(e)
 
-@app.get('/api/range/dates')
-async def range_dates() -> DateRange | StatusResponse:
-  try:
-    return await db.get_dates_range_async()
-  except Exception as e:
-    return error_template(e)
-
-@app.get('/api/range/weeks')
-async def get_range_weeks() -> DateRange | StatusResponse:
-  try:
-    return await db.get_weeks_range_async()
-  except Exception as e:
-    return error_template(e)
-
-@app.get('/api/range/months')
-async def get_range_months() -> DateRange | StatusResponse:
-  try:
-    return await db.get_months_range_async()
-  except Exception as e:
-    return error_template(e)
-
 @app.get('/api/daterange')
 async def get_daterange():
   try:

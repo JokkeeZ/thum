@@ -137,39 +137,6 @@ class Database:
         'months': self._get_range_with_fmt(row["min"], row["max"], self.config.monthformat)
       }
 
-  async def get_dates_range_async(self) -> DateRange | StatusResponse:
-    async with self.ctx.execute("""
-      SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
-    """) as cursor:
-
-      row = await cursor.fetchone()
-      if row is None:
-        return StatusResponse(success=False, message='Could not fetch dates(min, max)')
-
-      return DateRange(first=row["min"], last=row["max"])
-
-  async def get_weeks_range_async(self) -> DateRange | StatusResponse:
-    async with self.ctx.execute("""
-      SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
-    """) as cursor:
-
-      row = await cursor.fetchone()
-      if row is None:
-        return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
-
-    return self._get_range_with_fmt(row["min"], row["max"], self.config.weekformat)
-
-  async def get_months_range_async(self) -> DateRange | StatusResponse:
-    async with self.ctx.execute("""
-      SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
-    """) as cursor:
-
-      row = await cursor.fetchone()
-      if row is None:
-        return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
-
-    return self._get_range_with_fmt(row["min"], row["max"], self.config.monthformat)
-
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
     async with self.ctx.execute("""
       INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time)
