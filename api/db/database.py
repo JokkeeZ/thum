@@ -5,7 +5,7 @@ from api.models.app_config import AppConfig
 from api.models.status_response import StatusResponse
 from api.models.entries.log_entry import LogEntry
 from api.models.log_delete_result import LogDeleteResult
-from api.models.min_max import MinMax
+from api.models.daterange import DateRange
 from api.models.entries.statistic_entry import StatisticEntry
 from api.models.entries.sensor_entry import SensorEntry
 
@@ -50,28 +50,51 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_week_async(self, week: str) -> dict[str, list[str] | list[float]]:
+  async def get_week_async(self, week: str) -> list[SensorEntry]:
     first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
-    dates = [(first + timedelta(days=i)).strftime(self.config.dateformat) for i in range(7)]
+
+    data_by_weekday: dict[str, SensorEntry] = {}
+
+    start_date = first.strftime(self.config.dateformat)
+    end_date = (first + timedelta(days=6)).strftime(self.config.dateformat)
 
     async with self.ctx.execute("""
-      SELECT timestamp_date, AVG(temperature), AVG(humidity)
+      SELECT
+        timestamp_date AS ts,
+        AVG(temperature) AS temperature,
+        AVG(humidity) AS humidity
       FROM sensor_data
       WHERE timestamp_date BETWEEN ? AND ?
-      GROUP BY timestamp_date
-      ORDER BY timestamp_date ASC;
-    """, [dates[0], dates[-1]]) as cursor:
+      GROUP BY ts
+      ORDER BY ts ASC;
+    """, [start_date, end_date]) as cursor:
       rows = await cursor.fetchall()
-      data_map = {row[0]: (row[1], row[2]) for row in rows}
 
-    stats = [data_map.get(date, (None, None)) for date in dates]
-    temperatures, humidities = zip(*stats) if stats else ([], [])
+      for row in rows:
+        dt = datetime.strptime(row["ts"], self.config.dateformat)
+        weekday = calendar.day_name[dt.weekday()]
 
-    return {
-      'labels': list(calendar.day_name),
-      'temperatures': list(temperatures),
-      'humidities': list(humidities)
-    }
+        data_by_weekday[weekday] = SensorEntry(
+          ts=weekday,
+          temperature=row["temperature"],
+          humidity=row["humidity"],
+        )
+
+    entries: list[SensorEntry] = []
+
+    for weekday in calendar.day_name:
+      entries.append(
+        data_by_weekday.get(
+          weekday,
+          SensorEntry(
+            ts=weekday,
+            temperature=None,
+            humidity=None,
+          ),
+        )
+      )
+
+    return entries
 
   async def get_date_async(self, day, month, year) -> list[SensorEntry]:
     date = datetime(year, month, day).strftime(self.config.dateformat)
@@ -99,7 +122,7 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_min_max_dates_async(self) -> MinMax | StatusResponse:
+  async def get_dates_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -108,9 +131,9 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch dates(min, max)')
 
-      return MinMax(first=row["min"], last=row["max"])
+      return DateRange(first=row["min"], last=row["max"])
 
-  async def get_min_max_weeks_async(self) -> MinMax | StatusResponse:
+  async def get_weeks_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -119,9 +142,9 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.weekformat)
+    return self._get_range_with_fmt(row["min"], row["max"], self.config.weekformat)
 
-  async def get_min_max_months_async(self) -> MinMax | StatusResponse:
+  async def get_months_range_async(self) -> DateRange | StatusResponse:
     async with self.ctx.execute("""
       SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
     """) as cursor:
@@ -130,7 +153,7 @@ class Database:
       if row is None:
         return StatusResponse(success=False, message='Could not fetch weeks(min, max)')
 
-    return self._get_min_max_with_fmt(row["min"], row["max"], self.config.monthformat)
+    return self._get_range_with_fmt(row["min"], row["max"], self.config.monthformat)
 
   async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
     async with self.ctx.execute("""
@@ -144,7 +167,7 @@ class Database:
       await self.ctx.commit()
       return LogDeleteResult(count=cursor.rowcount)
 
-  def _get_min_max_with_fmt(self, min: str, max: str | None, fmt: str) -> MinMax:
+  def _get_range_with_fmt(self, min: str, max: str | None, fmt: str) -> DateRange:
     now_str = datetime.now().strftime(fmt)
 
     def _fmt_internal(val: str | None) -> str:
@@ -152,7 +175,7 @@ class Database:
         return now_str
       return datetime.strptime(val, self.config.dateformat).strftime(fmt)
 
-    return MinMax(first=_fmt_internal(min), last=_fmt_internal(max))
+    return DateRange(first=_fmt_internal(min), last=_fmt_internal(max))
 
   async def log_get_all_async(self) -> list[LogEntry]:
     async with self.ctx.execute("""
@@ -216,9 +239,9 @@ class Database:
   async def configure_async(self):
     await self.ctx.execute("""
       INSERT OR IGNORE INTO config (
-          id, sensor_interval, dateformat, timeformat,
-          weekformat, monthformat, iso_week_format, use_sensor
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+        id, sensor_interval, dateformat, timeformat,
+        weekformat, monthformat, iso_week_format, use_sensor
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?);
     """, [
         self.config.sensor_interval,
         self.config.dateformat,
@@ -231,7 +254,7 @@ class Database:
     await self.ctx.commit()
 
     async with self.ctx.execute("""
-      SELECT * FROM config WHERE id = 1
+      SELECT * FROM config WHERE id = 1;
     """) as cursor:
       row = await cursor.fetchone()
       if not row:

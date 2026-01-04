@@ -12,6 +12,7 @@ export default function WeekPicker(props: {
   setWeek: (value: SetStateAction<number>) => void;
 }) {
   const { weeks } = useDateRange();
+
   const { errorNotification } = useNotification();
 
   const onWeekChanged = (e: ChangeEvent<HTMLInputElement>) => {

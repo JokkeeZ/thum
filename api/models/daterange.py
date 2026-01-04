@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class MinMax(BaseModel):
+class DateRange(BaseModel):
   first: str
   last: str

@@ -27,9 +27,9 @@ export default function WeeklyView() {
     ApiService.weekly(weekString)
       .then((resp) => {
         setChartData({
-          labels: resp.data.labels,
-          temperatures: resp.data.temperatures,
-          humidities: resp.data.humidities,
+          labels: resp.data.map((p) => p.ts),
+          temperatures: resp.data.map((p) => p.temperature),
+          humidities: resp.data.map((p) => p.humidity),
         });
         setChartReady(true);
       })

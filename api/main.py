@@ -9,11 +9,10 @@ from api.models.app_config import AppConfig
 from api.models.status_response import StatusResponse
 from api.models.entries.log_entry import LogEntry
 from api.models.log_delete_result import LogDeleteResult
-from api.models.min_max import MinMax
+from api.models.daterange import DateRange
 from api.models.entries.sensor_entry import SensorEntry
 from api.models.live_sensor import LiveSensor
 from api.models.entries.statistic_entry import StatisticEntry
-from api.models.week_response import WeekResponse
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
@@ -98,23 +97,23 @@ async def current() -> LiveSensor | StatusResponse:
     return error_template(e)
 
 @app.get('/api/range/dates')
-async def range_dates() -> MinMax | StatusResponse:
+async def range_dates() -> DateRange | StatusResponse:
   try:
-    return await db.get_min_max_dates_async()
+    return await db.get_dates_range_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/range/weeks')
-async def get_range_weeks() -> MinMax | StatusResponse:
+async def get_range_weeks() -> DateRange | StatusResponse:
   try:
-    return await db.get_min_max_weeks_async()
+    return await db.get_weeks_range_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/range/months')
-async def get_range_months() -> MinMax | StatusResponse:
+async def get_range_months() -> DateRange | StatusResponse:
   try:
-    return await db.get_min_max_months_async()
+    return await db.get_months_range_async()
   except Exception as e:
     return error_template(e)
 
