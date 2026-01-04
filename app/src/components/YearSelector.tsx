@@ -1,19 +1,22 @@
 import type { ChangeEvent } from "react";
 import type { IDateRange } from "../types/IDateRange";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 export default function YearSelector(props: {
   daterange: IDateRange;
   onYearChanged: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const minimum = DateTime.fromISO(props.daterange.first);
+  const maximum = DateTime.fromISO(props.daterange.last);
+
   return (
     <input
       className="form-control"
       id="year"
       type="number"
-      min={moment(props.daterange.first).year()}
-      max={moment(props.daterange.last).year()}
-      defaultValue={moment(props.daterange.last).year()}
+      min={minimum.weekYear}
+      max={maximum.weekYear}
+      defaultValue={maximum.weekYear}
       onChange={props.onYearChanged}
     />
   );
