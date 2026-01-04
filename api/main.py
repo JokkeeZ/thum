@@ -117,6 +117,13 @@ async def get_range_months() -> DateRange | StatusResponse:
   except Exception as e:
     return error_template(e)
 
+@app.get('/api/daterange')
+async def get_daterange():
+  try:
+    return await db.get_daterange()
+  except Exception as e:
+    return error_template(e)
+
 @app.get('/api/logs')
 async def get_logs_all() -> list[LogEntry] | StatusResponse:
   try:
