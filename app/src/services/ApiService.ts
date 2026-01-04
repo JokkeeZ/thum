@@ -4,7 +4,7 @@ import type {
   ILiveSensorResponse,
   ISensorResponse,
 } from "../types/ISensorResponse";
-import type { IDateRange } from "../types/IDateRange";
+import type { IDateRange, IDateRanges } from "../types/IDateRange";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 import type { ILogEntry } from "../types/ILogEntry";
 import type { IApiResponse } from "../types/IApiResponse";
@@ -13,6 +13,10 @@ export default class ApiService {
   static api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL as string,
   });
+
+  static daterange() {
+    return this.api.get<IDateRanges>("/daterange");
+  }
 
   static all() {
     return this.api.get<ISensorResponse[]>("/sensor/all");

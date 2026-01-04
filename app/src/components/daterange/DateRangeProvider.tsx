@@ -16,24 +16,14 @@ export default function DateRangeProvider({
   const { errorNotification } = useNotification();
 
   useEffect(() => {
-    ApiService.dates()
-      .then((resp) => setDates(resp.data))
+    ApiService.daterange()
+      .then((resp) => {
+        setDates(resp.data.dates);
+        setWeeks(resp.data.weeks);
+        setMonths(resp.data.months);
+      })
       .catch((err) => {
-        errorNotification("Failed to fetch dates range.");
-        console.error(err);
-      });
-
-    ApiService.weeks()
-      .then((resp) => setWeeks(resp.data))
-      .catch((err) => {
-        errorNotification("Failed to fetch weeks range.");
-        console.error(err);
-      });
-
-    ApiService.months()
-      .then((resp) => setMonths(resp.data))
-      .catch((err) => {
-        errorNotification("Failed to fetch months range.");
+        errorNotification("Failed to fetch dateranges.");
         console.error(err);
       });
   }, [errorNotification]);
