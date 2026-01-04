@@ -1,11 +1,11 @@
 import { type ChangeEvent, type SetStateAction } from "react";
 import { isChromiumBrowser } from "../utils/chromium-detect";
 import { useNotification } from "./notification/NotificationContext";
-import moment from "moment";
 import SpinnyLoader from "./SpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "./daterange/DateRangeContext";
 import YearSelector from "./YearSelector";
+import { DateTime } from "luxon";
 
 export default function WeekPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
@@ -39,9 +39,9 @@ export default function WeekPicker(props: {
       return errorNotification("Invalid week selected.");
     }
 
-    const selection = moment(date);
-    props.setYear(selection.year());
-    props.setWeek(selection.week());
+    const selection = DateTime.fromJSDate(date);
+    props.setYear(selection.year);
+    props.setWeek(selection.localWeekNumber);
   };
 
   if (!weeks) {
@@ -52,6 +52,8 @@ export default function WeekPicker(props: {
     );
   }
 
+  const defaultVal = DateTime.fromISO(weeks.last);
+
   return (
     <form>
       <div className="row mb-3 mt-3">
@@ -60,7 +62,7 @@ export default function WeekPicker(props: {
             type="week"
             min={weeks.first}
             max={weeks.last}
-            defaultValue={moment(weeks.last).format("GGGG-[W]WW")}
+            defaultValue={defaultVal.toFormat("kkkk-'W'WW")}
             onChange={onWeekChangedOnChromium}
           />
         ) : (
@@ -72,8 +74,8 @@ export default function WeekPicker(props: {
                 id="week"
                 type="number"
                 min={1}
-                max={moment(weeks.last).isoWeeksInISOWeekYear()}
-                defaultValue={moment(weeks.last).week()}
+                max={defaultVal.weeksInWeekYear}
+                defaultValue={defaultVal.weekNumber}
                 onChange={onWeekChanged}
               />
 

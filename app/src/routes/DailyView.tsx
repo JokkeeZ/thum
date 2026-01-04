@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
-import moment from "moment";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import DatePicker from "../components/DatePicker";
 import ApiService from "../services/ApiService";
+import { DateTime } from "luxon";
 
 export default function DailyView() {
-  const now = moment();
-  const [date, setDate] = useState(now.toDate());
+  const now = DateTime.now();
+  const [date, setDate] = useState(now.toJSDate());
   const [chartReady, setChartReady] = useState<boolean>(false);
   const { errorNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
@@ -18,12 +18,9 @@ export default function DailyView() {
   });
 
   useEffect(() => {
-    const dd = moment(date);
-    const day = dd.date();
-    const month = dd.month() + 1;
-    const year = dd.year();
+    const dd = DateTime.fromJSDate(date);
 
-    ApiService.daily(day, month, year)
+    ApiService.daily(dd.day, dd.month, dd.year)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),

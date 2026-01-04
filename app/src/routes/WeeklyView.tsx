@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
-import moment from "moment";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import WeekPicker from "../components/WeekPicker";
 import ApiService from "../services/ApiService";
+import { DateTime } from "luxon";
 
 export default function WeeklyView() {
-  const now = moment();
-  const [year, setYear] = useState(now.year());
-  const [week, setWeek] = useState(now.week());
+  const now = DateTime.now();
+  const [year, setYear] = useState(now.year);
+  const [week, setWeek] = useState(now.localWeekNumber);
 
   const { errorNotification } = useNotification();
   const [chartData, setChartData] = useState<IDataChart>({
@@ -20,9 +20,9 @@ export default function WeeklyView() {
   const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
-    const weekString = moment().isoWeekYear(year).format("GGGG-[W]WW");
-
-    console.log(weekString);
+    const weekString = DateTime.now()
+      .set({ weekYear: year, weekNumber: week })
+      .toFormat("kkkk-'W'WW");
 
     ApiService.weekly(weekString)
       .then((resp) => {

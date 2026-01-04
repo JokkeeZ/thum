@@ -2,10 +2,10 @@ import { type ChangeEvent, type SetStateAction } from "react";
 import { isChromiumBrowser } from "../utils/chromium-detect";
 import ChromiumPicker from "./ChromiumPicker";
 import { useNotification } from "./notification/NotificationContext";
-import moment from "moment";
 import SpinnyLoader from "./SpinnyLoader";
 import { useDateRange } from "./daterange/DateRangeContext";
 import YearSelector from "./YearSelector";
+import { DateTime, Info } from "luxon";
 
 export default function MonthPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
@@ -16,15 +16,15 @@ export default function MonthPicker(props: {
 
   const onMonthChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
     const date = event.currentTarget.valueAsDate;
-    const selection = moment(date);
 
     if (!date) {
       errorNotification("Invalid month selected.");
       return;
     }
 
-    props.setYear(selection.year());
-    props.setMonth(selection.month() + 1);
+    const selection = DateTime.fromJSDate(date);
+    props.setYear(selection.year);
+    props.setMonth(selection.month);
   };
 
   const onYearChanged = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +43,8 @@ export default function MonthPicker(props: {
     );
   }
 
+  const defaultVal = DateTime.fromISO(months.last);
+
   return (
     <form>
       <div className="row mb-3 mt-3">
@@ -51,7 +53,7 @@ export default function MonthPicker(props: {
             type="month"
             min={months.first}
             max={months.last}
-            defaultValue={moment(months.last).format("YYYY-MM")}
+            defaultValue={defaultVal.toFormat("yyyy-MM")}
             onChange={onMonthChangedOnChromium}
           />
         ) : (
@@ -61,9 +63,9 @@ export default function MonthPicker(props: {
               <select
                 className="form-select"
                 onChange={onMonthChanged}
-                defaultValue={moment(months.last).month() + 1}
+                defaultValue={defaultVal.month}
               >
-                {moment.months().map((m, i) => {
+                {Info.months().map((m, i) => {
                   return (
                     <option key={i} value={i + 1}>
                       {m}

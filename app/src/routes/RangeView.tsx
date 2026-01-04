@@ -1,11 +1,11 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { type IDataChart } from "../types/IDataChart";
-import moment from "moment";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 import SpinnyLoader from "../components/SpinnyLoader";
 import { useDateRange } from "../components/daterange/DateRangeContext";
+import { DateTime } from "luxon";
 
 export default function RangeView() {
   const { errorNotification } = useNotification();
@@ -44,11 +44,19 @@ export default function RangeView() {
   };
 
   useEffect(() => {
-    const start = startDate ?? dates?.first;
-    const end = endDate ?? dates?.last;
+    if (!dates) return;
 
-    const rangeStart = moment(start).format("YYYY-MM-DD");
-    const rangeEnd = moment(end).format("YYYY-MM-DD");
+    const rangeStart = (
+      startDate !== undefined
+        ? DateTime.fromJSDate(startDate)
+        : DateTime.fromISO(dates.first)
+    ).toFormat("yyyy-MM-dd");
+
+    const rangeEnd = (
+      endDate !== undefined
+        ? DateTime.fromJSDate(endDate)
+        : DateTime.fromISO(dates.last)
+    ).toFormat("yyyy-MM-dd");
 
     ApiService.range(rangeStart, rangeEnd)
       .then((resp) => {
@@ -64,7 +72,7 @@ export default function RangeView() {
         errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [dates?.first, dates?.last, startDate, endDate, errorNotification]);
+  }, [dates, startDate, endDate, errorNotification]);
 
   if (!dates) {
     return (
