@@ -4,7 +4,7 @@ import type {
   ILiveSensorResponse,
   ISensorResponse,
 } from "../types/ISensorResponse";
-import type { IDateRange, IDateRanges } from "../types/IDateRange";
+import type { IDateRanges } from "../types/IDateRange";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 import type { ILogEntry } from "../types/ILogEntry";
 import type { IApiResponse } from "../types/IApiResponse";
@@ -42,18 +42,6 @@ export default class ApiService {
 
   static current() {
     return this.api.get<ILiveSensorResponse>("/sensor/current");
-  }
-
-  static dates() {
-    return this.api.get<IDateRange>("/range/dates");
-  }
-
-  static weeks() {
-    return this.api.get<IDateRange>("/range/weeks");
-  }
-
-  static months() {
-    return this.api.get<IDateRange>("/range/months");
   }
 
   static logs() {
