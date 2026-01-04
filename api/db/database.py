@@ -22,7 +22,7 @@ class Database:
       weekformat='%G-W%V',
       monthformat='%Y-%m',
       iso_week_format='%G-W%V-%u',
-      use_sensor=True
+      use_sensor=False
     )
 
   async def get_all_async(self) -> list[SensorEntry]:
