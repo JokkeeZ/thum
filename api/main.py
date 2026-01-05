@@ -18,14 +18,12 @@ db = Database(DB_FILE)
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-
   print('initializing database...')
   await db.initialize_database()
   print('initializing database configuration...')
   await db.configure_async()
 
   if db.config.use_sensor:
-    print('db: use_sensor=True')
     from api.sensor_polling import sensor_poll
     asyncio.create_task(sensor_poll(db))
 
@@ -43,7 +41,7 @@ app.add_middleware(
 )
 
 def error_template(e: Exception) -> StatusResponse:
-	return StatusResponse(success=False, message=str(e))
+  return StatusResponse(success=False, message=str(e))
 
 @app.get('/api/sensor/all')
 async def all() -> list[SensorEntry] | StatusResponse:
