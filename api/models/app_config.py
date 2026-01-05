@@ -27,3 +27,16 @@ class AppConfig(BaseModel):
       iso_week_format=row["iso_week_format"],
       use_sensor=bool(row["use_sensor"])
     )
+
+  @classmethod
+  def default(cls):
+    return cls(
+      id=0,
+      sensor_interval=600,
+      dateformat='%Y-%m-%d',
+      timeformat='%H:%M:%S',
+      weekformat='%G-W%V',
+      monthformat='%Y-%m',
+      iso_week_format='%G-W%V-%u',
+      use_sensor=False
+    )

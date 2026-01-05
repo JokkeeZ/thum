@@ -19,7 +19,7 @@ sensor_service = SensorService()
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-  await db.initialize_database()
+  await db.init_database_async()
   await db.configure_async()
 
   sensor_service.init_sensor()
@@ -48,35 +48,35 @@ def error_template(e: Exception) -> StatusResponse:
 @app.get('/api/sensor/all')
 async def all() -> list[SensorEntry] | StatusResponse:
   try:
-    return await db.get_all_async()
+    return await db.all_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/monthly/{year}/{month}')
 async def monthly(year: int, month: int) -> list[SensorEntry] | StatusResponse:
   try:
-    return await db.get_year_month_async(year, month)
+    return await db.by_month_async(year, month)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/weekly/{week}')
 async def weekly(week: str):
   try:
-    return await db.get_week_async(week)
+    return await db.by_week_async(week)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/daily/{day}/{month}/{year}')
 async def daily(day: int, month: int, year: int) -> list[SensorEntry] | StatusResponse:
   try:
-    return await db.get_date_async(day, month, year)
+    return await db.by_date_async(day, month, year)
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/sensor/range/{start_date}/{end_date}')
 async def range(start_date: str, end_date: str) -> list[SensorEntry] | StatusResponse:
   try:
-    return await db.get_data_range_async(start_date, end_date)
+    return await db.by_range_async(start_date, end_date)
   except Exception as e:
     return error_template(e)
 
@@ -100,35 +100,35 @@ async def current() -> LiveSensor | StatusResponse:
 @app.get('/api/daterange')
 async def get_daterange():
   try:
-    return await db.get_daterange()
+    return await db.daterange_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/logs')
 async def get_logs_all() -> list[LogEntry] | StatusResponse:
   try:
-    return await db.log_get_all_async()
+    return await db.all_logs_async()
   except Exception as e:
     return error_template(e)
 
 @app.delete('/api/logs/{timestamp}')
 async def remove_log_by_timestamp(timestamp: str) -> LogDeleteResult | StatusResponse:
   try:
-    return await db.log_delete_by_timestamp_async(timestamp)
+    return await db.delete_log_by_ts_async(timestamp)
   except Exception as e:
     return error_template(e)
 
 @app.delete('/api/logs')
 async def remove_all_logs() -> LogDeleteResult | StatusResponse:
   try:
-    return await db.log_delete_all_async()
+    return await db.delete_all_logs_async()
   except Exception as e:
     return error_template(e)
 
 @app.get('/api/statistics')
 async def get_statistics() -> StatisticEntry | StatusResponse:
   try:
-    return await db.get_statistics_async()
+    return await db.statistics_async()
   except Exception as e:
     return error_template(e)
 
@@ -138,7 +138,7 @@ async def get_all_urls_from_request(request: Request) -> list[str]:
 
 @app.get('/api/config')
 async def get_app_config() -> AppConfig:
-  return db.get_app_config_async()
+  return db.config
 
 @app.put('/api/config')
 async def update_config(cfg: AppConfig) -> StatusResponse:

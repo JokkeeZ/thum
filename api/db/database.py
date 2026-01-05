@@ -13,21 +13,14 @@ class Database:
   def __init__(self, db_file: str):
     self.dbfile = db_file
     self.ctx: aiosqlite.Connection
+    self.config: AppConfig = AppConfig.default()
 
-    self.config: AppConfig = AppConfig(
-      id=0,
-      sensor_interval=600,
-      dateformat='%Y-%m-%d',
-      timeformat='%H:%M:%S',
-      weekformat='%G-W%V',
-      monthformat='%Y-%m',
-      iso_week_format='%G-W%V-%u',
-      use_sensor=False
-    )
-
-  async def get_all_async(self) -> list[SensorEntry]:
+  async def all_async(self) -> list[SensorEntry]:
     async with self.ctx.execute("""
-      SELECT timestamp_date as ts, AVG(temperature) AS temperature, AVG(humidity) AS humidity
+      SELECT
+        timestamp_date as ts,
+        AVG(temperature) AS temperature,
+        AVG(humidity) AS humidity
       FROM sensor_data
       GROUP BY ts
       ORDER BY ts;
@@ -35,13 +28,16 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_year_month_async(self, year: int, month: int) -> list[SensorEntry]:
+  async def by_month_async(self, year: int, month: int) -> list[SensorEntry]:
     (_, days) = calendar.monthrange(year, month)
     start_date = datetime(year, month, 1).strftime(self.config.dateformat)
     end_date = datetime(year, month, days).strftime(self.config.dateformat)
 
     async with self.ctx.execute("""
-      SELECT timestamp_date as ts, AVG(temperature) AS temperature, AVG(humidity) AS humidity
+      SELECT
+        timestamp_date as ts,
+        AVG(temperature) AS temperature,
+        AVG(humidity) AS humidity
       FROM sensor_data
       WHERE timestamp_date BETWEEN ? AND ?
       GROUP BY ts
@@ -50,7 +46,7 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_week_async(self, week: str) -> list[SensorEntry]:
+  async def by_week_async(self, week: str) -> list[SensorEntry]:
     first = datetime.strptime(f'{week}-1', self.config.iso_week_format)
 
     data_by_weekday: dict[str, SensorEntry] = {}
@@ -96,10 +92,13 @@ class Database:
 
     return entries
 
-  async def get_date_async(self, day, month, year) -> list[SensorEntry]:
+  async def by_date_async(self, day, month, year) -> list[SensorEntry]:
     date = datetime(year, month, day).strftime(self.config.dateformat)
     async with self.ctx.execute("""
-      SELECT timestamp_time as ts, temperature, humidity
+      SELECT
+        timestamp_time as ts,
+        temperature,
+        humidity
       FROM sensor_data
       WHERE timestamp_date = ?
       GROUP BY ts
@@ -108,48 +107,54 @@ class Database:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_data_range_async(self, start_date: str, end_date: str) -> list[SensorEntry]:
-    start = datetime.strptime(start_date, self.config.dateformat)
-    end = datetime.strptime(end_date, self.config.dateformat)
+  async def by_range_async(self, start: str, end: str) -> list[SensorEntry]:
+    start_date = datetime.strptime(start, self.config.dateformat)
+    end_date = datetime.strptime(end, self.config.dateformat)
 
     async with self.ctx.execute(f"""
-      SELECT timestamp_date as ts, AVG(temperature) as temperature, AVG(humidity) as humidity
+      SELECT
+        timestamp_date as ts,
+        AVG(temperature) as temperature,
+        AVG(humidity) as humidity
       FROM sensor_data
       WHERE timestamp_date BETWEEN ? AND ?
       GROUP BY ts
       ORDER BY ts;
-    """, [start, end]) as cursor:
+    """, [start_date, end_date]) as cursor:
 
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def get_daterange(self):
+  async def daterange_async(self):
     async with self.ctx.execute("""
-      SELECT MIN(timestamp_date) as min, MAX(timestamp_date) as max FROM sensor_data;
+      SELECT
+        MIN(timestamp_date) as min,
+        MAX(timestamp_date) as max
+      FROM sensor_data;
     """) as cursor:
 
       row = await cursor.fetchone()
       if row is None:
-        return StatusResponse(success=False, message='Could not fetch dates(min, max)')
+        return StatusResponse(success=False, message='Could not fetch dates')
 
       return {
         'dates': DateRange(first=row["min"], last=row["max"]),
-        'weeks': self._get_range_with_fmt(row["min"], row["max"], self.config.weekformat),
-        'months': self._get_range_with_fmt(row["min"], row["max"], self.config.monthformat)
+        'weeks': self._fmt_range(row["min"], row["max"], self.config.weekformat),
+        'months': self._fmt_range(row["min"], row["max"], self.config.monthformat)
       }
 
-  async def sensor_insert_entry_async(self, temperature: float, humidity: float, date: str, time: str):
+  async def insert_sensor_entry_async(self, temp: float, humi: float, date: str, time: str):
     async with self.ctx.execute("""
       INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time)
       VALUES (?, ?, ?, ?);
-    """, [temperature, humidity, date, time]):
+    """, [temp, humi, date, time]):
       await self.ctx.commit()
 
-  async def log_delete_by_timestamp_async(self, timestamp: str) -> LogDeleteResult:
+  async def delete_log_by_ts_async(self, timestamp: str) -> LogDeleteResult:
     async with self.ctx.execute('DELETE FROM logs WHERE timestamp = ?;', [timestamp]) as cursor:
       await self.ctx.commit()
       return LogDeleteResult(count=cursor.rowcount)
 
-  def _get_range_with_fmt(self, min: str, max: str | None, fmt: str) -> DateRange:
+  def _fmt_range(self, min: str, max: str | None, fmt: str) -> DateRange:
     now_str = datetime.now().strftime(fmt)
 
     def _fmt_internal(val: str | None) -> str:
@@ -159,7 +164,7 @@ class Database:
 
     return DateRange(first=_fmt_internal(min), last=_fmt_internal(max))
 
-  async def log_get_all_async(self) -> list[LogEntry]:
+  async def all_logs_async(self) -> list[LogEntry]:
     async with self.ctx.execute("""
       SELECT message as msg, timestamp as ts
       FROM logs
@@ -169,12 +174,12 @@ class Database:
 
       return [LogEntry.from_row(row) for row in await cursor.fetchall()]
 
-  async def log_delete_all_async(self) -> LogDeleteResult:
+  async def delete_all_logs_async(self) -> LogDeleteResult:
     async with self.ctx.execute('DELETE FROM logs;') as cursor:
       await self.ctx.commit()
       return LogDeleteResult(count=cursor.rowcount)
 
-  async def log_insert_entry_async(self, msg: str, ts: str):
+  async def insert_log_entry_async(self, msg: str, ts: str):
     async with self.ctx.execute('INSERT INTO logs VALUES (?, ?);', [msg, ts]):
       await self.ctx.commit()
 
@@ -182,23 +187,23 @@ class Database:
     if self.ctx:
       await self.ctx.close()
 
-  async def initialize_database(self):
+  async def init_database_async(self):
     self.ctx = await aiosqlite.connect(self.dbfile)
     self.ctx.row_factory = aiosqlite.Row
 
     await self.ctx.execute("""
       CREATE TABLE IF NOT EXISTS logs (
-        message	TEXT NOT NULL,
-        timestamp	TEXT NOT NULL
+        message TEXT NOT NULL,
+        timestamp TEXT NOT NULL
       );
     """)
 
     await self.ctx.execute("""
       CREATE TABLE IF NOT EXISTS sensor_data (
-        temperature	NUMERIC NOT NULL,
-        humidity	NUMERIC NOT NULL,
-        timestamp_date	date NOT NULL,
-        timestamp_time	time NOT NULL
+        temperature NUMERIC NOT NULL,
+        humidity NUMERIC NOT NULL,
+        timestamp_date date NOT NULL,
+        timestamp_time time NOT NULL
       );
     """)
 
@@ -244,19 +249,16 @@ class Database:
       else:
         self.config = AppConfig.from_row(row)
 
-  def get_app_config_async(self) -> AppConfig:
-    return self.config
-
   async def update_config_async(self, cfg: AppConfig):
     await self.ctx.execute("""
       UPDATE config
       SET sensor_interval = ?,
-          dateformat = ?,
-          timeformat = ?,
-          weekformat = ?,
-          monthformat = ?,
-          iso_week_format = ?,
-          use_sensor = ?
+        dateformat = ?,
+        timeformat = ?,
+        weekformat = ?,
+        monthformat = ?,
+        iso_week_format = ?,
+        use_sensor = ?
       WHERE id = 1;
     """, [
       cfg.sensor_interval,
@@ -269,7 +271,7 @@ class Database:
     ])
     await self.ctx.commit()
 
-  async def get_statistics_async(self) -> StatisticEntry:
+  async def statistics_async(self) -> StatisticEntry:
     async with self.ctx.execute("""
       SELECT
         COUNT(*) AS total_entries,

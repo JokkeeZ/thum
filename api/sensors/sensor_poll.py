@@ -29,13 +29,13 @@ class SensorPoll:
           await asyncio.sleep(2)
           continue
 
-        await db.sensor_insert_entry_async(temp, humi, date, time)
+        await db.insert_sensor_entry_async(temp, humi, date, time)
         await asyncio.wait_for(
           db.config.settings_changed.wait(),
           timeout=db.config.sensor_interval
         )
       except RuntimeError as e:
-        await db.log_insert_entry_async(str(e), f'{date} {time}')
+        await db.insert_log_entry_async(str(e), f'{date} {time}')
         await asyncio.sleep(2)
         continue
       except asyncio.TimeoutError:
