@@ -42,11 +42,11 @@ export default function NavigationBar() {
 
           <div className="d-flex align-items-center">
             <span
-              className="navbar-text me-3 d-md-none current-temperature"
+              className="navbar-text me-3 d-md-none"
               title={
-                currentReading == null
-                  ? "Loading..."
-                  : `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+                currentReading
+                  ? `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+                  : "Loading..."
               }
             >
               {currentReading ? (
@@ -127,7 +127,7 @@ export default function NavigationBar() {
 
         <div className="d-flex align-items-center">
           <span
-            className="navbar-text me-3 d-none d-md-block current-temperature"
+            className="navbar-text me-3 d-none d-md-block"
             title={
               currentReading
                 ? `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`

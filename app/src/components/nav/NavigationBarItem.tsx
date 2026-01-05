@@ -5,13 +5,13 @@ export default function NavigationBarItem(props: {
   title: string;
 }) {
   const navigation = useNavigate();
+  const isCurrentRoute = navigation.name === props.route;
+
   return (
     <li className="nav-item">
       <NavLink
         to={props.route}
-        className={
-          "nav-link " + (navigation.name === props.route ? "active" : "")
-        }
+        className={"nav-link " + (isCurrentRoute ? "active" : "")}
       >
         {props.title}
       </NavLink>
