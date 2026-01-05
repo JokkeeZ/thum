@@ -37,21 +37,27 @@ export default function NotificationContainer(props: {
     setNotifications((prev) => [...prev, notif]);
   }, []);
 
-  const success = (title: string, message: string) => {
-    addNotification({
-      error: false,
-      title: title,
-      text: message,
-    });
-  };
+  const success = useCallback(
+    (title: string, message: string) => {
+      addNotification({
+        error: false,
+        title: title,
+        text: message,
+      });
+    },
+    [addNotification],
+  );
 
-  const error = (message: string) => {
-    addNotification({
-      error: false,
-      title: "Error",
-      text: message,
-    });
-  };
+  const error = useCallback(
+    (message: string) => {
+      addNotification({
+        error: true,
+        title: "Error",
+        text: message,
+      });
+    },
+    [addNotification],
+  );
 
   const removeNotification = (id?: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
