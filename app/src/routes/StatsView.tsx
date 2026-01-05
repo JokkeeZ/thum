@@ -28,9 +28,9 @@ export default function StatsView() {
   }
 
   return (
-    <div className="container-fluid py-5">
+    <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
+        <div className="col-sm-12 col-lg-6">
           <div className="card shadow-sm text-center">
             <div className="card-body">
               <h5 className="card-title mb-3">Statistics</h5>

@@ -92,9 +92,9 @@ export default function SettingsView() {
   }
 
   return (
-    <div className="container-fluid py-5">
+    <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
+        <div className="col-sm-12 col-lg-6">
           <div className="card shadow-sm">
             <div className="card-body">
               <form>
@@ -231,7 +231,7 @@ export default function SettingsView() {
       </div>
 
       <div className="row justify-content-center">
-        <div className="col-md-6 d-grid mt-2">
+        <div className="col-sm-12 col-lg-6 d-grid mt-2">
           <a
             href={ApiService.dumpUrl()}
             role="button"
