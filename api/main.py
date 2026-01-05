@@ -1,4 +1,3 @@
-import asyncio
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi.responses import FileResponse
@@ -12,22 +11,25 @@ from api.models.log_delete_result import LogDeleteResult
 from api.models.entries.sensor_entry import SensorEntry
 from api.models.live_sensor import LiveSensor
 from api.models.entries.statistic_entry import StatisticEntry
+from api.services.sensor_service import SensorService
 
 DB_FILE = './thum.db'
 db = Database(DB_FILE)
+sensor_service = SensorService()
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-  print('initializing database...')
   await db.initialize_database()
-  print('initializing database configuration...')
   await db.configure_async()
 
+  sensor_service.init_sensor()
+
   if db.config.use_sensor:
-    from api.sensor_polling import sensor_poll
-    asyncio.create_task(sensor_poll(db))
+    await sensor_service.start(db)
 
   yield
+
+  await sensor_service.stop()
   await db.shutdown_async()
 
 app = FastAPI(lifespan=lifespan)
@@ -83,13 +85,15 @@ async def current() -> LiveSensor | StatusResponse:
   if not db.config.use_sensor:
     return StatusResponse(success=False, message='Sensor is not available.')
 
+  if not sensor_service.sensor_poll:
+    return StatusResponse(success=False, message='Sensor is not available.')
+
   try:
-    from api.sensor_polling import get_sensor_reading
-    temperature, humidity = get_sensor_reading()
-    if temperature is None or humidity is None:
+    temp, humi = await sensor_service.sensor_poll.get_sensor_reading()
+    if temp is None or humi is None:
       return StatusResponse(success=False, message='Invalid temperature or humidity reading.')
 
-    return LiveSensor(success=True, temperature=temperature, humidity=humidity)
+    return LiveSensor(success=True, temperature=temp, humidity=humi)
   except Exception as e:
     return error_template(e)
 
@@ -141,6 +145,12 @@ async def update_config(cfg: AppConfig) -> StatusResponse:
   try:
     await db.update_config_async(cfg)
     await db.configure_async()
+
+    if db.config.use_sensor:
+      await sensor_service.start(db)
+    else:
+      await sensor_service.stop()
+
     db.config.settings_changed.set()
 
     return StatusResponse(success=True, message='Configuration updated successfully!')
