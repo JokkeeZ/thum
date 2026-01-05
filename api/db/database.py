@@ -210,15 +210,35 @@ class Database:
     await self.ctx.execute("""
       CREATE TABLE IF NOT EXISTS config (
         id INTEGER PRIMARY KEY CHECK (id = 1),
-        sensor_interval NUMERIC NOT NULL DEFAULT 600,
-        dateformat TEXT NOT NULL DEFAULT "%Y-%m-%d",
-        timeformat TEXT NOT NULL DEFAULT "%H:%M:%S",
-        weekformat TEXT NOT NULL DEFAULT "%G-W%V",
-        monthformat TEXT NOT NULL DEFAULT "%Y-%m",
-        iso_week_format TEXT NOT NULL DEFAULT "%G-W%V-%u",
-        use_sensor BOOLEAN NOT NULL DEFAULT 1 CHECK (use_sensor IN (0, 1))
+        sensor_interval NUMERIC NOT NULL,
+        dateformat TEXT NOT NULL,
+        timeformat TEXT NOT NULL,
+        weekformat TEXT NOT NULL,
+        monthformat TEXT NOT NULL,
+        iso_week_format TEXT NOT NULL,
+        use_sensor BOOLEAN NOT NULL CHECK (use_sensor IN (0, 1))
       );
     """)
+    await self.ctx.execute("""
+      INSERT OR IGNORE INTO config (
+        id,
+        sensor_interval,
+        dateformat,
+        timeformat,
+        weekformat,
+        monthformat,
+        iso_week_format,
+        use_sensor
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+    """, [
+      self.config.sensor_interval,
+      self.config.dateformat,
+      self.config.timeformat,
+      self.config.weekformat,
+      self.config.monthformat,
+      self.config.iso_week_format,
+      self.config.use_sensor
+    ])
 
     await self.ctx.execute("CREATE INDEX IF NOT EXISTS idx_timestamp_date ON sensor_data (timestamp_date);")
     await self.ctx.commit()
