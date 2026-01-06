@@ -10,7 +10,6 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import type { IDataChart } from "../types/IDataChart";
-import SpinnyLoader from "./SpinnyLoader";
 import { useMemo } from "react";
 import { getChartTheme } from "../utils/chart-theme";
 import CenteredSpinnyLoader from "./CenteredSpinnyLoader";
