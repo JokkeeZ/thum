@@ -35,6 +35,13 @@ export default function DateTimePicker(props: {
       return;
     }
 
+    // TODO: this is just hardcoded atm, but it would be
+    //       better to check if week > weeksInLocalWeekYear
+    if (week < 1 || week > 53) {
+      setWeekHasError(true);
+      return;
+    }
+
     setWeekHasError(false);
     if (props.onWeekChanged) props.onWeekChanged(week);
   };
