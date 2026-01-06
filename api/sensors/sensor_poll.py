@@ -13,11 +13,6 @@ class SensorPoll:
       if not db.config.use_sensor:
         continue
 
-      # we can skip polling if sensor is dummy dum dum
-      if self.sensor.name == 'dummy':
-        await asyncio.sleep(2)
-        continue
-
       now = datetime.now()
       date = now.strftime(db.config.dateformat)
       time = now.strftime(db.config.timeformat)
