@@ -49,13 +49,13 @@ export default function Range() {
   }, [dates, startDate, endDate, errorNotification]);
 
   return (
-    <>
+    <div className="container">
       <DateTimePicker
         type="range"
         onRangeStartChanged={(d) => setStartDate(d)}
         onRangeEndChanged={(d) => setEndDate(d)}
       />
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }

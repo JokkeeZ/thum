@@ -42,7 +42,7 @@ export default function Monthly() {
   }, [year, month, errorNotification]);
 
   return (
-    <>
+    <div className="container">
       <DateTimePicker
         type="month"
         onDateSelected={onMonthChangedOnChromium}
@@ -50,6 +50,6 @@ export default function Monthly() {
         onYearChanged={(y) => setYear(y)}
       />
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }

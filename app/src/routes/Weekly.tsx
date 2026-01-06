@@ -45,7 +45,7 @@ export default function Weekly() {
   }, [year, week, errorNotification]);
 
   return (
-    <>
+    <div className="container">
       <DateTimePicker
         type="week"
         onDateSelected={onWeekChangedOnChromium}
@@ -53,6 +53,6 @@ export default function Weekly() {
         onYearChanged={(y) => setYear(y)}
       />
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }
