@@ -24,6 +24,7 @@ export default function YearPicker(props: {
       return;
     }
 
+    setHasError(false);
     props.onYearChanged(year);
   };
 
