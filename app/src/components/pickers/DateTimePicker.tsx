@@ -1,4 +1,4 @@
-import type { ChangeEvent, JSX } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 import CenteredSpinnyLoader from "../CenteredSpinnyLoader";
 import ChromiumPicker from "../ChromiumPicker";
 import { useDateRange } from "../daterange/DateRangeContext";
@@ -8,15 +8,16 @@ import YearSelector from "../YearSelector";
 
 export default function DateTimePicker(props: {
   type: "date" | "week" | "month" | "range";
-
-  // TODO: Validate DateTime.isValid and change param to DateTime<true>.
-  onDateSelected?: (d: Date) => void;
+  onDateSelected?: (d: DateTime<true>) => void;
   onWeekChanged?: (n: number) => void;
   onYearChanged?: (y: number) => void;
   onMonthChanged?: (m: number) => void;
-  onRangeStartChanged?: (d: Date) => void;
-  onRangeEndChanged?: (d: Date) => void;
+  onRangeStartChanged?: (d: DateTime<true>) => void;
+  onRangeEndChanged?: (d: DateTime<true>) => void;
 }) {
+  const [weekHasError, setWeekHasError] = useState(false);
+  const [monthHasError, setMonthHasError] = useState(false);
+
   const { dates, weeks, months } = useDateRange();
 
   if (!dates || !weeks || !months) {
@@ -25,14 +26,16 @@ export default function DateTimePicker(props: {
 
   const defaultWeekValue = DateTime.fromISO(weeks.last);
   const defaultMonthValue = DateTime.fromISO(months.last);
+  const isChromium = isChromiumBrowser();
 
   const onWeekChanged = (e: ChangeEvent<HTMLInputElement>) => {
     const week = e.currentTarget.valueAsNumber;
     if (isNaN(week) || !Number.isInteger(week)) {
+      setWeekHasError(true);
       return;
-      // TODO
     }
 
+    setWeekHasError(false);
     if (props.onWeekChanged) props.onWeekChanged(week);
   };
 
@@ -40,10 +43,11 @@ export default function DateTimePicker(props: {
     const month = parseInt(event.currentTarget.value);
 
     if (!month) {
+      setMonthHasError(true);
       return;
-      // TODO
     }
 
+    setMonthHasError(false);
     if (props.onMonthChanged) props.onMonthChanged(month);
   };
 
@@ -61,7 +65,7 @@ export default function DateTimePicker(props: {
         }}
       />
     ),
-    week: isChromiumBrowser() ? (
+    week: isChromium ? (
       <ChromiumPicker
         type="week"
         min={weeks.first}
@@ -76,12 +80,12 @@ export default function DateTimePicker(props: {
     ) : (
       <div className="input-group">
         <input
-          className="form-control"
+          className={`form-control ${weekHasError ? "is-invalid" : ""}`}
           id="week"
           type="number"
           min={1}
-          max={defaultWeekValue.weeksInWeekYear}
-          defaultValue={defaultWeekValue.weekNumber}
+          max={defaultWeekValue.weeksInLocalWeekYear}
+          defaultValue={defaultWeekValue.localWeekNumber}
           onChange={onWeekChanged}
         />
 
@@ -93,7 +97,7 @@ export default function DateTimePicker(props: {
         />
       </div>
     ),
-    month: isChromiumBrowser() ? (
+    month: isChromium ? (
       <ChromiumPicker
         type="month"
         min={months.first}
@@ -108,7 +112,7 @@ export default function DateTimePicker(props: {
     ) : (
       <div className="input-group" id="picker">
         <select
-          className="form-select"
+          className={`form-select ${monthHasError ? "is-invalid" : ""}`}
           onChange={onMonthChanged}
           defaultValue={defaultMonthValue.month}
         >

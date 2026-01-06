@@ -8,7 +8,7 @@ import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function DailyView() {
   const now = DateTime.now();
-  const [date, setDate] = useState(now.toJSDate());
+  const [date, setDate] = useState<DateTime<true>>(now);
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -19,9 +19,7 @@ export default function DailyView() {
   const { errorNotification } = useNotification();
 
   useEffect(() => {
-    const dd = DateTime.fromJSDate(date);
-
-    ApiService.daily(dd.day, dd.month, dd.year)
+    ApiService.daily(date.day, date.month, date.year)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),

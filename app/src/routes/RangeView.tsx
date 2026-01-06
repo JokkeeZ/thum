@@ -12,8 +12,8 @@ export default function RangeView() {
   const { dates } = useDateRange();
 
   const [chartReady, setChartReady] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<DateTime<true>>();
+  const [endDate, setEndDate] = useState<DateTime<true>>();
 
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -24,17 +24,13 @@ export default function RangeView() {
   useEffect(() => {
     if (!dates) return;
 
-    const rangeStart = (
-      startDate !== undefined
-        ? DateTime.fromJSDate(startDate)
-        : DateTime.fromISO(dates.first)
-    ).toFormat("yyyy-MM-dd");
+    const rangeStart = (startDate ?? DateTime.fromISO(dates.first)).toFormat(
+      "yyyy-MM-dd",
+    );
 
-    const rangeEnd = (
-      endDate !== undefined
-        ? DateTime.fromJSDate(endDate)
-        : DateTime.fromISO(dates.last)
-    ).toFormat("yyyy-MM-dd");
+    const rangeEnd = (endDate ?? DateTime.fromISO(dates.last)).toFormat(
+      "yyyy-MM-dd",
+    );
 
     ApiService.range(rangeStart, rangeEnd)
       .then((resp) => {

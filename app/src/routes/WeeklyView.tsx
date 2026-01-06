@@ -8,7 +8,7 @@ import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function WeeklyView() {
   const now = DateTime.now();
-  const [year, setYear] = useState(now.year);
+  const [year, setYear] = useState(now.localWeekYear);
   const [week, setWeek] = useState(now.localWeekNumber);
 
   const { errorNotification } = useNotification();
@@ -19,15 +19,14 @@ export default function WeeklyView() {
   });
   const [chartReady, setChartReady] = useState<boolean>(false);
 
-  const onWeekChangedOnChromium = (date: Date) => {
-    const selection = DateTime.fromJSDate(date);
-    setYear(selection.year);
-    setWeek(selection.localWeekNumber);
+  const onWeekChangedOnChromium = (date: DateTime<true>) => {
+    setYear(date.localWeekYear);
+    setWeek(date.localWeekNumber);
   };
 
   useEffect(() => {
     const weekString = DateTime.now()
-      .set({ weekYear: year, weekNumber: week })
+      .set({ localWeekYear: year, localWeekNumber: week })
       .toFormat("kkkk-'W'WW");
 
     ApiService.weekly(weekString)

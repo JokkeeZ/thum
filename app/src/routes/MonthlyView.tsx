@@ -8,7 +8,7 @@ import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function MonthlyView() {
   const now = DateTime.now();
-  const [year, setYear] = useState(now.year);
+  const [year, setYear] = useState(now.localWeekYear);
   const [month, setMonth] = useState(now.get("month"));
 
   const { errorNotification } = useNotification();
@@ -19,10 +19,9 @@ export default function MonthlyView() {
     temperatures: [],
   });
 
-  const onMonthChangedOnChromium = (date: Date) => {
-    const selection = DateTime.fromJSDate(date);
-    setYear(selection.year);
-    setMonth(selection.month);
+  const onMonthChangedOnChromium = (date: DateTime<true>) => {
+    setYear(date.year);
+    setMonth(date.month);
   };
 
   useEffect(() => {
