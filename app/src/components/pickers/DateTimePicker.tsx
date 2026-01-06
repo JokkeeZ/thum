@@ -58,11 +58,7 @@ export default function DateTimePicker(props: {
         min={dates.first}
         max={dates.last}
         defaultValue={dates.last}
-        onChange={(d) => {
-          if (props.onDateSelected) {
-            props.onDateSelected(d);
-          }
-        }}
+        onChange={(d) => props.onDateSelected?.(d)}
       />
     ),
     week: isChromium ? (
@@ -71,11 +67,7 @@ export default function DateTimePicker(props: {
         min={weeks.first}
         max={weeks.last}
         defaultValue={defaultWeekValue.toFormat("kkkk-'W'WW")}
-        onChange={(d) => {
-          if (props.onDateSelected) {
-            props.onDateSelected(d);
-          }
-        }}
+        onChange={(d) => props.onDateSelected?.(d)}
       />
     ) : (
       <div className="input-group">
@@ -91,9 +83,7 @@ export default function DateTimePicker(props: {
 
         <YearSelector
           daterange={weeks}
-          onYearChanged={(y) => {
-            if (props.onYearChanged) props.onYearChanged(y);
-          }}
+          onYearChanged={(y) => props.onYearChanged?.(y)}
         />
       </div>
     ),
@@ -103,11 +93,7 @@ export default function DateTimePicker(props: {
         min={months.first}
         max={months.last}
         defaultValue={defaultMonthValue.toFormat("yyyy-MM")}
-        onChange={(d) => {
-          if (props.onDateSelected) {
-            props.onDateSelected(d);
-          }
-        }}
+        onChange={(d) => props.onDateSelected?.(d)}
       />
     ) : (
       <div className="input-group" id="picker">
@@ -127,9 +113,7 @@ export default function DateTimePicker(props: {
 
         <YearSelector
           daterange={months}
-          onYearChanged={(y) => {
-            if (props.onYearChanged) props.onYearChanged(y);
-          }}
+          onYearChanged={(y) => props.onYearChanged?.(y)}
         />
       </div>
     ),
@@ -140,22 +124,14 @@ export default function DateTimePicker(props: {
           min={dates.first}
           max={dates.last}
           defaultValue={dates.first}
-          onChange={(d) => {
-            if (props.onRangeStartChanged) {
-              props.onRangeStartChanged(d);
-            }
-          }}
+          onChange={(d) => props.onRangeStartChanged?.(d)}
         />
         <ChromiumPicker
           type="date"
           min={dates.first}
           max={dates.last}
           defaultValue={dates.last}
-          onChange={(d) => {
-            if (props.onRangeEndChanged) {
-              props.onRangeEndChanged(d);
-            }
-          }}
+          onChange={(d) => props.onRangeEndChanged?.(d)}
         />
       </div>
     ),
