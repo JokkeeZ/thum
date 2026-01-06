@@ -1,8 +1,8 @@
 import { useState, type ChangeEvent } from "react";
-import type { IDateRange } from "../types/IDateRange";
 import { DateTime } from "luxon";
+import type { IDateRange } from "../../types/IDateRange";
 
-export default function YearSelector(props: {
+export default function YearPicker(props: {
   daterange: IDateRange;
   onYearChanged: (year: number) => void;
 }) {
@@ -24,6 +24,7 @@ export default function YearSelector(props: {
       return;
     }
 
+    setHasError(false);
     props.onYearChanged(year);
   };
 

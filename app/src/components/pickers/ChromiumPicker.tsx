@@ -6,7 +6,7 @@ export default function ChromiumPicker(props: {
   min: string;
   max: string;
   defaultValue: string;
-  onChange: (date: Date) => void;
+  onChange: (date: DateTime<true>) => void;
 }) {
   const [hasError, setHasError] = useState(false);
 
@@ -18,9 +18,15 @@ export default function ChromiumPicker(props: {
       return;
     }
 
-    const selection = DateTime.fromJSDate(selectedDate);
-    const minAllowed = DateTime.fromISO(props.min);
-    const maxAllowed = DateTime.fromISO(props.max);
+    const selection = DateTime.fromJSDate(selectedDate).startOf("day");
+
+    if (!selection.isValid) {
+      setHasError(true);
+      return;
+    }
+
+    const minAllowed = DateTime.fromISO(props.min).startOf("day");
+    const maxAllowed = DateTime.fromISO(props.max).startOf("day");
 
     if (selection < minAllowed || selection > maxAllowed) {
       setHasError(true);
@@ -28,7 +34,7 @@ export default function ChromiumPicker(props: {
     }
 
     setHasError(false);
-    props.onChange(selectedDate);
+    props.onChange(selection);
   };
 
   return (

@@ -4,13 +4,11 @@ import { useNotification } from "../components/notification/NotificationContext"
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
-import ChromiumPicker from "../components/ChromiumPicker";
-import { useDateRange } from "../components/daterange/DateRangeContext";
-import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
-export default function DailyView() {
+export default function Daily() {
   const now = DateTime.now();
-  const [date, setDate] = useState(now.toJSDate());
+  const [date, setDate] = useState<DateTime<true>>(now);
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -18,13 +16,10 @@ export default function DailyView() {
     temperatures: [],
   });
 
-  const { dates } = useDateRange();
   const { errorNotification } = useNotification();
 
   useEffect(() => {
-    const dd = DateTime.fromJSDate(date);
-
-    ApiService.daily(dd.day, dd.month, dd.year)
+    ApiService.daily(date.day, date.month, date.year)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
@@ -40,30 +35,10 @@ export default function DailyView() {
       });
   }, [date, errorNotification]);
 
-  if (!dates) {
-    return <CenteredSpinnyLoader />;
-  }
-
   return (
-    <>
-      <div className="col-md-6 mx-auto">
-        <form>
-          <div className="row mb-3 mt-3">
-            <div className="form-group">
-              <label htmlFor="picker">Select date</label>
-              <ChromiumPicker
-                type="date"
-                min={dates.first}
-                max={dates.last}
-                defaultValue={dates.last}
-                onChange={(d) => setDate(d)}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-
+    <div className="container">
+      <DateTimePicker type="date" onDateSelected={(d) => setDate(d)} />
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }

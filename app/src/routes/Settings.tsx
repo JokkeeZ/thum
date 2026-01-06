@@ -3,7 +3,7 @@ import { useNotification } from "../components/notification/NotificationContext"
 import ApiService from "../services/ApiService";
 import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
-export default function SettingsView() {
+export default function Settings() {
   const { addNotification, errorNotification } = useNotification();
   const [cfgLoaded, setCfgLoaded] = useState<boolean>(false);
 
