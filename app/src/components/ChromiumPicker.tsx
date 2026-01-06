@@ -18,9 +18,9 @@ export default function ChromiumPicker(props: {
       return;
     }
 
-    const selection = DateTime.fromJSDate(selectedDate);
-    const minAllowed = DateTime.fromISO(props.min);
-    const maxAllowed = DateTime.fromISO(props.max);
+    const selection = DateTime.fromJSDate(selectedDate).startOf("day");
+    const minAllowed = DateTime.fromISO(props.min).startOf("day");
+    const maxAllowed = DateTime.fromISO(props.max).startOf("day");
 
     if (selection < minAllowed || selection > maxAllowed) {
       setHasError(true);
