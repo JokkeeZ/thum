@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type JSX } from "react";
 import CenteredSpinnyLoader from "../CenteredSpinnyLoader";
-import ChromiumPicker from "../ChromiumPicker";
+import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "../daterange/DateRangeContext";
 import { isChromiumBrowser } from "../../utils/chromium-detect";
 import { DateTime, Info } from "luxon";
