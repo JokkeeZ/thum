@@ -4,7 +4,7 @@ import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "../daterange/DateRangeContext";
 import { isChromiumBrowser } from "../../utils/chromium-detect";
 import { DateTime, Info } from "luxon";
-import YearSelector from "../YearSelector";
+import YearPicker from "./YearPicker";
 
 export default function DateTimePicker(props: {
   type: "date" | "week" | "month" | "range";
@@ -88,7 +88,7 @@ export default function DateTimePicker(props: {
           onChange={onWeekChanged}
         />
 
-        <YearSelector
+        <YearPicker
           daterange={weeks}
           onYearChanged={(y) => props.onYearChanged?.(y)}
         />
@@ -118,7 +118,7 @@ export default function DateTimePicker(props: {
           })}
         </select>
 
-        <YearSelector
+        <YearPicker
           daterange={months}
           onYearChanged={(y) => props.onYearChanged?.(y)}
         />
