@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
-import MonthPicker from "../components/MonthPicker";
 import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function MonthlyView() {
   const now = DateTime.now();
@@ -18,6 +18,12 @@ export default function MonthlyView() {
     labels: [],
     temperatures: [],
   });
+
+  const onMonthChangedOnChromium = (date: Date) => {
+    const selection = DateTime.fromJSDate(date);
+    setYear(selection.year);
+    setMonth(selection.month);
+  };
 
   useEffect(() => {
     ApiService.monthly(year, month)
@@ -38,10 +44,12 @@ export default function MonthlyView() {
 
   return (
     <>
-      <div className="col-md-6 mx-auto">
-        <MonthPicker setMonth={setMonth} setYear={setYear} />
-      </div>
-
+      <DateTimePicker
+        type="month"
+        onDateSelected={onMonthChangedOnChromium}
+        onMonthChanged={(m) => setMonth(m)}
+        onYearChanged={(y) => setYear(y)}
+      />
       <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );

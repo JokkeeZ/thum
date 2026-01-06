@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
-import WeekPicker from "../components/WeekPicker";
 import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function WeeklyView() {
   const now = DateTime.now();
@@ -18,6 +18,12 @@ export default function WeeklyView() {
     temperatures: [],
   });
   const [chartReady, setChartReady] = useState<boolean>(false);
+
+  const onWeekChangedOnChromium = (date: Date) => {
+    const selection = DateTime.fromJSDate(date);
+    setYear(selection.year);
+    setWeek(selection.localWeekNumber);
+  };
 
   useEffect(() => {
     const weekString = DateTime.now()
@@ -41,10 +47,12 @@ export default function WeeklyView() {
 
   return (
     <>
-      <div className="col-md-6 mx-auto">
-        <WeekPicker setWeek={setWeek} setYear={setYear} />
-      </div>
-
+      <DateTimePicker
+        type="week"
+        onDateSelected={onWeekChangedOnChromium}
+        onWeekChanged={(w) => setWeek(w)}
+        onYearChanged={(y) => setYear(y)}
+      />
       <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );

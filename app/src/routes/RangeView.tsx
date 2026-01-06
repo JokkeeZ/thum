@@ -5,8 +5,7 @@ import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 import { useDateRange } from "../components/daterange/DateRangeContext";
 import { DateTime } from "luxon";
-import ChromiumPicker from "../components/ChromiumPicker";
-import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function RangeView() {
   const { errorNotification } = useNotification();
@@ -53,36 +52,13 @@ export default function RangeView() {
       });
   }, [dates, startDate, endDate, errorNotification]);
 
-  if (!dates) {
-    return <CenteredSpinnyLoader />;
-  }
-
   return (
     <>
-      <div className="col-md-6 mx-auto">
-        <form>
-          <div className="row mb-3 mt-3">
-            <label htmlFor="date-select">Select start & end dates</label>
-            <div className="input-group" id="date-select">
-              <ChromiumPicker
-                type="date"
-                min={dates.first}
-                max={dates.last}
-                defaultValue={dates.first}
-                onChange={(d) => setStartDate(d)}
-              />
-              <ChromiumPicker
-                type="date"
-                min={dates.first}
-                max={dates.last}
-                defaultValue={dates.last}
-                onChange={(d) => setEndDate(d)}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-
+      <DateTimePicker
+        type="range"
+        onRangeStartChanged={(d) => setStartDate(d)}
+        onRangeEndChanged={(d) => setEndDate(d)}
+      />
       <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );

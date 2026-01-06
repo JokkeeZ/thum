@@ -4,9 +4,7 @@ import { useNotification } from "../components/notification/NotificationContext"
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
-import ChromiumPicker from "../components/ChromiumPicker";
-import { useDateRange } from "../components/daterange/DateRangeContext";
-import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
 export default function DailyView() {
   const now = DateTime.now();
@@ -18,7 +16,6 @@ export default function DailyView() {
     temperatures: [],
   });
 
-  const { dates } = useDateRange();
   const { errorNotification } = useNotification();
 
   useEffect(() => {
@@ -40,29 +37,9 @@ export default function DailyView() {
       });
   }, [date, errorNotification]);
 
-  if (!dates) {
-    return <CenteredSpinnyLoader />;
-  }
-
   return (
     <>
-      <div className="col-md-6 mx-auto">
-        <form>
-          <div className="row mb-3 mt-3">
-            <div className="form-group">
-              <label htmlFor="picker">Select date</label>
-              <ChromiumPicker
-                type="date"
-                min={dates.first}
-                max={dates.last}
-                defaultValue={dates.last}
-                onChange={(d) => setDate(d)}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-
+      <DateTimePicker type="date" onDateSelected={(d) => setDate(d)} />
       <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );
