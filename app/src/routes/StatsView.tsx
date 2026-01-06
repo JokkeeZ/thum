@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNotification } from "../components/notification/NotificationContext";
 import ApiService from "../services/ApiService";
 import type { IStatisticsResponse } from "../types/IStatisticsResponse";
-import SpinnyLoader from "../components/SpinnyLoader";
 import StatisticsList from "../components/StatisticsList";
+import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
 export default function StatsView() {
   const [stats, setStats] = useState<IStatisticsResponse | null>(null);
@@ -21,11 +21,7 @@ export default function StatsView() {
   }, [errorNotification]);
 
   if (!stats) {
-    return (
-      <div className="d-flex justify-content-center pt-5">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   return (

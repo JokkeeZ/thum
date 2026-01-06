@@ -2,7 +2,7 @@ import { Activity, useEffect, useState } from "react";
 import { useNotification } from "../components/notification/NotificationContext";
 import type { ILogEntry } from "../types/ILogEntry";
 import ApiService from "../services/ApiService";
-import SpinnyLoader from "../components/SpinnyLoader";
+import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
 export default function LogView() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
@@ -54,11 +54,7 @@ export default function LogView() {
   };
 
   if (!logsLoaded) {
-    return (
-      <div className="d-flex justify-content-center pt-5">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   return (

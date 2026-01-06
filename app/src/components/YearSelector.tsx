@@ -1,23 +1,41 @@
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import type { IDateRange } from "../types/IDateRange";
 import { DateTime } from "luxon";
 
 export default function YearSelector(props: {
   daterange: IDateRange;
-  onYearChanged: (e: ChangeEvent<HTMLInputElement>) => void;
+  onYearChanged: (year: number) => void;
 }) {
   const minimum = DateTime.fromISO(props.daterange.first);
   const maximum = DateTime.fromISO(props.daterange.last);
 
+  const [hasError, setHasError] = useState(false);
+
+  const onYearChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    const year = event.currentTarget.valueAsNumber;
+
+    if (!year || isNaN(year)) {
+      setHasError(true);
+      return;
+    }
+
+    if (year < minimum.weekYear || year > maximum.weekYear) {
+      setHasError(true);
+      return;
+    }
+
+    props.onYearChanged(year);
+  };
+
   return (
     <input
-      className="form-control"
+      className={`form-control ${hasError ? "is-invalid" : ""}`}
       id="year"
       type="number"
       min={minimum.weekYear}
       max={maximum.weekYear}
       defaultValue={maximum.weekYear}
-      onChange={props.onYearChanged}
+      onChange={onYearChanged}
     />
   );
 }

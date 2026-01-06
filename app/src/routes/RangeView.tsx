@@ -1,11 +1,12 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { type IDataChart } from "../types/IDataChart";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
-import SpinnyLoader from "../components/SpinnyLoader";
 import { useDateRange } from "../components/daterange/DateRangeContext";
 import { DateTime } from "luxon";
+import ChromiumPicker from "../components/ChromiumPicker";
+import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
 export default function RangeView() {
   const { errorNotification } = useNotification();
@@ -20,28 +21,6 @@ export default function RangeView() {
     labels: [],
     temperatures: [],
   });
-
-  const onStartDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = event.currentTarget.valueAsDate;
-
-    if (!selectedDate) {
-      errorNotification("Invalid date selected.");
-      return;
-    }
-
-    setStartDate(selectedDate);
-  };
-
-  const onEndDateChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = event.currentTarget.valueAsDate;
-
-    if (!selectedDate) {
-      errorNotification("Invalid date selected.");
-      return;
-    }
-
-    setEndDate(selectedDate);
-  };
 
   useEffect(() => {
     if (!dates) return;
@@ -75,11 +54,7 @@ export default function RangeView() {
   }, [dates, startDate, endDate, errorNotification]);
 
   if (!dates) {
-    return (
-      <div className="d-flex justify-content-center pt-5">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   return (
@@ -89,21 +64,19 @@ export default function RangeView() {
           <div className="row mb-3 mt-3">
             <label htmlFor="date-select">Select start & end dates</label>
             <div className="input-group" id="date-select">
-              <input
-                className="form-control"
+              <ChromiumPicker
                 type="date"
                 min={dates.first}
                 max={dates.last}
                 defaultValue={dates.first}
-                onChange={onStartDateChanged}
+                onChange={(d) => setStartDate(d)}
               />
-              <input
-                className="form-control"
+              <ChromiumPicker
                 type="date"
                 min={dates.first}
                 max={dates.last}
                 defaultValue={dates.last}
-                onChange={onEndDateChanged}
+                onChange={(d) => setEndDate(d)}
               />
             </div>
           </div>

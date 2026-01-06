@@ -13,6 +13,7 @@ import type { IDataChart } from "../types/IDataChart";
 import SpinnyLoader from "./SpinnyLoader";
 import { useMemo } from "react";
 import { getChartTheme } from "../utils/chart-theme";
+import CenteredSpinnyLoader from "./CenteredSpinnyLoader";
 
 export default function DataChart(props: {
   chartData: IDataChart;
@@ -54,11 +55,7 @@ export default function DataChart(props: {
   };
 
   if (!props.chartReady) {
-    return (
-      <div className="d-flex justify-content-center">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   return (

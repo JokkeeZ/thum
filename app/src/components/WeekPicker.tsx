@@ -1,11 +1,11 @@
 import { type ChangeEvent, type SetStateAction } from "react";
 import { isChromiumBrowser } from "../utils/chromium-detect";
 import { useNotification } from "./notification/NotificationContext";
-import SpinnyLoader from "./SpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "./daterange/DateRangeContext";
 import YearSelector from "./YearSelector";
 import { DateTime } from "luxon";
+import CenteredSpinnyLoader from "./CenteredSpinnyLoader";
 
 export default function WeekPicker(props: {
   setYear: (value: SetStateAction<number>) => void;
@@ -24,32 +24,14 @@ export default function WeekPicker(props: {
     props.setWeek(week);
   };
 
-  const onYearChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    const year = e.currentTarget.valueAsNumber;
-    if (isNaN(year) || !Number.isInteger(year)) {
-      return errorNotification("Invalid year selected.");
-    }
-
-    props.setYear(year);
-  };
-
-  const onWeekChangedOnChromium = (event: ChangeEvent<HTMLInputElement>) => {
-    const date = event.currentTarget.valueAsDate;
-    if (!date) {
-      return errorNotification("Invalid week selected.");
-    }
-
+  const onWeekChangedOnChromium = (date: Date) => {
     const selection = DateTime.fromJSDate(date);
     props.setYear(selection.year);
     props.setWeek(selection.localWeekNumber);
   };
 
   if (!weeks) {
-    return (
-      <div className="d-flex justify-content-center pt-5">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   const defaultVal = DateTime.fromISO(weeks.last);
@@ -58,13 +40,16 @@ export default function WeekPicker(props: {
     <form>
       <div className="row mb-3 mt-3">
         {isChromiumBrowser() ? (
-          <ChromiumPicker
-            type="week"
-            min={weeks.first}
-            max={weeks.last}
-            defaultValue={defaultVal.toFormat("kkkk-'W'WW")}
-            onChange={onWeekChangedOnChromium}
-          />
+          <div className="form-group">
+            <label htmlFor="picker">Select week</label>
+            <ChromiumPicker
+              type="week"
+              min={weeks.first}
+              max={weeks.last}
+              defaultValue={defaultVal.toFormat("kkkk-'W'WW")}
+              onChange={onWeekChangedOnChromium}
+            />
+          </div>
         ) : (
           <>
             <label htmlFor="year-week">Select week and year</label>
@@ -79,7 +64,10 @@ export default function WeekPicker(props: {
                 onChange={onWeekChanged}
               />
 
-              <YearSelector daterange={weeks} onYearChanged={onYearChanged} />
+              <YearSelector
+                daterange={weeks}
+                onYearChanged={(y) => props.setYear(y)}
+              />
             </div>
           </>
         )}

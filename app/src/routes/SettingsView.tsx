@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNotification } from "../components/notification/NotificationContext";
-import SpinnyLoader from "../components/SpinnyLoader";
 import ApiService from "../services/ApiService";
+import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
 export default function SettingsView() {
   const { addNotification, errorNotification } = useNotification();
@@ -84,11 +84,7 @@ export default function SettingsView() {
   };
 
   if (!cfgLoaded) {
-    return (
-      <div className="d-flex justify-content-center pt-5">
-        <SpinnyLoader width={50} height={50} />
-      </div>
-    );
+    return <CenteredSpinnyLoader />;
   }
 
   return (
