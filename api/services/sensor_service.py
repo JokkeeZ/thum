@@ -16,7 +16,7 @@ class SensorService:
     self.sensor_poll = SensorPoll(create_sensor())
     print('sensor_service(init_sensor): sensor initialized.')
 
-  async def start(self, db: Database):
+  def start(self, db: Database):
     if self.is_running():
       print('sensor_service(start): already running; failed to start.')
       return

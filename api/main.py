@@ -25,7 +25,7 @@ async def lifespan(_app: FastAPI):
   sensor_service.init_sensor()
 
   if db.config.use_sensor:
-    await sensor_service.start(db)
+    sensor_service.start(db)
 
   yield
 
@@ -148,7 +148,7 @@ async def update_config(cfg: AppConfig, response: Response) -> StatusResponse:
     await db.configure_async()
 
     if db.config.use_sensor:
-      await sensor_service.start(db)
+      sensor_service.start(db)
     else:
       await sensor_service.stop()
 

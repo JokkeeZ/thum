@@ -15,6 +15,7 @@ class SensorPoll:
 
       # we can skip polling if sensor is dummy dum dum
       if self.sensor.name == 'dummy':
+        await asyncio.sleep(2)
         continue
 
       now = datetime.now()
