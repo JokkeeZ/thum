@@ -3,10 +3,18 @@ import { type IDataChart } from "../types/IDataChart";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
+import { useDateRange } from "../components/daterange/DateRangeContext";
+import { DateTime } from "luxon";
+import DateTimePicker from "../components/pickers/DateTimePicker";
 
-export default function HomeView() {
+export default function Range() {
   const { errorNotification } = useNotification();
+  const { dates } = useDateRange();
+
   const [chartReady, setChartReady] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<DateTime<true>>();
+  const [endDate, setEndDate] = useState<DateTime<true>>();
+
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
@@ -14,7 +22,17 @@ export default function HomeView() {
   });
 
   useEffect(() => {
-    ApiService.all()
+    if (!dates) return;
+
+    const rangeStart = (startDate ?? DateTime.fromISO(dates.first)).toFormat(
+      "yyyy-MM-dd",
+    );
+
+    const rangeEnd = (endDate ?? DateTime.fromISO(dates.last)).toFormat(
+      "yyyy-MM-dd",
+    );
+
+    ApiService.range(rangeStart, rangeEnd)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
@@ -28,16 +46,15 @@ export default function HomeView() {
         errorNotification("Failed to fetch data from API.");
         console.error(error);
       });
-  }, [errorNotification]);
+  }, [dates, startDate, endDate, errorNotification]);
 
   return (
     <>
-      <div className="col-md-6 mx-auto">
-        <h3 className="text-primary-emphasis text-center mb-3 mt-3">
-          All time averages
-        </h3>
-      </div>
-
+      <DateTimePicker
+        type="range"
+        onRangeStartChanged={(d) => setStartDate(d)}
+        onRangeEndChanged={(d) => setEndDate(d)}
+      />
       <DataChart chartData={chartData} chartReady={chartReady} />
     </>
   );

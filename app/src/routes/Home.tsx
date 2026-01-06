@@ -3,12 +3,9 @@ import { type IDataChart } from "../types/IDataChart";
 import { useNotification } from "../components/notification/NotificationContext";
 import DataChart from "../components/DataChart";
 import ApiService from "../services/ApiService";
-import { DateTime } from "luxon";
-import DateTimePicker from "../components/pickers/DateTimePicker";
 
-export default function DailyView() {
-  const now = DateTime.now();
-  const [date, setDate] = useState<DateTime<true>>(now);
+export default function Home() {
+  const { errorNotification } = useNotification();
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -16,10 +13,8 @@ export default function DailyView() {
     temperatures: [],
   });
 
-  const { errorNotification } = useNotification();
-
   useEffect(() => {
-    ApiService.daily(date.day, date.month, date.year)
+    ApiService.all()
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
@@ -29,16 +24,21 @@ export default function DailyView() {
 
         setChartReady(true);
       })
-      .catch((err) => {
+      .catch((error) => {
         errorNotification("Failed to fetch data from API.");
-        console.error(err);
+        console.error(error);
       });
-  }, [date, errorNotification]);
+  }, [errorNotification]);
 
   return (
-    <>
-      <DateTimePicker type="date" onDateSelected={(d) => setDate(d)} />
+    <div className="container">
+      <div className="col-md-6 mx-auto">
+        <h3 className="text-primary-emphasis text-center mb-3 mt-3">
+          All time averages
+        </h3>
+      </div>
+
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }

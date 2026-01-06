@@ -6,12 +6,9 @@ import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
 import DateTimePicker from "../components/pickers/DateTimePicker";
 
-export default function MonthlyView() {
+export default function Daily() {
   const now = DateTime.now();
-  const [year, setYear] = useState(now.localWeekYear);
-  const [month, setMonth] = useState(now.get("month"));
-
-  const { errorNotification } = useNotification();
+  const [date, setDate] = useState<DateTime<true>>(now);
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
@@ -19,13 +16,10 @@ export default function MonthlyView() {
     temperatures: [],
   });
 
-  const onMonthChangedOnChromium = (date: DateTime<true>) => {
-    setYear(date.year);
-    setMonth(date.month);
-  };
+  const { errorNotification } = useNotification();
 
   useEffect(() => {
-    ApiService.monthly(year, month)
+    ApiService.daily(date.day, date.month, date.year)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
@@ -35,21 +29,16 @@ export default function MonthlyView() {
 
         setChartReady(true);
       })
-      .catch((error) => {
+      .catch((err) => {
         errorNotification("Failed to fetch data from API.");
-        console.error(error);
+        console.error(err);
       });
-  }, [year, month, errorNotification]);
+  }, [date, errorNotification]);
 
   return (
-    <>
-      <DateTimePicker
-        type="month"
-        onDateSelected={onMonthChangedOnChromium}
-        onMonthChanged={(m) => setMonth(m)}
-        onYearChanged={(y) => setYear(y)}
-      />
+    <div className="container">
+      <DateTimePicker type="date" onDateSelected={(d) => setDate(d)} />
       <DataChart chartData={chartData} chartReady={chartReady} />
-    </>
+    </div>
   );
 }

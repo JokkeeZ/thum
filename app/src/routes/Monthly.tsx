@@ -6,50 +6,47 @@ import ApiService from "../services/ApiService";
 import { DateTime } from "luxon";
 import DateTimePicker from "../components/pickers/DateTimePicker";
 
-export default function WeeklyView() {
+export default function Monthly() {
   const now = DateTime.now();
   const [year, setYear] = useState(now.localWeekYear);
-  const [week, setWeek] = useState(now.localWeekNumber);
+  const [month, setMonth] = useState(now.get("month"));
 
   const { errorNotification } = useNotification();
+  const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartData, setChartData] = useState<IDataChart>({
     humidities: [],
     labels: [],
     temperatures: [],
   });
-  const [chartReady, setChartReady] = useState<boolean>(false);
 
-  const onWeekChangedOnChromium = (date: DateTime<true>) => {
-    setYear(date.localWeekYear);
-    setWeek(date.localWeekNumber);
+  const onMonthChangedOnChromium = (date: DateTime<true>) => {
+    setYear(date.year);
+    setMonth(date.month);
   };
 
   useEffect(() => {
-    const weekString = DateTime.now()
-      .set({ localWeekYear: year, localWeekNumber: week })
-      .toFormat("kkkk-'W'WW");
-
-    ApiService.weekly(weekString)
+    ApiService.monthly(year, month)
       .then((resp) => {
         setChartData({
           labels: resp.data.map((p) => p.ts),
           temperatures: resp.data.map((p) => p.temperature),
           humidities: resp.data.map((p) => p.humidity),
         });
+
         setChartReady(true);
       })
-      .catch((err) => {
+      .catch((error) => {
         errorNotification("Failed to fetch data from API.");
-        console.error(err);
+        console.error(error);
       });
-  }, [year, week, errorNotification]);
+  }, [year, month, errorNotification]);
 
   return (
     <>
       <DateTimePicker
-        type="week"
-        onDateSelected={onWeekChangedOnChromium}
-        onWeekChanged={(w) => setWeek(w)}
+        type="month"
+        onDateSelected={onMonthChangedOnChromium}
+        onMonthChanged={(m) => setMonth(m)}
         onYearChanged={(y) => setYear(y)}
       />
       <DataChart chartData={chartData} chartReady={chartReady} />

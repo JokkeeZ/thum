@@ -1,15 +1,15 @@
 import NavigationBar from "./components/nav/NavigationBar";
-import HomeView from "./routes/HomeView";
-import DailyView from "./routes/DailyView";
-import WeeklyView from "./routes/WeeklyView";
-import MonthlyView from "./routes/MonthlyView";
-import RangeView from "./routes/RangeView";
-import LogView from "./routes/LogView";
+import Home from "./routes/Home";
+import Daily from "./routes/Daily";
+import Weekly from "./routes/Weekly";
+import Monthly from "./routes/Monthly";
+import Range from "./routes/Range";
+import Logs from "./routes/Logs";
 import NotificationContainer from "./components/notification/NotificationContainer";
-import StatsView from "./routes/StatsView";
+import Statistics from "./routes/Statistics";
 import ThemeProvider from "./components/theme/ThemeProvider";
 import { BrowserRouter, Route, Routes } from "react-router";
-import SettingsView from "./routes/SettingsView";
+import Settings from "./routes/Settings";
 import Footer from "./components/Footer";
 import DateRangeProvider from "./components/daterange/DateRangeProvider";
 import TitleManager from "./components/TitleManager";
@@ -33,18 +33,16 @@ export default function App() {
               }}
             >
               <DateRangeProvider>
-                <div className="container">
-                  <Routes>
-                    <Route path="/" element={<HomeView />} />
-                    <Route path="/daily" element={<DailyView />} />
-                    <Route path="/weekly" element={<WeeklyView />} />
-                    <Route path="/monthly" element={<MonthlyView />} />
-                    <Route path="/range" element={<RangeView />} />
-                    <Route path="/statistics" element={<StatsView />} />
-                    <Route path="/logs" element={<LogView />} />
-                    <Route path="/settings" element={<SettingsView />} />
-                  </Routes>
-                </div>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/daily" element={<Daily />} />
+                  <Route path="/weekly" element={<Weekly />} />
+                  <Route path="/monthly" element={<Monthly />} />
+                  <Route path="/range" element={<Range />} />
+                  <Route path="/statistics" element={<Statistics />} />
+                  <Route path="/logs" element={<Logs />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
               </DateRangeProvider>
             </NotificationContainer>
           </main>

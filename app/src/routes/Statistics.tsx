@@ -5,7 +5,7 @@ import type { IStatisticsResponse } from "../types/IStatisticsResponse";
 import StatisticsList from "../components/StatisticsList";
 import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
 
-export default function StatsView() {
+export default function Statistics() {
   const [stats, setStats] = useState<IStatisticsResponse | null>(null);
   const { errorNotification } = useNotification();
 
