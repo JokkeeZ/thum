@@ -27,10 +27,10 @@ export default function NavigationBar() {
 
     fetchData();
 
-    const intervalId = setInterval(fetchData, 15000); // 15 sec
+    const intervalId = setInterval(fetchData, 5000); // 5 sec
 
     return () => clearInterval(intervalId);
-  }, [setCurrentReading]);
+  }, []);
 
   return (
     <>
