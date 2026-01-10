@@ -22,7 +22,9 @@ export default function Daily() {
     ApiService.daily(date.day, date.month, date.year)
       .then((resp) => {
         setChartData({
-          labels: resp.data.map((p) => p.ts),
+          labels: resp.data.map((p) => {
+            return DateTime.fromISO(p.ts).toLocaleString(DateTime.TIME_SIMPLE);
+          }),
           temperatures: resp.data.map((p) => p.temperature),
           humidities: resp.data.map((p) => p.humidity),
         });
