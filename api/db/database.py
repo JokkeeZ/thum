@@ -108,8 +108,8 @@ class Database:
       return [SensorEntry.from_row(row) for row in await cursor.fetchall()]
 
   async def by_range_async(self, start: str, end: str) -> list[SensorEntry]:
-    start_date = datetime.strptime(start, self.config.dateformat)
-    end_date = datetime.strptime(end, self.config.dateformat)
+    start_date = datetime.strptime(start, self.config.dateformat).date()
+    end_date = datetime.strptime(end, self.config.dateformat).date()
 
     async with self.ctx.execute(f"""
       SELECT
@@ -117,7 +117,7 @@ class Database:
         AVG(temperature) as temperature,
         AVG(humidity) as humidity
       FROM sensor_data
-      WHERE timestamp_date BETWEEN ? AND ?
+      WHERE DATE(timestamp_date) BETWEEN ? AND ?
       GROUP BY ts
       ORDER BY ts;
     """, [start_date, end_date]) as cursor:
