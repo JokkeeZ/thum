@@ -229,7 +229,7 @@ class Database:
         monthformat,
         iso_week_format,
         use_sensor
-      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (1, ?, ?, ?, ?, ?, ?, ?);
     """, [
       self.config.sensor_interval,
       self.config.dateformat,
