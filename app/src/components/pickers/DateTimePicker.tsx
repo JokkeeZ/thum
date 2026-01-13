@@ -3,8 +3,9 @@ import CenteredSpinnyLoader from "../CenteredSpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "../daterange/DateRangeContext";
 import { isChromiumBrowser } from "../../utils/chromium-detect";
-import { DateTime, Info } from "luxon";
+import { DateTime } from "luxon";
 import YearPicker from "./YearPicker";
+import MonthlyPicker from "./MonthlyPicker";
 
 export default function DateTimePicker(props: {
   type: "date" | "week" | "month" | "range";
@@ -16,7 +17,6 @@ export default function DateTimePicker(props: {
   onRangeEndChanged?: (d: DateTime<true>) => void;
 }) {
   const [weekHasError, setWeekHasError] = useState(false);
-  const [monthHasError, setMonthHasError] = useState(false);
 
   const { dates, weeks, months } = useDateRange();
 
@@ -44,18 +44,6 @@ export default function DateTimePicker(props: {
 
     setWeekHasError(false);
     if (props.onWeekChanged) props.onWeekChanged(week);
-  };
-
-  const onMonthChanged = (event: ChangeEvent<HTMLSelectElement>) => {
-    const month = parseInt(event.currentTarget.value);
-
-    if (!month) {
-      setMonthHasError(true);
-      return;
-    }
-
-    setMonthHasError(false);
-    if (props.onMonthChanged) props.onMonthChanged(month);
   };
 
   const pickers: { [type: string]: JSX.Element } = {
@@ -103,26 +91,11 @@ export default function DateTimePicker(props: {
         onChange={(d) => props.onDateSelected?.(d)}
       />
     ) : (
-      <div className="input-group" id="picker">
-        <select
-          className={`form-select ${monthHasError ? "is-invalid" : ""}`}
-          onChange={onMonthChanged}
-          defaultValue={defaultMonthValue.month}
-        >
-          {Info.months().map((m, i) => {
-            return (
-              <option key={i} value={i + 1}>
-                {m}
-              </option>
-            );
-          })}
-        </select>
-
-        <YearPicker
-          daterange={months}
-          onYearChanged={(y) => props.onYearChanged?.(y)}
-        />
-      </div>
+      <MonthlyPicker
+        months={months}
+        onMonthChanged={props.onMonthChanged}
+        onYearChanged={props.onYearChanged}
+      />
     ),
     range: (
       <div className="input-group" id="date-select">
