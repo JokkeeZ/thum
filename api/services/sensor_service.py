@@ -5,9 +5,6 @@ from api.db.database import Database
 from api.sensors.sensor import Sensor
 from api.sensors.sensor_poll import SensorPoll
 
-import logging
-from uvicorn.logging import DefaultFormatter
-
 class SensorService:
   def __init__(self):
     self._task: Optional[asyncio.Task] = None
