@@ -1,11 +1,11 @@
-import { useState, type ChangeEvent, type JSX } from "react";
+import { type JSX } from "react";
 import CenteredSpinnyLoader from "../CenteredSpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
 import { useDateRange } from "../daterange/DateRangeContext";
 import { isChromiumBrowser } from "../../utils/chromium-detect";
 import { DateTime } from "luxon";
-import YearPicker from "./YearPicker";
 import MonthlyPicker from "./MonthlyPicker";
+import WeeklyPicker from "./WeeklyPicker";
 
 export default function DateTimePicker(props: {
   type: "date" | "week" | "month" | "range";
@@ -16,8 +16,6 @@ export default function DateTimePicker(props: {
   onRangeStartChanged?: (d: DateTime<true>) => void;
   onRangeEndChanged?: (d: DateTime<true>) => void;
 }) {
-  const [weekHasError, setWeekHasError] = useState(false);
-
   const { dates, weeks, months } = useDateRange();
 
   if (!dates || !weeks || !months) {
@@ -27,24 +25,6 @@ export default function DateTimePicker(props: {
   const defaultWeekValue = DateTime.fromISO(weeks.last);
   const defaultMonthValue = DateTime.fromISO(months.last);
   const isChromium = isChromiumBrowser();
-
-  const onWeekChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    const week = e.currentTarget.valueAsNumber;
-    if (isNaN(week) || !Number.isInteger(week)) {
-      setWeekHasError(true);
-      return;
-    }
-
-    // TODO: this is just hardcoded atm, but it would be
-    //       better to check if week > weeksInLocalWeekYear
-    if (week < 1 || week > 53) {
-      setWeekHasError(true);
-      return;
-    }
-
-    setWeekHasError(false);
-    if (props.onWeekChanged) props.onWeekChanged(week);
-  };
 
   const pickers: { [type: string]: JSX.Element } = {
     date: (
@@ -65,22 +45,11 @@ export default function DateTimePicker(props: {
         onChange={(d) => props.onDateSelected?.(d)}
       />
     ) : (
-      <div className="input-group">
-        <input
-          className={`form-control ${weekHasError ? "is-invalid" : ""}`}
-          id="week"
-          type="number"
-          min={1}
-          max={defaultWeekValue.weeksInLocalWeekYear}
-          defaultValue={defaultWeekValue.localWeekNumber}
-          onChange={onWeekChanged}
-        />
-
-        <YearPicker
-          daterange={weeks}
-          onYearChanged={(y) => props.onYearChanged?.(y)}
-        />
-      </div>
+      <WeeklyPicker
+        weeks={weeks}
+        onWeekChanged={props.onWeekChanged}
+        onYearChanged={props.onYearChanged}
+      />
     ),
     month: isChromium ? (
       <ChromiumPicker
