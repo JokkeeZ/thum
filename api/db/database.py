@@ -143,11 +143,10 @@ class Database:
       }
 
   async def insert_sensor_entry_async(self, temp: float, humi: float, date: str, time: str):
-    async with self.ctx.execute("""
+    await self.ctx.execute_insert("""
       INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time)
       VALUES (?, ?, ?, ?);
-    """, [temp, humi, date, time]):
-      await self.ctx.commit()
+    """, [temp, humi, date, time])
 
   async def delete_log_by_ts_async(self, timestamp: str) -> LogDeleteResult:
     async with self.ctx.execute('DELETE FROM logs WHERE timestamp = ?;', [timestamp]) as cursor:
@@ -180,8 +179,7 @@ class Database:
       return LogDeleteResult(count=cursor.rowcount)
 
   async def insert_log_entry_async(self, msg: str, ts: str):
-    async with self.ctx.execute('INSERT INTO logs VALUES (?, ?);', [msg, ts]):
-      await self.ctx.commit()
+    await self.ctx.execute_insert('INSERT INTO logs VALUES (?, ?);', [msg, ts])
 
   async def shutdown_async(self):
     if self.ctx:
