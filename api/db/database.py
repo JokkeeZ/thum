@@ -147,6 +147,7 @@ class Database:
       INSERT INTO sensor_data(temperature, humidity, timestamp_date, timestamp_time)
       VALUES (?, ?, ?, ?);
     """, [temp, humi, date, time])
+    await self.ctx.commit()
 
   async def delete_log_by_ts_async(self, timestamp: str) -> LogDeleteResult:
     async with self.ctx.execute('DELETE FROM logs WHERE timestamp = ?;', [timestamp]) as cursor:
@@ -180,6 +181,7 @@ class Database:
 
   async def insert_log_entry_async(self, msg: str, ts: str):
     await self.ctx.execute_insert('INSERT INTO logs VALUES (?, ?);', [msg, ts])
+    await self.ctx.commit()
 
   async def shutdown_async(self):
     if self.ctx:
