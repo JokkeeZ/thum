@@ -55,6 +55,23 @@ export default function DataChart(props: {
     ],
   };
 
+  const calculateDewPoint = (temperature: number, humidity: number) => {
+    return temperature - (100 - humidity) / 5;
+  };
+
+  // https://fi.wikipedia.org/wiki/Kastepiste
+  const getAirComfortLevel = (dewPoint: number) => {
+    if (dewPoint < 10) {
+      return "Dry";
+    } else if (dewPoint >= 10 && dewPoint < 16) {
+      return "Comfortable";
+    } else if (dewPoint >= 16 && dewPoint < 18) {
+      return "Humid";
+    } else {
+      return "Oppressive";
+    }
+  };
+
   if (!props.chartReady) {
     return <CenteredSpinnyLoader />;
   }
@@ -99,17 +116,24 @@ export default function DataChart(props: {
                       (i) => i.dataset.label === "Humidity",
                     )?.parsed.y;
 
-                    if (
-                      Number.isFinite(temperature) &&
-                      temperature &&
-                      Number.isFinite(humidity) &&
-                      humidity
-                    ) {
-                      const dewPoint = temperature - (100 - humidity) / 5;
+                    if (temperature && humidity) {
+                      const dewPoint = calculateDewPoint(temperature, humidity);
                       return `Dew point: ${dewPoint.toFixed(2)}°C`;
                     }
+                  },
+                  afterFooter(tooltipItems: TooltipItem<"line">[]) {
+                    const temperature = tooltipItems.find(
+                      (i) => i.dataset.label === "Temperature",
+                    )?.parsed.y;
+                    const humidity = tooltipItems.find(
+                      (i) => i.dataset.label === "Humidity",
+                    )?.parsed.y;
 
-                    return `Dew point: ?`;
+                    if (temperature && humidity) {
+                      const dewPoint = calculateDewPoint(temperature, humidity);
+                      const airComfort = getAirComfortLevel(dewPoint);
+                      return `The air may feel: ${airComfort}`;
+                    }
                   },
                 },
               },
