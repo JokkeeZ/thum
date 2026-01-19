@@ -5,6 +5,16 @@ import { NavLink } from "react-router";
 import ApiService from "../../services/ApiService";
 import NavigationBarItem from "./NavigationBarItem";
 
+function LiveDataDisplay(props: {
+  currentReading?: { temperature: number; humidity: number };
+}) {
+  return props.currentReading ? (
+    `${props.currentReading.temperature}°C`
+  ) : (
+    <SpinnyLoader width={20} height={20} />
+  );
+}
+
 export default function NavigationBar() {
   const [currentReading, setCurrentReading] = useState<{
     temperature: number;
@@ -32,6 +42,12 @@ export default function NavigationBar() {
     return () => clearInterval(intervalId);
   }, []);
 
+  const getLiveDataTitle = () => {
+    return currentReading
+      ? `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
+      : "Loading...";
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-md bg-primary">
@@ -43,17 +59,9 @@ export default function NavigationBar() {
           <div className="d-flex align-items-center">
             <span
               className="navbar-text me-3 d-md-none"
-              title={
-                currentReading
-                  ? `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
-                  : "Loading..."
-              }
+              title={getLiveDataTitle()}
             >
-              {currentReading ? (
-                `${currentReading.temperature}°C`
-              ) : (
-                <SpinnyLoader width={20} height={20} />
-              )}
+              <LiveDataDisplay currentReading={currentReading} />
             </span>
 
             <button
@@ -128,17 +136,9 @@ export default function NavigationBar() {
         <div className="d-flex align-items-center">
           <span
             className="navbar-text me-3 d-none d-md-block"
-            title={
-              currentReading
-                ? `Temperature: ${currentReading?.temperature}°C\nHumidity: ${currentReading.humidity}%`
-                : "Loading..."
-            }
+            title={getLiveDataTitle()}
           >
-            {currentReading ? (
-              `${currentReading.temperature}°C`
-            ) : (
-              <SpinnyLoader width={20} height={20} />
-            )}
+            <LiveDataDisplay currentReading={currentReading} />
           </span>
         </div>
       </nav>
