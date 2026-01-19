@@ -109,12 +109,8 @@ export default function DataChart(props: {
               tooltip: {
                 callbacks: {
                   footer(tooltipItems: TooltipItem<"line">[]) {
-                    const temperature = tooltipItems.find(
-                      (i) => i.dataset.label === "Temperature",
-                    )?.parsed.y;
-                    const humidity = tooltipItems.find(
-                      (i) => i.dataset.label === "Humidity",
-                    )?.parsed.y;
+                    const temperature = tooltipItems[0].parsed.y;
+                    const humidity = tooltipItems[1].parsed.y;
 
                     if (temperature && humidity) {
                       const dewPoint = calculateDewPoint(temperature, humidity);
@@ -122,12 +118,8 @@ export default function DataChart(props: {
                     }
                   },
                   afterFooter(tooltipItems: TooltipItem<"line">[]) {
-                    const temperature = tooltipItems.find(
-                      (i) => i.dataset.label === "Temperature",
-                    )?.parsed.y;
-                    const humidity = tooltipItems.find(
-                      (i) => i.dataset.label === "Humidity",
-                    )?.parsed.y;
+                    const temperature = tooltipItems[0].parsed.y;
+                    const humidity = tooltipItems[1].parsed.y;
 
                     if (temperature && humidity) {
                       const dewPoint = calculateDewPoint(temperature, humidity);
