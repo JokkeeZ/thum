@@ -9,6 +9,7 @@ import {
   type ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import zoomPlugin from "chartjs-plugin-zoom";
 import type { IDataChart } from "../types/IDataChart";
 import { useMemo } from "react";
 import { getChartTheme } from "../utils/chart-theme";
@@ -24,6 +25,7 @@ export default function DataChart(props: {
     PointElement,
     LineElement,
     Tooltip,
+    zoomPlugin,
   );
 
   const chartTheme = useMemo(() => getChartTheme(), []);
@@ -76,6 +78,17 @@ export default function DataChart(props: {
             },
 
             plugins: {
+              zoom: {
+                pan: {
+                  enabled: true,
+                  modifierKey: "ctrl",
+                  mode: "x",
+                },
+                zoom: {
+                  drag: { enabled: true },
+                  mode: "x",
+                },
+              },
               tooltip: {
                 callbacks: {
                   footer(tooltipItems: TooltipItem<"line">[]) {
