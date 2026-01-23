@@ -1,7 +1,7 @@
 {
   "name": "thum",
   "private": true,
-  "version": "2.3.2",
+  "version": "2.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
     "bootswatch": "^5.3.7",
     "chart.js": "^4.5.0",

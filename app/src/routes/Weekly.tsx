@@ -32,9 +32,9 @@ export default function Weekly() {
     ApiService.weekly(weekString)
       .then((resp) => {
         setChartData({
-          labels: resp.data.map((p) => p.ts),
-          temperatures: resp.data.map((p) => p.temperature),
-          humidities: resp.data.map((p) => p.humidity),
+          labels: resp.map((p) => p.ts),
+          temperatures: resp.map((p) => p.temperature),
+          humidities: resp.map((p) => p.humidity),
         });
         setChartReady(true);
       })

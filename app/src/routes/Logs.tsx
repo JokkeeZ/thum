@@ -12,7 +12,7 @@ export default function Logs() {
   useEffect(() => {
     ApiService.logs()
       .then((resp) => {
-        setLogs(resp.data);
+        setLogs(resp);
         setLogsLoaded(true);
       })
       .catch((error) => {
@@ -24,7 +24,7 @@ export default function Logs() {
   const removeLog = (log: ILogEntry) => {
     ApiService.deleteLog(log.timestamp)
       .then((resp) => {
-        if (resp.data.count > 0) {
+        if (resp.count > 0) {
           successNotification("Log removed", "Log was successfully removed!");
 
           setLogs((prev) => prev.filter((l) => l.timestamp !== log.timestamp));
@@ -39,10 +39,10 @@ export default function Logs() {
   const removeAllLogs = () => {
     ApiService.deleteLogs()
       .then((resp) => {
-        if (resp.data.count > 0) {
+        if (resp.count > 0) {
           successNotification(
             "Log(s) removed",
-            `${resp.data.count} log(s) was successfully removed!`,
+            `${resp.count} log(s) was successfully removed!`,
           );
           setLogs([]);
         }

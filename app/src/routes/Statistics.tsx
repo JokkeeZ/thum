@@ -11,9 +11,7 @@ export default function Statistics() {
 
   useEffect(() => {
     ApiService.statistics()
-      .then((resp) => {
-        setStats(resp.data);
-      })
+      .then((resp) => setStats(resp))
       .catch((error) => {
         errorNotification("Failed to fetch statistics from API.");
         console.error(error);

@@ -26,10 +26,10 @@ export default function NavigationBar() {
   useEffect(() => {
     const fetchData = () => {
       ApiService.current().then((resp) => {
-        if (resp.data.success) {
+        if (resp.success) {
           setCurrentReading({
-            temperature: resp.data.temperature,
-            humidity: resp.data.humidity,
+            temperature: resp.temperature,
+            humidity: resp.humidity,
           });
         }
       });
