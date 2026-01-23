@@ -18,9 +18,9 @@ export default function DateRangeProvider({
   useEffect(() => {
     ApiService.daterange()
       .then((resp) => {
-        setDates(resp.data.dates);
-        setWeeks(resp.data.weeks);
-        setMonths(resp.data.months);
+        setDates(resp.dates);
+        setWeeks(resp.weeks);
+        setMonths(resp.months);
       })
       .catch((err) => {
         errorNotification("Failed to fetch dateranges.");

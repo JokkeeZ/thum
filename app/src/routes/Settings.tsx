@@ -18,13 +18,13 @@ export default function Settings() {
   useEffect(() => {
     ApiService.config()
       .then((resp) => {
-        setSensorInterval(resp.data.sensor_interval);
-        setDateformat(resp.data.dateformat);
-        setTimeformat(resp.data.timeformat);
-        setWeekformat(resp.data.weekformat);
-        setMonthformat(resp.data.monthformat);
-        setIsoWeekFormat(resp.data.iso_week_format);
-        setUseSensor(resp.data.use_sensor);
+        setSensorInterval(resp.sensor_interval);
+        setDateformat(resp.dateformat);
+        setTimeformat(resp.timeformat);
+        setWeekformat(resp.weekformat);
+        setMonthformat(resp.monthformat);
+        setIsoWeekFormat(resp.iso_week_format);
+        setUseSensor(resp.use_sensor);
 
         setCfgLoaded(true);
       })
@@ -52,9 +52,9 @@ export default function Settings() {
     })
       .then((resp) => {
         addNotification({
-          error: resp.data.error,
+          error: resp.error,
           title: "Configuration update",
-          text: resp.data.message,
+          text: resp.message,
         });
       })
       .catch((error) => {

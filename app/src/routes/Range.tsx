@@ -35,11 +35,11 @@ export default function Range() {
     ApiService.range(rangeStart, rangeEnd)
       .then((resp) => {
         setChartData({
-          labels: resp.data.map((p) => {
+          labels: resp.map((p) => {
             return DateTime.fromISO(p.ts).toLocaleString(DateTime.DATE_MED);
           }),
-          temperatures: resp.data.map((p) => p.temperature),
-          humidities: resp.data.map((p) => p.humidity),
+          temperatures: resp.map((p) => p.temperature),
+          humidities: resp.map((p) => p.humidity),
         });
 
         setChartReady(true);
