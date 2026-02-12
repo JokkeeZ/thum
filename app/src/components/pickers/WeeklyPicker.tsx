@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from "react";
-import type { IDateRange } from "../../types/IDateRange";
-import YearPicker from "./YearPicker";
 import { DateTime } from "luxon";
+import type { IDateRange } from "@/types/IDateRange";
+import YearPicker from "./YearPicker";
 
 interface IWeekRange {
   minimum: number;

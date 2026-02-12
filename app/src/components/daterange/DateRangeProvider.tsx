@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { DateRangeContext } from "./DateRangeContext";
-import { type IDateRange } from "../../types/IDateRange";
-import ApiService from "../../services/ApiService";
-import { useNotification } from "../notification/NotificationContext";
+import { type IDateRange } from "@/types/IDateRange";
+import ApiService from "@/services/ApiService";
+import { useNotification } from "@/components/notification/NotificationContext";
 
 export default function DateRangeProvider({
   children,

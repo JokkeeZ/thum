@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import SpinnyLoader from "../SpinnyLoader";
-import { useTheme } from "../theme/ThemeContext";
 import { NavLink } from "react-router";
-import ApiService from "../../services/ApiService";
+import SpinnyLoader from "@/components/SpinnyLoader";
+import { useTheme } from "@/components/theme/ThemeContext";
+import ApiService from "@/services/ApiService";
 import NavigationBarItem from "./NavigationBarItem";
 
 function LiveDataDisplay(props: {

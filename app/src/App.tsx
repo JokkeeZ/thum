@@ -1,18 +1,18 @@
-import NavigationBar from "./components/nav/NavigationBar";
-import Home from "./routes/Home";
-import Daily from "./routes/Daily";
-import Weekly from "./routes/Weekly";
-import Monthly from "./routes/Monthly";
-import Range from "./routes/Range";
-import Logs from "./routes/Logs";
-import NotificationContainer from "./components/notification/NotificationContainer";
-import Statistics from "./routes/Statistics";
-import ThemeProvider from "./components/theme/ThemeProvider";
+import NavigationBar from "@/components/nav/NavigationBar";
+import Home from "@/routes/Home";
+import Daily from "@/routes/Daily";
+import Weekly from "@/routes/Weekly";
+import Monthly from "@/routes/Monthly";
+import Range from "@/routes/Range";
+import Logs from "@/routes/Logs";
+import NotificationContainer from "@/components/notification/NotificationContainer";
+import Statistics from "@/routes/Statistics";
+import ThemeProvider from "@/components/theme/ThemeProvider";
 import { BrowserRouter, Route, Routes } from "react-router";
-import Settings from "./routes/Settings";
-import Footer from "./components/Footer";
-import DateRangeProvider from "./components/daterange/DateRangeProvider";
-import TitleManager from "./components/TitleManager";
+import Settings from "@/routes/Settings";
+import Footer from "@/components/Footer";
+import DateRangeProvider from "@/components/daterange/DateRangeProvider";
+import TitleManager from "@/components/TitleManager";
 
 export default function App() {
   return (

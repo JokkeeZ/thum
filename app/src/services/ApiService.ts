@@ -1,12 +1,12 @@
-import type { IConfig } from "../types/IConfig";
+import type { IConfig } from "@/types/IConfig";
 import type {
   ILiveSensorResponse,
   ISensorResponse,
-} from "../types/ISensorResponse";
-import type { IDateRanges } from "../types/IDateRange";
-import type { IStatisticsResponse } from "../types/IStatisticsResponse";
-import type { ILogEntry } from "../types/ILogEntry";
-import type { IApiResponse } from "../types/IApiResponse";
+} from "@/types/ISensorResponse";
+import type { IDateRanges } from "@/types/IDateRanges";
+import type { IStatisticsResponse } from "@/types/IStatisticsResponse";
+import type { ILogEntry } from "@/types/ILogEntry";
+import type { IApiResponse } from "@/types/IApiResponse";
 
 export default class ApiService {
   static readonly baseURL: string = import.meta.env.VITE_API_BASE_URL as string;

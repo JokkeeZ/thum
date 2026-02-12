@@ -10,9 +10,9 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
-import type { IDataChart } from "../types/IDataChart";
 import { useMemo } from "react";
-import { getChartTheme } from "../utils/chart-theme";
+import type { IDataChart } from "@/types/IDataChart";
+import { getChartTheme } from "@/utils/chart-theme";
 import CenteredSpinnyLoader from "./CenteredSpinnyLoader";
 
 export default function DataChart(props: {

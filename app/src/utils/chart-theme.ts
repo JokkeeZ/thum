@@ -1,4 +1,4 @@
-import type { IChartTheme } from "../types/IChartTheme";
+import type { IChartTheme } from "@/types/IChartTheme";
 
 export function getChartTheme(): IChartTheme {
   const styles = getComputedStyle(document.documentElement);

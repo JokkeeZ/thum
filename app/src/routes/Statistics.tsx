@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNotification } from "../components/notification/NotificationContext";
-import ApiService from "../services/ApiService";
-import type { IStatisticsResponse } from "../types/IStatisticsResponse";
-import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
-import StatisticsItem from "../components/StatisticsItem";
+import { useNotification } from "@/components/notification/NotificationContext";
+import ApiService from "@/services/ApiService";
+import type { IStatisticsResponse } from "@/types/IStatisticsResponse";
+import CenteredSpinnyLoader from "@/components/CenteredSpinnyLoader";
+import StatisticsItem from "@/components/StatisticsItem";
 
 export default function Statistics() {
   const [stats, setStats] = useState<IStatisticsResponse | null>(null);

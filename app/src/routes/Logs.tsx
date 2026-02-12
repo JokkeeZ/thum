@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNotification } from "../components/notification/NotificationContext";
-import type { ILogEntry } from "../types/ILogEntry";
-import ApiService from "../services/ApiService";
-import CenteredSpinnyLoader from "../components/CenteredSpinnyLoader";
+import { useNotification } from "@/components/notification/NotificationContext";
+import type { ILogEntry } from "@/types/ILogEntry";
+import ApiService from "@/services/ApiService";
+import CenteredSpinnyLoader from "@/components/CenteredSpinnyLoader";
 
 export default function Logs() {
   const [logs, setLogs] = useState<ILogEntry[]>([]);
