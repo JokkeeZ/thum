@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import SpinnyLoader from "@/components/SpinnyLoader";
-import { useTheme } from "@/components/theme/ThemeContext";
+import { useTheme } from "@/hooks/theme/ThemeContext";
 import ApiService from "@/services/ApiService";
 import NavigationBarItem from "./NavigationBarItem";
 

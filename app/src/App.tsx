@@ -1,3 +1,4 @@
+import { BrowserRouter, Route, Routes } from "react-router";
 import NavigationBar from "@/components/nav/NavigationBar";
 import Home from "@/routes/Home";
 import Daily from "@/routes/Daily";
@@ -5,13 +6,12 @@ import Weekly from "@/routes/Weekly";
 import Monthly from "@/routes/Monthly";
 import Range from "@/routes/Range";
 import Logs from "@/routes/Logs";
-import NotificationContainer from "@/components/notification/NotificationContainer";
+import NotificationProvider from "@/hooks/notification/NotificationProvider";
 import Statistics from "@/routes/Statistics";
-import ThemeProvider from "@/components/theme/ThemeProvider";
-import { BrowserRouter, Route, Routes } from "react-router";
+import ThemeProvider from "@/hooks/theme/ThemeProvider";
 import Settings from "@/routes/Settings";
 import Footer from "@/components/Footer";
-import DateRangeProvider from "@/components/daterange/DateRangeProvider";
+import DateRangeProvider from "@/hooks/daterange/DateRangeProvider";
 import TitleManager from "@/components/TitleManager";
 
 export default function App() {
@@ -25,7 +25,7 @@ export default function App() {
           </header>
 
           <main className="flex-grow-1">
-            <NotificationContainer
+            <NotificationProvider
               settings={{
                 dockPosition: "top-right",
                 duration: 3000,
@@ -44,7 +44,7 @@ export default function App() {
                   <Route path="/settings" element={<Settings />} />
                 </Routes>
               </DateRangeProvider>
-            </NotificationContainer>
+            </NotificationProvider>
           </main>
 
           <footer className="py-4">

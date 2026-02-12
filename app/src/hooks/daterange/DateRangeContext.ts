@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { IDateRange } from "@/types/IDateRange";
 
-export interface IDateRangeContext {
+interface IDateRangeContext {
   dates?: IDateRange;
   weeks?: IDateRange;
   months?: IDateRange;

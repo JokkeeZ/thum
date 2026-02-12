@@ -2,7 +2,7 @@ import { type JSX } from "react";
 import { DateTime } from "luxon";
 import CenteredSpinnyLoader from "@/components/CenteredSpinnyLoader";
 import ChromiumPicker from "./ChromiumPicker";
-import { useDateRange } from "@/components/daterange/DateRangeContext";
+import { useDateRange } from "@/hooks/daterange/DateRangeContext";
 import { isChromiumBrowser } from "@/utils/chromium-detect";
 import MonthlyPicker from "./MonthlyPicker";
 import WeeklyPicker from "./WeeklyPicker";

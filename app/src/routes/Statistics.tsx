@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNotification } from "@/components/notification/NotificationContext";
+import { useNotification } from "@/hooks/notification/NotificationContext";
 import ApiService from "@/services/ApiService";
 import type { IStatisticsResponse } from "@/types/IStatisticsResponse";
 import CenteredSpinnyLoader from "@/components/CenteredSpinnyLoader";

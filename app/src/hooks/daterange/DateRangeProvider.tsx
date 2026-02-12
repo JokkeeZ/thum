@@ -2,13 +2,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { DateRangeContext } from "./DateRangeContext";
 import { type IDateRange } from "@/types/IDateRange";
 import ApiService from "@/services/ApiService";
-import { useNotification } from "@/components/notification/NotificationContext";
+import { useNotification } from "@/hooks/notification/NotificationContext";
 
-export default function DateRangeProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function DateRangeProvider(props: { children: ReactNode }) {
   const [dates, setDates] = useState<IDateRange>();
   const [weeks, setWeeks] = useState<IDateRange>();
   const [months, setMonths] = useState<IDateRange>();
@@ -30,7 +26,7 @@ export default function DateRangeProvider({
 
   return (
     <DateRangeContext.Provider value={{ dates, weeks, months }}>
-      {children}
+      {props.children}
     </DateRangeContext.Provider>
   );
 }

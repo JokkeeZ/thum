@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { type IDataChart } from "@/types/IDataChart";
-import { useNotification } from "@/components/notification/NotificationContext";
+import { useNotification } from "@/hooks/notification/NotificationContext";
 import DataChart from "@/components/DataChart";
 import ApiService from "@/services/ApiService";
-import { useDateRange } from "@/components/daterange/DateRangeContext";
+import { useDateRange } from "@/hooks/daterange/DateRangeContext";
 import DateTimePicker from "@/components/pickers/DateTimePicker";
 
 export default function Range() {

@@ -3,7 +3,7 @@ import {
   NotificationContext,
   type INotificationDetails,
 } from "./NotificationContext";
-import SlideNotification from "./SlideNotification";
+import SlideNotification from "@/components/SlideNotification";
 
 export interface INotificationSettings {
   duration: number;
@@ -11,7 +11,7 @@ export interface INotificationSettings {
   dockPosition: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }
 
-export default function NotificationContainer(props: {
+export default function NotificationProvider(props: {
   children: React.ReactNode;
   settings: INotificationSettings;
 }) {

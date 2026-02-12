@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { INotificationDetails } from "./NotificationContext";
-import type { INotificationSettings } from "./NotificationContainer";
+import type { INotificationDetails } from "@/hooks/notification/NotificationContext";
+import type { INotificationSettings } from "@/hooks/notification/NotificationProvider";
 
 export default function SlideNotification(props: {
   details: INotificationDetails;

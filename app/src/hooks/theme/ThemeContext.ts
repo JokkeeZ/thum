@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 export type Theme = "light" | "dark";
 
-export interface IThemeContext {
+interface IThemeContext {
   theme: Theme;
   updateTheme: (theme: Theme) => void;
 }

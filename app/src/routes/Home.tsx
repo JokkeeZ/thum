@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { type IDataChart } from "@/types/IDataChart";
-import { useNotification } from "@/components/notification/NotificationContext";
+import { useNotification } from "@/hooks/notification/NotificationContext";
 import DataChart from "@/components/DataChart";
 import ApiService from "@/services/ApiService";
 
