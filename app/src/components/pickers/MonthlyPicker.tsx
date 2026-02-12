@@ -69,7 +69,7 @@ export default function MonthlyPicker(props: {
 
     const monthIndex = Info.months().findIndex((m) => m === monthName);
 
-    if (!monthIndex) {
+    if (monthIndex === -1) {
       setError(true);
       return;
     }
